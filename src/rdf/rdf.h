@@ -11,17 +11,35 @@
 
 namespace rdf {
 
+  enum class Format
+  /*-------------*/
+  {
+    UNKNOWN = 0,
+    RDFXML,
+    TURTLE,
+    NTRIPLES
+    } ;
+
+  class Prefixes : protected Sord::Namespaces
+  /*---------------------------------------*/
+  {
+   public:
+    using Sord::Namespaces::add ;
+
+    friend class Graph ;
+    } ;
 
   class Node : protected Sord::Node
   /*-----------------------------*/
   {
    public:
     using Sord::Node::to_string ;
+    using Sord::Node::to_u_string ;
 
    protected:
     Node() ;
     Node(Type t, const std::string &s) ;
-    Node(SordNode *node) ;
+    Node(SordNode *node, bool copy) ;
 
     static SordNode *sord_node_from_serd_node(
       const SerdNode* node, const SerdNode *type, const SerdNode *lang) ;
@@ -32,6 +50,7 @@ namespace rdf {
   /*-------------------*/
   {
    public:
+    URI() ;
     URI(const std::string& s) ;
 
     friend class Literal ;
@@ -83,6 +102,17 @@ namespace rdf {
   {
    public:
     Graph(const URI &p_uri) ;
+
+    void parseResource(const std::string &resource,
+                       const Format format=rdf::Format::RDFXML,
+                       const std::string &base="") ;
+    void parseString(const std::string &source,
+                     const Format format=rdf::Format::RDFXML,
+                     const std::string &base="") ;
+
+    std::string serialise(const rdf::Format &format=rdf::Format::RDFXML,
+                          const std::string &base="",
+                          const rdf::Prefixes &prefixes=Prefixes()) ;
 
     const URI &getUri(void) const ;
 

@@ -31,13 +31,28 @@ rdf::Node::Node(Type t, const std::string& s)
 {
   }
 
-rdf::Node::Node(SordNode* node)
-/*---------------------------*/
-: Sord::Node(getWorld(), node, false)
+rdf::Node::Node(SordNode* node, bool copy)
+/*--------------------------------------*/
+: Sord::Node(getWorld(), node, copy)
 {
   }
 
+
+SordNode *rdf::Node::sord_node_from_serd_node(
+/*------------------------------------------*/
+  const SerdNode* node, const SerdNode *type, const SerdNode *lang)
+{
+  return ::sord_node_from_serd_node(getWorld().c_obj(), getWorld().prefixes().c_obj(), node, type, lang) ;
+  }
+
+
 //**************************************************************************//
+
+rdf::URI::URI()
+/*-----------*/
+: rdf::Node(rdf::Node::sord_node_from_serd_node(&SERD_NODE_NULL, NULL, NULL), true)
+{
+  }
 
 rdf::URI::URI(const std::string& s)
 /*-------------------------------*/
@@ -70,25 +85,25 @@ rdf::Literal::Literal(const std::string& s)
 
 rdf::Literal::Literal(const std::string& s, const rdf::URI &datatype)
 /*-----------------------------------------------------------------*/
-: rdf::Node(sord_datatype_node(s, datatype))
+: rdf::Node(sord_datatype_node(s, datatype), false)
 {
   }
 
 rdf::Literal::Literal(const std::string& s, const std::string &language)
 /*--------------------------------------------------------------------*/
-: rdf::Node(sord_language_node(s, language))
+: rdf::Node(sord_language_node(s, language), false)
 {
   }
 
 rdf::Literal::Literal(double d, unsigned frac_digits)
 /*-------------------------------------------------*/
-: rdf::Node(sord_decimal_node(d, frac_digits))
+: rdf::Node(sord_decimal_node(d, frac_digits), false)
 {
   }
 
 rdf::Literal::Literal(int64_t i)
 /*----------------------------*/
-: rdf::Node(sord_integer_node(i))
+: rdf::Node(sord_integer_node(i), false)
 {
   }
 
@@ -135,6 +150,59 @@ rdf::Graph::Graph(const URI &p_uri)
 {
   }
 
+void rdf::Graph::parseResource(
+/*---------------------------*/
+  const std::string &resource, const rdf::Format format, const std::string &base)
+{
+  if (format != rdf::Format::TURTLE
+   || serd_file_uri_parse((const uint8_t*)resource.c_str(), NULL) == NULL) {  // Use Raptor...
+
+    }
+  else {
+    Sord::Model::load_file(getWorld().prefixes().c_obj(),	SERD_TURTLE, resource, base) ;
+    }
+  }
+
+void rdf::Graph::parseString(
+/*-------------------------*/
+  const std::string &source, const rdf::Format format, const std::string &base)
+{
+  if (format == rdf::Format::TURTLE) {
+    Sord::Model::load_string(getWorld().prefixes().c_obj(),	SERD_TURTLE,
+      source.c_str(), source.length(), base) ;
+    }
+  }
+
+
+std::string rdf::Graph::serialise(
+/*-------------------------------*/
+  const rdf::Format &format, const std::string &base, const rdf::Prefixes &prefixes)
+{
+  std::string result = "" ;
+  if (format == rdf::Format::TURTLE) {
+    SerdURI base_uri = SERD_URI_NULL ;
+    const uint8_t *base_str = (base == "") ? m_uri.to_u_string() : (const uint8_t*)base.c_str() ;
+    if (serd_uri_parse(base_str, &base_uri)) {
+      return "" ; // throw exception ??
+      }
+    SerdWriter* writer = serd_writer_new(SERD_TURTLE, SERD_STYLE_ABBREVIATED,
+      getWorld().prefixes().c_obj(), &base_uri, Sord::string_sink, &result) ;
+
+// First add prefixes taht graph knows about (in graph's world)
+    serd_env_foreach(prefixes.c_obj(), (SerdPrefixSink)serd_writer_set_prefix, writer) ;
+
+    sord_write(this->c_obj(), writer, 0) ;
+    serd_writer_free(writer) ;
+    }
+  return result ;
+  }
+
+/**
+
+    if base is None: base = self.uri
+
+**/
+
 const rdf::URI &rdf::Graph::getUri(void) const
 /*------------------------------------------*/
 {
@@ -145,22 +213,6 @@ const rdf::URI &rdf::Graph::getUri(void) const
 /******************
 class Graph(rdflib.graph.Graph):
 #===============================
-  '''
-  We store graphs in memory.
-  '''
-  def __init__(self, uri=None):
-  #----------------------------
-    super(Graph, self).__init__(store=IOMemory(), identifier=uri)
-
-  @property
-  def uri(self):
-  #-------------
-    return self.identifier
-
-  @uri.setter
-  def uri(self, value):
-  #--------------------
-    self.__identifier = value
 
   @classmethod
   def create_from_resource(cls, uri, format=Format.RDFXML, base=None):
@@ -197,29 +249,6 @@ class Graph(rdflib.graph.Graph):
   def __str__(self):
   #-----------------
     return str(self.uri)
-
-  def parse_resource(self, uri, format=Format.RDFXML, base=None):
-  #--------------------------------------------------------------
-    """
-    Add statements to the graph from a resource.
-
-    :param uri: The URI of RDF content to parse and add.
-    :param format: The content's RDF format.
-    :param base: An optional base URI of the content.
-    """
-    self.parse(source=uri, format=Format.name(format), publicID=base)
-
-  def parse_string(self, string, format=Format.RDFXML, base=None):
-  #---------------------------------------------------------------
-    """
-    Add statements to the graph from a string.
-
-    :param string: The RDF to parse and add.
-    :type string: str
-    :param format: The string's RDF format.
-    :param base: The base URI of the content.
-    """
-    self.parse(data=string, format=Format.name(format), publicID=base)
 
   def serialise(self, format=Format.RDFXML, base=None, prefixes={}):
   #-----------------------------------------------------------------
