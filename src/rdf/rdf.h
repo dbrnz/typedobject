@@ -36,6 +36,11 @@ namespace rdf {
     using Sord::Node::to_string ;
     using Sord::Node::to_u_string ;
 
+    using Sord::Node::operator == ;
+    inline bool operator !=(const Node &other) const {
+      return !(*this == other) ;
+      }
+
    protected:
     Node() ;
     Node(Type t, const std::string &s) ;
