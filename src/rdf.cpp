@@ -185,10 +185,11 @@ std::string rdf::Graph::serialise(
   std::string result = "" ;
   if (format == rdf::Format::TURTLE) {
     SerdURI base_uri = SERD_URI_NULL ;
-    const uint8_t *base_str = (base == "") ? m_uri.to_u_string() : (const uint8_t*)base.c_str() ;
-    if (serd_uri_parse(base_str, &base_uri)) {
-      return "" ; // throw exception ??
-      }
+    const uint8_t *base_str = (base != "") ? (const uint8_t*)base.c_str()
+                            : (m_uri != URI::EMPTY) ? m_uri.to_u_string()
+                            : NULL ;
+    if (base_str) serd_uri_parse(base_str, &base_uri) ;
+
     SerdWriter* writer = serd_writer_new(SERD_TURTLE, SERD_STYLE_ABBREVIATED,
       getWorld().prefixes().c_obj(), &base_uri, Sord::string_sink, &result) ;
 
