@@ -149,21 +149,31 @@ SordNode *rdf::Literal::sord_integer_node(int64_t i)
 
 rdf::Graph::Graph(const URI &p_uri)
 /*-------------------------------*/
-: Sord::Model(getWorld(), p_uri.to_string(), SORD_SPO | SORD_OPS, false),
+: m_model(sord_new(getWorld().c_obj(), SORD_SPO | SORD_OPS, false)),
   m_uri(p_uri)
 {
+  }
+
+rdf::Graph::~Graph()
+/*----------------*/
+{
+  sord_free(m_model) ;
   }
 
 void rdf::Graph::parseResource(
 /*---------------------------*/
   const std::string &resource, const rdf::Format format, const std::string &base)
 {
+  uint8_t* path ;
   if (format != rdf::Format::TURTLE
-   || serd_file_uri_parse((const uint8_t*)resource.c_str(), NULL) == NULL) {  // Use Raptor...
+   || (path = serd_file_uri_parse((const uint8_t*)resource.c_str(), NULL)) == NULL) {  // Use Raptor...
 
     }
   else {
-    Sord::Model::load_file(getWorld().prefixes().c_obj(),	SERD_TURTLE, resource, base) ;
+    SerdReader* reader = sord_new_reader(m_model, getWorld().prefixes().c_obj(), SERD_TURTLE, NULL) ;
+    serd_reader_read_file(reader, path) ;
+    serd_reader_free(reader) ;
+    free(path) ;
     }
   }
 
@@ -172,8 +182,9 @@ void rdf::Graph::parseString(
   const std::string &source, const rdf::Format format, const std::string &base)
 {
   if (format == rdf::Format::TURTLE) {
-    Sord::Model::load_string(getWorld().prefixes().c_obj(),	SERD_TURTLE,
-      source.c_str(), source.length(), base) ;
+    SerdReader* reader = sord_new_reader(m_model, getWorld().prefixes().c_obj(), SERD_TURTLE, NULL) ;
+    serd_reader_read_string(reader, (const uint8_t*)source.c_str()) ;
+    serd_reader_free(reader) ;
     }
   }
 
@@ -192,21 +203,14 @@ std::string rdf::Graph::serialise(
 
     SerdWriter* writer = serd_writer_new(SERD_TURTLE, SERD_STYLE_ABBREVIATED,
       getWorld().prefixes().c_obj(), &base_uri, Sord::string_sink, &result) ;
-
-// First add prefixes taht graph knows about (in graph's world)
+    serd_env_foreach(getWorld().prefixes().c_obj(), (SerdPrefixSink)serd_writer_set_prefix, writer) ;
     serd_env_foreach(prefixes.c_obj(), (SerdPrefixSink)serd_writer_set_prefix, writer) ;
-
-    sord_write(this->c_obj(), writer, 0) ;
+    sord_write(m_model, writer, 0) ;
     serd_writer_free(writer) ;
     }
   return result ;
   }
 
-/**
-
-    if base is None: base = self.uri
-
-**/
 
 const rdf::URI &rdf::Graph::getUri(void) const
 /*------------------------------------------*/

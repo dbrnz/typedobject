@@ -103,11 +103,12 @@ namespace rdf {
   /**
   A model may consist of triples from a base (unnamed) graph and one or more named graphs.
   **/
-  class Graph : protected Sord::Model
-  /*-------------------------------*/
+  class Graph
+  /*-------*/
   {
    public:
     Graph(const URI &p_uri) ;
+    virtual ~Graph() ;
 
     void parseResource(const std::string &resource,
                        const Format format=rdf::Format::RDFXML,
@@ -130,6 +131,7 @@ namespace rdf {
 
    private:
     const URI &m_uri ;
+    SordModel *m_model ;
     } ;
 
 
