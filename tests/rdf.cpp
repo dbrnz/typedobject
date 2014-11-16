@@ -6,7 +6,7 @@
 int main(void)
 /*----------*/
 {
-  rdf::URI g_uri("http://www.bsml.org/graph") ;
+  rdf::URI g_uri ;
   rdf::Graph g(g_uri) ;
 
   std::string turtle = R"(
