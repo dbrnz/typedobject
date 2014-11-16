@@ -57,6 +57,7 @@ namespace rdf {
    public:
     URI() ;
     URI(const std::string& s) ;
+    static const URI EMPTY ;
 
     friend class Literal ;
     } ;
