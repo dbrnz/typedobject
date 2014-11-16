@@ -1,14 +1,16 @@
-set(INCLUDE_DIRS ${INCLUDE_DIRS}
-  /usr/local/include/serd-0  ## From pkg_config ??
-  /usr/local/include/sord-0  ## From pkg_config ??
-  PARENT_SCOPE)
+find_package(PkgConfig)
+pkg_check_modules(SORD QUIET sord-0)
 
-LINK_DIRECTORIES(/usr/local/lib)
+set(INCLUDE_DIRS ${INCLUDE_DIRS} ${SORD_INCLUDE_DIRS} PARENT_SCOPE)
+add_definitions(${SORD_CFLAGS_OTHER})
 
-set(LIBRARIES ${LIBRARIES}
-  serd-0
-  sord-0
-  PARENT_SCOPE)
+set(LIBNUM 1)
+foreach(LIBRARY_NAME ${SORD_LIBRARIES})
+  find_library(LIBRARY${LIBNUM} ${LIBRARY_NAME} PATHS ${SORD_LIBRARY_DIRS})
+  set(LIBS ${LIBS} ${LIBRARY${LIBNUM}})
+  MATH(EXPR LIBNUM "${LIBNUM}+1")
+endforeach()
+set(LIBRARIES ${LIBRARIES} ${LIBS} PARENT_SCOPE)
 
 set(SOURCES ${SOURCES}
   ${CMAKE_CURRENT_SOURCE_DIR}/rdf.cpp
