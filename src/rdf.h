@@ -20,6 +20,7 @@ namespace rdf {
     friend class Graph ;
     } ;
 
+
   class Node : protected Sord::Node
   /*-----------------------------*/
   {
@@ -31,6 +32,8 @@ namespace rdf {
     inline bool operator !=(const Node &other) const {
       return !(*this == other) ;
       }
+    const bool empty(void) const ;
+
     friend class Statement ;
 
    protected:
@@ -49,7 +52,6 @@ namespace rdf {
    public:
     URI() ;
     URI(const std::string& s) ;
-    static const URI EMPTY ;
 
     friend class Literal ;
     } ;
