@@ -436,64 +436,6 @@ const rdf::URI &rdf::Graph::getUri(void) const
 class Graph(rdflib.graph.Graph):
 #===============================
 
-  @classmethod
-  def create_from_resource(cls, uri, format=Format.RDFXML, base=None):
-  #-------------------------------------------------------------------
-    """
-    Create a new Graph from RDF statements in a resource.
-
-    :param uri: The URI of RDF content to parse and add.
-    :param format: The content's RDF format.
-    :param base: An optional base URI of the content.
-    :rtype: A :class:`Graph`
-    """
-    self = cls(uri)
-    self.parse(source=uri, format=Format.name(format), publicID=base)
-    return self
-
-  @classmethod
-  def create_from_string(cls, uri, string, format=Format.RDFXML):
-  #--------------------------------------------------------------
-    """
-    Create a new Graph from RDF statements in a string.
-
-    :param uri: The URI of the resulting graph. This is also
-      use as the base URI when parsing.
-    :param string: The RDF to parse and add.
-    :type string: str
-    :param format: The string's RDF format.
-    :rtype: A :class:`Graph`
-    """
-    self = cls(uri)
-    self.parse(data=string, format=Format.name(format), publicID=str(uri))
-    return self
-
-  def __str__(self):
-  #-----------------
-    return str(self.uri)
-
-  def serialise(self, format=Format.RDFXML, base=None, prefixes={}):
-  #-----------------------------------------------------------------
-    '''
-    Serialise the graph as a string of RDF statements.
-
-    :param format: The RDF format to return.
-    :param base: An optional base URI.
-    :param prefixes: A dictionary of { 'prefix': 'namespace_uri' } abbreviations
-      to use in the resulting serialisation.
-    :type prefixes: dict
-    :return: The graph serialised as a string.
-    :rtype: str
-    '''
-    if base is None: base = self.uri
-    for prefix, uri in prefixes.items():
-      self.bind(prefix, uri)
-    return self.serialize(format=Format.name(format)) ## BUG IN RDFLIB..., base=base)
-
-#  def __iter__(self):
-#  #------------------
-#    return self.as_stream(self._default_graph).__iter__()
-
   def add_statements(self, statements):
   #------------------------------------
     '''
