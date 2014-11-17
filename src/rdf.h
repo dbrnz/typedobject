@@ -11,15 +11,6 @@
 
 namespace rdf {
 
-  enum class Format
-  /*-------------*/
-  {
-    UNKNOWN = 0,
-    RDFXML,
-    TURTLE,
-    NTRIPLES
-    } ;
-
   class Prefixes : protected Sord::Namespaces
   /*---------------------------------------*/
   {
@@ -95,14 +86,10 @@ namespace rdf {
   {
    public:
     Statement(const URI &p_subject, const URI &p_predicate, const Node &p_object) ;
-    Statement(const URI &p_subject, const URI &p_predicate, const Literal &p_object) ;
     Statement(const BNode &p_subject, const URI &p_predicate, const Node &p_object) ;
-    Statement(const BNode &p_subject, const URI &p_predicate, const Literal &p_object) ;
     } ;
 
-  /**
-  A model may consist of triples from a base (unnamed) graph and one or more named graphs.
-  **/
+
   class Graph
   /*-------*/
   {
@@ -110,14 +97,21 @@ namespace rdf {
     Graph(const URI &p_uri) ;
     virtual ~Graph() ;
 
+    enum class Format {
+      UNKNOWN = 0,
+      RDFXML,
+      TURTLE,
+      NTRIPLES
+      } ;
+
     void parseResource(const std::string &resource,
-                       const Format format=rdf::Format::RDFXML,
+                       const Format format=Format::RDFXML,
                        const std::string &base="") ;
     void parseString(const std::string &source,
-                     const Format format=rdf::Format::RDFXML,
+                     const Format format=Format::RDFXML,
                      const std::string &base="") ;
 
-    std::string serialise(const rdf::Format &format=rdf::Format::RDFXML,
+    std::string serialise(const Format format=Format::RDFXML,
                           const std::string &base="",
                           const rdf::Prefixes &prefixes=Prefixes()) ;
 
@@ -125,9 +119,7 @@ namespace rdf {
 
     bool contains(const Statement &p_statement) const ;
     bool contains(const URI &p_subject, const URI &p_predicate, const Node &p_object) const ;
-    bool contains(const URI &p_subject, const URI &p_predicate, const Literal &p_object) const ;
     bool contains(const BNode &p_subject, const URI &p_predicate, const Node &p_object) const ;
-    bool contains(const BNode &p_subject, const URI &p_predicate, const Literal &p_object) const ;
 
    private:
     const URI &m_uri ;
