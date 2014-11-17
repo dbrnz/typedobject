@@ -5,17 +5,34 @@
 //**************************************************************************//
 
 #include <sord/sordmm.hpp>
-
-#include <string>
+#include <raptor2.h>
 
 //**************************************************************************//
 
-static Sord::World& getWorld()
-/*--------------------------*/
+#include <string>
+#include <stdio.h>
+
+//**************************************************************************//
+
+static Sord::World& sordWorld()
+/*---------------------------*/
 {
-  static Sord::World instance;
+  static Sord::World instance ;
   return instance;
   }
+
+
+static raptor_world *raptorWorld(void)
+/*----------------------------------*/
+{
+  static raptor_world *world = NULL ;
+  if (world == NULL) {
+    world = raptor_new_world() ;
+    raptor_world_open(world) ;
+    }
+  return world ;
+  }
+
 
 //**************************************************************************//
 
@@ -27,13 +44,13 @@ rdf::Node::Node()
 
 rdf::Node::Node(Type t, const std::string& s)
 /*-----------------------------------------*/
-: Sord::Node(getWorld(), t, s)
+: Sord::Node(sordWorld(), t, s)
 {
   }
 
 rdf::Node::Node(SordNode* node, bool copy)
 /*--------------------------------------*/
-: Sord::Node(getWorld(), node, copy)
+: Sord::Node(sordWorld(), node, copy)
 {
   }
 
@@ -42,7 +59,7 @@ SordNode *rdf::Node::sord_node_from_serd_node(
 /*------------------------------------------*/
   const SerdNode* node, const SerdNode *type, const SerdNode *lang)
 {
-  return ::sord_node_from_serd_node(getWorld().c_obj(), getWorld().prefixes().c_obj(), node, type, lang) ;
+  return ::sord_node_from_serd_node(sordWorld().c_obj(), sordWorld().prefixes().c_obj(), node, type, lang) ;
   }
 
 
@@ -149,7 +166,7 @@ SordNode *rdf::Literal::sord_integer_node(int64_t i)
 
 rdf::Graph::Graph(const URI &p_uri)
 /*-------------------------------*/
-: m_model(sord_new(getWorld().c_obj(), SORD_SPO | SORD_OPS, false)),
+: m_model(sord_new(sordWorld().c_obj(), SORD_SPO | SORD_OPS, false)),
   m_uri(p_uri)
 {
   }
@@ -160,53 +177,249 @@ rdf::Graph::~Graph()
   sord_free(m_model) ;
   }
 
+
+static char *get_raptor_format(const rdf::Graph::Format format)
+/*-----------------------------------------------------------*/
+{
+  static char *format_names[] = {  // Needs to match Graph::Format order
+    (char *)"guess",
+    (char *)"rdfxml",
+    (char *)"turtle",
+    (char *)"ntriples"
+    } ;
+  return format_names[(int)format] ;
+  }
+
+
+static SordNode *sord_node_from_raptor_term(const raptor_term *term)
+/*----------------------------------------------------------------*/
+{
+  SordNode *node = NULL ;
+  switch (term->type) {
+   case RAPTOR_TERM_TYPE_URI: {
+    raptor_uri *uri = term->value.uri ;
+    node = sord_new_uri(sordWorld().c_obj(), raptor_uri_as_string(uri)) ;
+    }
+    break ;
+	 case RAPTOR_TERM_TYPE_BLANK: {
+    raptor_term_blank_value blank = term->value.blank ;
+    node = sord_new_blank(sordWorld().c_obj(), blank.string) ;
+    }
+    break ;
+	 case RAPTOR_TERM_TYPE_LITERAL: {
+    raptor_term_literal_value literal = term->value.literal ;
+    SordNode *datatype = NULL ;
+    if (literal.datatype != NULL)
+      datatype = sord_new_uri(sordWorld().c_obj(), raptor_uri_as_string(literal.datatype)) ;
+    node = sord_new_literal(sordWorld().c_obj(), datatype, literal.string, (const char *)literal.language) ;
+    }
+   default:
+    break ;
+    }
+  return node ;
+  }
+
+static void process_raptor_message(void *user_data, raptor_log_message *message)
+/*----------------------------------------------------------------------------*/
+{
+  printf("Message: %s\n", message->text) ;
+  }
+
+
+static void process_raptor_namespace(void *user_data, raptor_namespace *nspace)
+/*---------------------------------------------------------------------------*/
+{
+  serd_env_set_prefix_from_strings(sordWorld().prefixes().c_obj(),
+                                   raptor_namespace_get_prefix(nspace),
+                                   raptor_uri_as_string(raptor_namespace_get_uri(nspace))) ;
+  }
+
+static void process_raptor_statement(void *user_data, raptor_statement *triple)
+/*---------------------------------------------------------------------------*/
+{
+  SordQuad quad ;
+  quad[SORD_SUBJECT] = sord_node_from_raptor_term(triple->subject) ;
+  quad[SORD_PREDICATE] = sord_node_from_raptor_term(triple->predicate) ;
+  quad[SORD_OBJECT] = sord_node_from_raptor_term(triple->object) ;
+  quad[SORD_GRAPH] = NULL ;
+  sord_add((SordModel *)user_data, quad) ;
+  }
+
+static uint8_t *get_file_from_uri_string(const uint8_t *s)
+/*------------------------------------------------------*/
+{
+  uint8_t *path = serd_file_uri_parse((const uint8_t*)s, NULL) ;
+  if (path != NULL && serd_uri_string_has_scheme(path)) {
+    free(path) ;
+    path = NULL ;
+    }
+  return path ;
+  }
+
+
+static raptor_parser *setup_raptor_parser(
+/*--------------------------------------*/
+  SordModel *model, const rdf::Graph::Format format, const std::string &base, raptor_uri **base_uri)
+{
+  raptor_world_set_log_handler(raptorWorld(), NULL, process_raptor_message) ;
+  raptor_parser *parser = raptor_new_parser(raptorWorld(), get_raptor_format(format)) ;
+  raptor_parser_set_statement_handler(parser, model, process_raptor_statement) ;
+  raptor_parser_set_namespace_handler(parser, model, process_raptor_namespace) ;
+  if (base != "") *base_uri = raptor_new_uri(raptorWorld(), (uint8_t *)base.c_str()) ;
+  return parser ;
+  }
+
+
 void rdf::Graph::parseResource(
 /*---------------------------*/
-  const std::string &resource, const rdf::Format format, const std::string &base)
+  const std::string &resource, const rdf::Graph::Format format, const std::string &base)
 {
-  uint8_t* path ;
-  if (format != rdf::Format::TURTLE
-   || (path = serd_file_uri_parse((const uint8_t*)resource.c_str(), NULL)) == NULL) {  // Use Raptor...
+  uint8_t* file_path = get_file_from_uri_string((const uint8_t*)resource.c_str()) ;
 
+  if ((format != Format::TURTLE && format != Format::NTRIPLES) || file_path == NULL) {  // Use Raptor...
+    std::string base_str = (base != "") ? base : resource ;
+    raptor_uri *base_uri = NULL ;
+    raptor_parser *parser = setup_raptor_parser(m_model, format, base_str, &base_uri) ;
+    raptor_uri *uri = raptor_new_uri(raptorWorld(), (uint8_t *)resource.c_str()) ;
+    if (file_path != NULL) {
+      FILE *stream = fopen((const char *)file_path, "rb") ;
+      int i = raptor_parser_parse_file_stream(parser, stream, (const char *)file_path, base_uri) ;
+      fclose(stream) ;
+      }
+    else raptor_parser_parse_uri(parser, uri, base_uri) ;
+    raptor_free_uri(uri) ;
+    if (base_uri != NULL) raptor_free_uri(base_uri) ;
+    raptor_free_parser(parser) ;
     }
   else {
-    SerdReader* reader = sord_new_reader(m_model, getWorld().prefixes().c_obj(), SERD_TURTLE, NULL) ;
-    serd_reader_read_file(reader, path) ;
+    SerdReader* reader = sord_new_reader(m_model, sordWorld().prefixes().c_obj(),
+                                         (format == Format::TURTLE) ? SERD_TURTLE : SERD_NTRIPLES,
+                                         NULL) ;
+    serd_reader_read_file(reader, file_path) ;
     serd_reader_free(reader) ;
-    free(path) ;
     }
+  if (file_path != NULL) free(file_path) ;
   }
 
 void rdf::Graph::parseString(
 /*-------------------------*/
-  const std::string &source, const rdf::Format format, const std::string &base)
+  const std::string &source, const rdf::Graph::Format format, const std::string &base)
 {
-  if (format == rdf::Format::TURTLE) {
-    SerdReader* reader = sord_new_reader(m_model, getWorld().prefixes().c_obj(), SERD_TURTLE, NULL) ;
+  if (format == Format::TURTLE || format == Format::NTRIPLES) {  // Use sord
+    SerdReader* reader = sord_new_reader(m_model, sordWorld().prefixes().c_obj(),
+                                         (format == Format::TURTLE) ? SERD_TURTLE : SERD_NTRIPLES,
+                                         NULL) ;
     serd_reader_read_string(reader, (const uint8_t*)source.c_str()) ;
     serd_reader_free(reader) ;
+    }
+  else {                                                         // Use Raptor
+    raptor_uri *base_uri = NULL ;
+    raptor_parser *parser = setup_raptor_parser(m_model, format, base, &base_uri) ;
+    raptor_parser_parse_start(parser, base_uri) ;
+    raptor_parser_parse_chunk(parser, (uint8_t *)source.c_str(), source.length(), 1) ;
+    if (base_uri != NULL) raptor_free_uri(base_uri) ;
+    raptor_free_parser(parser) ;
     }
   }
 
 
+static SerdStatus set_raptor_prefix(SerdWriter *writer, const SerdNode *name, const SerdNode *uri)
+/*----------------------------------------------------------------------------------------------*/
+{
+  raptor_serializer *serialiser = (raptor_serializer *)writer ;
+  raptor_uri *prefix_uri = raptor_new_uri(raptorWorld(), uri->buf) ;
+  raptor_serializer_set_namespace(serialiser, prefix_uri, name->buf) ;
+  raptor_free_uri(prefix_uri) ;
+  return SERD_SUCCESS ;
+  }
+
+static raptor_term *raptor_term_from_sord_node(const SordNode *node)
+/*----------------------------------------------------------------*/
+{
+  const uint8_t *text = sord_node_get_string(node) ;
+  raptor_term *term = NULL ;
+
+  switch (sord_node_get_type(node)) {
+   case SORD_URI:
+    term = raptor_new_term_from_uri_string(raptorWorld(), text) ;
+    break ;
+
+   case SORD_BLANK:
+    term = raptor_new_term_from_blank(raptorWorld(), text) ;
+    break ;
+
+   case SORD_LITERAL: {
+    SordNode *dtype = sord_node_get_datatype(node) ;
+    raptor_uri *datatype = NULL ;
+    if (dtype != NULL)
+      datatype = raptor_new_uri(raptorWorld(), sord_node_get_string(dtype)) ;
+    const char *language = sord_node_get_language(node) ;
+    term = raptor_new_term_from_literal(raptorWorld(), text, datatype, (uint8_t *)language) ;
+    if (datatype != NULL) raptor_free_uri(datatype) ;
+    }
+
+   default:
+    break ;
+    }
+  return term ;
+  }
+
 std::string rdf::Graph::serialise(
 /*-------------------------------*/
-  const rdf::Format &format, const std::string &base, const rdf::Prefixes &prefixes)
+  const rdf::Graph::Format format, const std::string &base, const rdf::Prefixes &prefixes)
 {
   std::string result = "" ;
-  if (format == rdf::Format::TURTLE) {
+  const uint8_t *base_str = (base != "") ? (const uint8_t*)base.c_str()
+                          : (m_uri != URI::EMPTY) ? m_uri.to_u_string()
+                          : NULL ;
+  if (format == Format::TURTLE || format == Format::NTRIPLES) {     // Use sord
     SerdURI base_uri = SERD_URI_NULL ;
-    const uint8_t *base_str = (base != "") ? (const uint8_t*)base.c_str()
-                            : (m_uri != URI::EMPTY) ? m_uri.to_u_string()
-                            : NULL ;
     if (base_str) serd_uri_parse(base_str, &base_uri) ;
 
-    SerdWriter* writer = serd_writer_new(SERD_TURTLE, SERD_STYLE_ABBREVIATED,
-      getWorld().prefixes().c_obj(), &base_uri, Sord::string_sink, &result) ;
-    serd_env_foreach(getWorld().prefixes().c_obj(), (SerdPrefixSink)serd_writer_set_prefix, writer) ;
+    SerdWriter* writer = serd_writer_new((format == Format::TURTLE) ? SERD_TURTLE : SERD_NTRIPLES,
+                                         (SerdStyle)(SERD_STYLE_ABBREVIATED | SERD_STYLE_RESOLVED | SERD_STYLE_CURIED),
+                                         sordWorld().prefixes().c_obj(),
+                                         &base_uri,
+                                         Sord::string_sink, &result) ;
+    serd_env_foreach(sordWorld().prefixes().c_obj(), (SerdPrefixSink)serd_writer_set_prefix, writer) ;
     serd_env_foreach(prefixes.c_obj(), (SerdPrefixSink)serd_writer_set_prefix, writer) ;
+
     sord_write(m_model, writer, 0) ;
+    
     serd_writer_free(writer) ;
+    }
+  else {                                   // Use Raptor
+    raptor_uri *base_uri = NULL ;
+    if (base_str) base_uri = raptor_new_uri(raptorWorld(), base_str) ;
+
+    raptor_serializer *serialiser = raptor_new_serializer(raptorWorld(), get_raptor_format(format)) ;
+//    if (serialiser == NULL) throw Exception("Unable to create graph serialiser") ;
+
+    serd_env_foreach(sordWorld().prefixes().c_obj(), (SerdPrefixSink)set_raptor_prefix, serialiser) ;
+    serd_env_foreach(prefixes.c_obj(), (SerdPrefixSink)set_raptor_prefix, serialiser) ;
+
+    size_t length = 0 ;
+    unsigned char *serialised ;
+    raptor_serializer_start_to_string(serialiser, base_uri, (void **)(&serialised), &length) ;
+
+    SordIter *statements = sord_begin(m_model) ;
+    if (statements != NULL) {
+      do {
+        SordQuad statement ;
+        sord_iter_get(statements, statement) ;
+        raptor_statement *triple = raptor_new_statement(raptorWorld()) ;
+        triple->subject = raptor_term_from_sord_node(statement[SORD_SUBJECT]) ;
+        triple->predicate = raptor_term_from_sord_node(statement[SORD_PREDICATE]) ;
+        triple->object = raptor_term_from_sord_node(statement[SORD_OBJECT]) ;
+        raptor_serializer_serialize_statement(serialiser, triple) ;
+        raptor_free_statement(triple) ;
+        } while (!sord_iter_next(statements)) ;
+      sord_iter_free(statements) ;
+      }
+    raptor_serializer_serialize_end(serialiser) ;
+    result = std::string((char *)serialised, length) ;
+    if (base_uri) raptor_free_uri(base_uri) ;
+    raptor_free_serializer(serialiser) ;
     }
   return result ;
   }
