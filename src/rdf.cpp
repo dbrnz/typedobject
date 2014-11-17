@@ -163,6 +163,29 @@ SordNode *rdf::Literal::sord_integer_node(int64_t i)
 
 //**************************************************************************//
 
+rdf::Statement::Statement(const rdf::Node &s, const rdf::Node &p, const rdf::Node &o)
+/*-------------------------------------------------------------------------------*/
+{
+  quad[SORD_SUBJECT] = s.c_obj() ;
+  quad[SORD_PREDICATE] = p.c_obj() ;
+  quad[SORD_OBJECT] = o.c_obj() ;
+  quad[SORD_GRAPH] = NULL ;
+  }
+
+rdf::Statement::Statement(const rdf::URI &s, const rdf::URI &p, const rdf::Node &o)
+/*-------------------------------------------------------------------------------*/
+: Statement((const rdf::Node &)s, (const rdf::Node &)p, o)
+{
+  }
+
+rdf::Statement::Statement(const rdf::BNode &s, const rdf::URI &p, const rdf::Node &o)
+/*---------------------------------------------------------------------------------*/
+: Statement((const rdf::Node &)s, (const rdf::Node &)p, o)
+{
+  }
+
+
+//**************************************************************************//
 
 rdf::Graph::Graph(const URI &p_uri)
 /*-------------------------------*/
@@ -432,6 +455,30 @@ const rdf::URI &rdf::Graph::getUri(void) const
   }
 
 
+const bool rdf::Graph::contains(const Statement &statement) const
+/*-------------------------------------------------------------*/
+{
+  return sord_ask(m_model,
+                  statement.quad[SORD_SUBJECT],
+                  statement.quad[SORD_PREDICATE],
+                  statement.quad[SORD_OBJECT],
+                  statement.quad[SORD_GRAPH]) ;
+  }
+
+const bool rdf::Graph::contains(const URI &s, const URI &p, const Node &o) const
+/*----------------------------------------------------------------------------*/
+{
+  return contains(rdf::Statement(s, p, o)) ;
+  }
+
+const bool rdf::Graph::contains(const BNode &s, const URI &p, const Node &o) const
+/*------------------------------------------------------------------------------*/
+{
+  return contains(rdf::Statement(s, p, o)) ;
+  }
+
+
+
 /******************
 class Graph(rdflib.graph.Graph):
 #===============================
@@ -456,18 +503,6 @@ class Graph(rdflib.graph.Graph):
     if graph is not None:
       for s in graph: self.add(s)
 
-  def contains(self, statement):
-  #-----------------------------
-    '''
-    Test if a statement is in the graph.
-
-    :param statement: The statement to check. Some or all of the `subject`,
-      `predicate` or `object` attributes can be `None`, meaning they match any value.
-    :type statement: :class:`Statement`
-    :return: True if the graph contains `statement`.
-    :rtype: bool
-    '''
-    return statement in self
 
   def has_resource(self, uri, rtype):
   #----------------------------------
