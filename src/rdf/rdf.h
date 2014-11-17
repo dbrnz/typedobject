@@ -31,6 +31,7 @@ namespace rdf {
     inline bool operator !=(const Node &other) const {
       return !(*this == other) ;
       }
+    friend class Statement ;
 
    protected:
     Node() ;
@@ -85,8 +86,14 @@ namespace rdf {
   /*-----------*/
   {
    public:
-    Statement(const URI &p_subject, const URI &p_predicate, const Node &p_object) ;
-    Statement(const BNode &p_subject, const URI &p_predicate, const Node &p_object) ;
+    Statement(const URI   &s, const URI &p, const Node &o) ;
+    Statement(const BNode &s, const URI &p, const Node &o) ;
+
+    friend class Graph ;
+
+   private:
+    Statement(const Node &s, const Node &p, const Node &o) ;
+    SordQuad quad ;
     } ;
 
 
@@ -117,9 +124,9 @@ namespace rdf {
 
     const URI &getUri(void) const ;
 
-    bool contains(const Statement &p_statement) const ;
-    bool contains(const URI &p_subject, const URI &p_predicate, const Node &p_object) const ;
-    bool contains(const BNode &p_subject, const URI &p_predicate, const Node &p_object) const ;
+    const bool contains(const Statement &p_statement) const ;
+    const bool contains(const URI   &s, const URI &p, const Node &o) const ;
+    const bool contains(const BNode &s, const URI &p, const Node &o) const ;
 
    private:
     const URI &m_uri ;
