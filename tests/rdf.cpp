@@ -35,8 +35,43 @@ int main(void)
 
   )" ;
 
-  g.parseString(turtle, rdf::Format::TURTLE) ;
+  std::string xml = R"(
+<rdf:RDF xmlns:dcterms="http://purl.org/dc/terms/" xmlns:map="http://www.biosignalml.org/ontologies/2011/02/mapping#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns="http://www.biosignalml.org/mappings/">
+  <rdf:Description rdf:about="http://www.biosignalml.org/mappings/comment">
+    <map:property rdf:resource="http://www.w3.org/2000/01/rdf-schema#comment"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.biosignalml.org/mappings/comment">
+    <rdf:type rdf:resource="http://www.biosignalml.org/ontologies/2011/02/mapping#Mapping"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.biosignalml.org/mappings/comment">
+    <rdfs:comment>comment</rdfs:comment>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.biosignalml.org/mappings/description">
+    <map:property rdf:resource="http://purl.org/dc/terms/description"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.biosignalml.org/mappings/description">
+    <rdf:type rdf:resource="http://www.biosignalml.org/ontologies/2011/02/mapping#Mapping"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.biosignalml.org/mappings/description">
+    <rdfs:label>description</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.biosignalml.org/mappings/label">
+    <map:property rdf:resource="http://www.w3.org/2000/01/rdf-schema#label"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.biosignalml.org/mappings/label">
+    <rdf:type rdf:resource="http://www.biosignalml.org/ontologies/2011/02/mapping#Mapping"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://www.biosignalml.org/mappings/label">
+    <rdfs:label>label</rdfs:label>
+  </rdf:Description>
+</rdf:RDF>
+  )" ;
 
-  std::cout << g.serialise(rdf::Format::TURTLE) << std::endl ;
+//  g.parseString(turtle, rdf::Graph::Format::TURTLE) ;
+//  g.parseString(xml, rdf::Graph::Format::RDFXML, "http://base.org") ;
+//  g.parseResource("file:///Users/dave/biosignalml/aobject/build/test.xml", rdf::Graph::Format::RDFXML) ;
+  g.parseResource("test.xml", rdf::Graph::Format::RDFXML) ;
+
+  std::cout << g.serialise(rdf::Graph::Format::TURTLE) << std::endl ;
 
   }
