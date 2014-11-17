@@ -1,5 +1,8 @@
 set(INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
 
+
+set(SOURCES aobject.cpp)
+
 add_subdirectory(rdf)
 
 add_library(aobject SHARED ${SOURCES})
