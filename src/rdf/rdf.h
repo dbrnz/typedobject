@@ -25,6 +25,8 @@ namespace rdf {
   /*-----------------------------*/
   {
    public:
+    Node() ;
+
     using Sord::Node::to_string ;
     using Sord::Node::to_u_string ;
 
@@ -36,7 +38,6 @@ namespace rdf {
     friend class Statement ;
 
    protected:
-    Node() ;
     Node(Type t, const std::string &s) ;
     Node(SordNode *node, bool copy) ;
 
