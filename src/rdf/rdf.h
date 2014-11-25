@@ -51,6 +51,8 @@ namespace rdf {
    public:
     URI() ;
     URI(const std::string& s) ;
+    inline const bool operator ==(const URI &other) const
+      { return this->to_string() == other.to_string() ; }
 
     friend class Literal ;
     } ;
