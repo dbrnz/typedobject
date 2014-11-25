@@ -481,7 +481,20 @@ const bool rdf::Graph::contains(const BNode &s, const URI &p, const Node &o) con
   return contains(rdf::Statement(s, p, o)) ;
   }
 
+rdf::Namespace::Namespace(const std::string &prefix, const std::string &uri)
+/*------------------------------------------------------------------------*/
+: m_prefix(prefix), m_uri(uri)
+{
+  }
 
+const rdf::URI rdf::Namespace::make_URI(const std::string &name) const
+/*------------------------------------------------------------------*/
+{
+  return rdf::URI(m_uri.to_string() + m_prefix) ;
+  }
+
+
+//**************************************************************************//
 
 /******************
 class Graph(rdflib.graph.Graph):
