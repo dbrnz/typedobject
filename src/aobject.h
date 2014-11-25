@@ -2,22 +2,106 @@
 #define _AOBJECT_H
 
 #include "rdf/rdf.h"
+#include "rdf/defs.h"
+
+#include <string>
+#include <list>
+
+/**
+
+  static const rdf::URI m_metaclass ;                           \
+  inline const std::list<const rdf::URI> metaorder(void) {      \
+    return { METACLASS, ##__VA_ARGS__ } ;                       \
+    }
+
+//    return std::list<const rdf::URI>( METACLASS, ##__VA_ARGS__ ) ;  \
+
+// Each class has a static rdfmap and a list pointing
+// to the rdfmaps of each ancestor.
 
 
-#define A_OBJECT(...)                   \
- private:                               \
-  static const rdf::URI m_metaclass;
+    from_rdf(graph) {
+      SUPER::from_rdf(graph) ;
+      // self maps ...
+      label = graph.get_object(m_uri, RDFS::label) ;
+      // but does graph query (<m_uri>, <property>, ?value) for each assignment
+      }
+
+
+  v's having statement (m_uri, RDFS::label, value) and then "label = value".
+
+  This requires a map from "RDFS::label" to (say) "set_label()" that is
+  then called passing "value".
+
+  However avoids multiple graph queries -- just the one that gets the list of
+  statements (<m_uri>, ?property, ?value).
+
+
+  Need to note both options
+
+   What about:
+
+    selfmaps[RDFS::label] = set_label ;
+
+**/
+
+
+/***
+   public:
+// Generated
+    void from_rdf(const rdf::Graph p_graph &)
+    {
+//    PROPERTY_MAP(label, RDFS::label);
+      label = graph.get_object(m_uri, RDFS::label) ;
+//    PROPERTY_MAP(creator, DCT::creator, to_rdf=PropertyMap::get_uri);
+      creator = graph.get_object(m_uri, DCT::CREATOR) ;
+
+      xxx = #from_rdf#(graph.get_object(m_uri, #property#)) ;
+      }
+
+    void to_rdf(const rdf::Graph p_graph &)
+    {
+//    PROPERTY_MAP(label, RDFS::label);
+      graph.add(m_uri, RDFS::label, label) ;
+//    PROPERTY_MAP(creator, DCT::creator, to_rdf=PropertyMap::get_uri);
+      graph.add(m_uri, DCT::CREATOR, PropertyMap::get_uri(creator)) ;
+      }
+
+  typedef void (*RdfMap)(const rdf::Graph &) ;
+
+  static const std::list<RdfMap> m_to_rdf ;  // to_rdf functions for self and parent classes
+
+***/
+
+
+
+
+#define A_OBJECT(METACLASS, ...)                   \
+ public:                                           \
+  virtual const rdf::URI &metaclass(void) const {  \
+    { static rdf::URI m_metaclass = METACLASS ;    \
+      return METACLASS ;                           \
+    }
+
 #define PROPERTY_MAP(variable, property, ...)
 
 
-namespace AObject {
+namespace AObject
+/*=============*/
+{
 
   class AObject
-  /*==========*/
+  /*---------*/
   {
-    A_OBJECT()
-    PROPERTY_MAP(label, RDFS::label);
-    PROPERTY_MAP(creator, DCT.creator, to_rdf=PropertyMap::get_uri);
+   public:
+    virtual const rdf::URI &metaclass(void) const ;
+
+   protected:
+    virtual void assign_from_rdf(const rdf::Node &property, const rdf::Node &value) ;
+
+//    PROPERTY_MAP(label, RDFS::label);
+//    PROPERTY_MAP(creator, DCT::creator, to_rdf=PropertyMap::get_uri) ;
+
   /*
     mapping = { 'label':       PropertyMap(RDFS.label),
                 'comment':     PropertyMap(RDFS.comment),
@@ -32,6 +116,8 @@ namespace AObject {
     AObject() ;
     AObject(const rdf::URI &p_uri) ;
     virtual ~AObject() ;
+
+    inline const rdf::URI &uri() const { return m_uri ; }
 
     /**
     Set attributes from RDF triples in a graph.
@@ -57,8 +143,15 @@ namespace AObject {
    private:
     const rdf::URI m_uri ;
 
-    std::string m_label ;        // Does this come via PROPERTY_MAP define??
+// Does these come via PROPERTY_MAP defines??
+    std::string label ;
+    std::string comment ;
+    std::string description ;
+    rdf::URI precededBy ;
+    rdf::URI creator ;
+    uint64_t created ;   // ***** DATETIME type
     } ;
+
 
   } ;
 
