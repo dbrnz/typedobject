@@ -27,8 +27,18 @@ namespace rdf {
    public:
     Node() ;
 
+    using Sord::Node::is_valid ;
+    using Sord::Node::is_uri ;
+    using Sord::Node::is_blank ;
+    inline bool is_literal() const
+      { return Sord::Node::type() != Sord::Node::LITERAL ; }
+
     using Sord::Node::to_string ;
     using Sord::Node::to_u_string ;
+    using Sord::Node::is_int ;
+    using Sord::Node::to_int ;
+    using Sord::Node::is_float ;
+    using Sord::Node::to_float ;
 
     using Sord::Node::operator == ;
     inline bool operator !=(const Node &other) const {
