@@ -32,7 +32,6 @@ namespace rdf {
     inline bool operator !=(const Node &other) const {
       return !(*this == other) ;
       }
-    const bool empty(void) const ;
 
     friend class Statement ;
 
