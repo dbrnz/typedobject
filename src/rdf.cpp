@@ -55,13 +55,6 @@ rdf::Node::Node(SordNode* node, bool copy)
   }
 
 
-const bool rdf::Node::empty(void) const
-/*-----------------------------------*/
-{
-  return (this->c_obj() == NULL) ;
-  }
-
-
 SordNode *rdf::Node::sord_node_from_serd_node(
 /*------------------------------------------*/
   const SerdNode* node, const SerdNode *type, const SerdNode *lang)
@@ -397,7 +390,7 @@ std::string rdf::Graph::serialise(
 {
   std::string result = "" ;
   const uint8_t *base_str = (base != "") ? (const uint8_t*)base.c_str()
-                          : !m_uri.empty() ? m_uri.to_u_string()
+                          : m_uri.is_valid() ? m_uri.to_u_string()
                           : NULL ;
   if (format == Format::TURTLE || format == Format::NTRIPLES) {     // Use sord
     SerdURI base_uri = SERD_URI_NULL ;
