@@ -99,6 +99,19 @@ namespace rdf {
     } ;
 
 
+  class StatementIterator : protected Sord::Iter
+  /*------------------------------------------*/
+  {
+   public:
+    using Sord::Iter::end ;
+    using Sord::Iter::next ;
+    using Sord::Iter::operator++ ;
+    using Sord::Iter::get_subject ;
+    using Sord::Iter::get_predicate ;
+    using Sord::Iter::get_object ;
+    } ;
+
+
   class Graph
   /*-------*/
   {
@@ -129,6 +142,10 @@ namespace rdf {
     const bool contains(const Statement &p_statement) const ;
     const bool contains(const URI   &s, const URI &p, const Node &o) const ;
     const bool contains(const BNode &s, const URI &p, const Node &o) const ;
+
+    StatementIterator getStatements(const Statement &p_statement) const ;
+    StatementIterator getStatements(const URI   &s, const URI &p, const Node &o) const ;
+    StatementIterator getStatements(const BNode &s, const URI &p, const Node &o) const ;
 
    private:
     const URI &m_uri ;
