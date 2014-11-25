@@ -474,6 +474,14 @@ const bool rdf::Graph::contains(const BNode &s, const URI &p, const Node &o) con
   return contains(rdf::Statement(s, p, o)) ;
   }
 
+/***
+StatmentIterator getStatements(const Statement &pattern)
+
+   SordIter *statements = sord_find(m_model, pattern.quad) ;
+
+**/
+//**************************************************************************//
+
 rdf::Namespace::Namespace(const std::string &prefix, const std::string &uri)
 /*------------------------------------------------------------------------*/
 : m_prefix(prefix), m_uri(uri)

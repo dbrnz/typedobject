@@ -1,7 +1,7 @@
 set(INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
 
 
-set(SOURCES aobject.cpp)
+set(SOURCES aobject.cpp bsml.cpp)
 
 add_subdirectory(rdf)
 
