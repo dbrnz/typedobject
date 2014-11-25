@@ -136,6 +136,20 @@ namespace rdf {
     } ;
 
 
+  class Namespace
+  /*-----------*/
+  {
+   public:
+    Namespace(const std::string &prefix, const std::string &uri) ;
+
+    const URI make_URI(const std::string &name) const ;
+
+   private:
+    const URI m_uri ;
+    const std::string &m_prefix ;
+    } ;
+
+
   } ;
 
 //**************************************************************************//
