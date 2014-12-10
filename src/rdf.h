@@ -1,59 +1,21 @@
-#ifndef _RDF_RDF_H
-#define _RDF_RDF_H
+#ifndef RDF_RDF_H
+#define RDF_RDF_H
 
 //**************************************************************************//
 
 #include <sord/sordmm.hpp>
 
 #include <string>
+#include <list>
+
 
 //**************************************************************************//
 
 namespace rdf {
 
-  class Prefixes : protected Sord::Namespaces
-  /*---------------------------------------*/
-  {
-   public:
-    using Sord::Namespaces::add ;
 
-    friend class Graph ;
-    } ;
-
-
-  class Node : protected Sord::Node
-  /*-----------------------------*/
-  {
-   public:
-    Node() ;
-
-    using Sord::Node::is_valid ;
-    using Sord::Node::is_uri ;
-    using Sord::Node::is_blank ;
-    inline bool is_literal() const
-      { return Sord::Node::type() != Sord::Node::LITERAL ; }
-
-    using Sord::Node::to_string ;
-    using Sord::Node::to_u_string ;
-    using Sord::Node::is_int ;
-    using Sord::Node::to_int ;
-    using Sord::Node::is_float ;
-    using Sord::Node::to_float ;
-
-    using Sord::Node::operator == ;
-    inline bool operator !=(const Node &other) const {
-      return !(*this == other) ;
-      }
-
-    friend class Statement ;
-
-   protected:
-    Node(Type t, const std::string &s) ;
-    Node(SordNode *node, bool copy) ;
-
-    static SordNode *sord_node_from_serd_node(
-      const SerdNode* node, const SerdNode *type, const SerdNode *lang) ;
-    } ;
+  typedef Sord::Node Node ;
+  /*---------------------*/
 
 
   class URI : public Node
@@ -61,11 +23,7 @@ namespace rdf {
   {
    public:
     URI() ;
-    URI(const std::string& s) ;
-    inline const bool operator ==(const URI &other) const
-      { return this->to_string() == other.to_string() ; }
-
-    friend class Literal ;
+    URI(const std::string &uri) ;
     } ;
 
 
@@ -74,7 +32,7 @@ namespace rdf {
   {
    public:
     BNode(void) ;
-    BNode(const std::string& s) ;
+    BNode(const std::string &s) ;
     } ;
 
 
@@ -82,17 +40,39 @@ namespace rdf {
   /*-----------------------*/
   {
    public:
-    Literal(const std::string& s) ;
-    Literal(const std::string& s, const rdf::URI &datatype) ;
-    Literal(const std::string& s, const std::string &language) ;
+    Literal(const std::string &s) ;
+    Literal(const std::string &s, const rdf::URI &datatype) ;
+    Literal(const std::string &s, const std::string &language) ;
     Literal(double d, unsigned frac_digits) ;
     Literal(int64_t i) ;
 
    private:
-    static SordNode *sord_datatype_node(const std::string& s, const rdf::URI &datatype) ;
-    static SordNode *sord_language_node(const std::string& s, const std::string &language) ;
+    static SordNode *sord_datatype_node(const std::string &s, const rdf::URI &datatype) ;
+    static SordNode *sord_language_node(const std::string &s, const std::string &language) ;
     static SordNode *sord_decimal_node(double d, unsigned frac_digits) ;
     static SordNode *sord_integer_node(int64_t i) ;
+    static SordNode *sord_node_from_serd_node(const SerdNode *node, const SerdNode *type, const SerdNode *lang) ;
+    } ;
+
+
+  typedef Sord::Iter StatementIter ;
+  /*------------------------------*/
+
+
+  class Namespace
+  /*-----------*/
+  {
+   public:
+    Namespace(const std::string &name, const std::string &uri) ;
+
+    const URI make_URI(const std::string &suffix) const ;
+
+    Literal name(void) const ;
+    URI uri(void) const ;
+
+   private:
+    const Literal m_name ;
+    const URI m_uri ;
     } ;
 
 
@@ -100,27 +80,12 @@ namespace rdf {
   /*-----------*/
   {
    public:
-    Statement(const URI   &s, const URI &p, const Node &o) ;
-    Statement(const BNode &s, const URI &p, const Node &o) ;
+    Statement(const Node &s, const Node &p, const Node &o) ;
 
     friend class Graph ;
 
    private:
-    Statement(const Node &s, const Node &p, const Node &o) ;
     SordQuad quad ;
-    } ;
-
-
-  class StatementIterator : protected Sord::Iter
-  /*------------------------------------------*/
-  {
-   public:
-    using Sord::Iter::end ;
-    using Sord::Iter::next ;
-    using Sord::Iter::operator++ ;
-    using Sord::Iter::get_subject ;
-    using Sord::Iter::get_predicate ;
-    using Sord::Iter::get_object ;
     } ;
 
 
@@ -128,7 +93,8 @@ namespace rdf {
   /*-------*/
   {
    public:
-    Graph(const URI &p_uri) ;
+    Graph() ;
+    Graph(const std::string &uri) ;
     virtual ~Graph() ;
 
     enum class Format {
@@ -147,35 +113,19 @@ namespace rdf {
 
     std::string serialise(const Format format=Format::RDFXML,
                           const std::string &base="",
-                          const rdf::Prefixes &prefixes=Prefixes()) ;
+                          const std::list<Namespace> &prefixes=std::list<Namespace>()) ;
 
     const URI &getUri(void) const ;
 
     const bool contains(const Statement &p_statement) const ;
-    const bool contains(const URI   &s, const URI &p, const Node &o) const ;
-    const bool contains(const BNode &s, const URI &p, const Node &o) const ;
+    const bool contains(const Node &s, const Node &p, const Node &o) const ;
 
-    StatementIterator getStatements(const Statement &p_statement) const ;
-    StatementIterator getStatements(const URI   &s, const URI &p, const Node &o) const ;
-    StatementIterator getStatements(const BNode &s, const URI &p, const Node &o) const ;
-
-   private:
-    const URI &m_uri ;
-    SordModel *m_model ;
-    } ;
-
-
-  class Namespace
-  /*-----------*/
-  {
-   public:
-    Namespace(const std::string &prefix, const std::string &uri) ;
-
-    const URI make_URI(const std::string &name) const ;
+    StatementIter getStatements(const Statement &pattern) const ;
+    StatementIter getStatements(const Node &s, const Node &p, const Node &o) const ;
 
    private:
     const URI m_uri ;
-    const std::string &m_prefix ;
+    SordModel *m_model ;
     } ;
 
 
