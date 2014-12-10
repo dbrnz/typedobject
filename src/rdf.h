@@ -85,7 +85,7 @@ namespace rdf {
     friend class Graph ;
 
    private:
-    SordQuad quad ;
+    SordQuad m_quad ;
     } ;
 
 

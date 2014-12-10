@@ -171,10 +171,10 @@ rdf::URI rdf::Namespace::uri(void) const
 rdf::Statement::Statement(const rdf::Node &s, const rdf::Node &p, const rdf::Node &o)
 /*---------------------------------------------------------------------------------*/
 {
-  quad[SORD_SUBJECT] = s.c_obj() ;
-  quad[SORD_PREDICATE] = p.c_obj() ;
-  quad[SORD_OBJECT] = o.c_obj() ;
-  quad[SORD_GRAPH] = NULL ;
+  m_quad[SORD_SUBJECT] = s.c_obj() ;
+  m_quad[SORD_PREDICATE] = p.c_obj() ;
+  m_quad[SORD_OBJECT] = o.c_obj() ;
+  m_quad[SORD_GRAPH] = NULL ;
   }
 
 
@@ -459,10 +459,10 @@ const bool rdf::Graph::contains(const Statement &statement) const
 /*-------------------------------------------------------------*/
 {
   return sord_ask(m_model,
-                  statement.quad[SORD_SUBJECT],
-                  statement.quad[SORD_PREDICATE],
-                  statement.quad[SORD_OBJECT],
-                  statement.quad[SORD_GRAPH]) ;
+                  statement.m_quad[SORD_SUBJECT],
+                  statement.m_quad[SORD_PREDICATE],
+                  statement.m_quad[SORD_OBJECT],
+                  statement.m_quad[SORD_GRAPH]) ;
   }
 
 const bool rdf::Graph::contains(const rdf::Node &s, const rdf::Node &p, const rdf::Node &o) const
@@ -475,7 +475,7 @@ const bool rdf::Graph::contains(const rdf::Node &s, const rdf::Node &p, const rd
 rdf::StatementIter rdf::Graph::getStatements(const rdf::Statement &pattern) const
 /*-----------------------------------------------------------------------------*/
 {
-  return Sord::Iter(sordWorld(), sord_find(m_model, pattern.quad)) ;
+  return Sord::Iter(sordWorld(), sord_find(m_model, pattern.m_quad)) ;
   }
 
 rdf::StatementIter rdf::Graph::getStatements(const rdf::Node &s, const rdf::Node &p, const rdf::Node &o) const
