@@ -1,5 +1,5 @@
-#ifndef _RDF_DEFS_H
-#define _RDF_DEFS_H
+#ifndef RDF_DEFS_H
+#define RDF_DEFS_H
 
 #include "rdf.h"
 
@@ -25,6 +25,9 @@ namespace rdf {
     static const URI description ;
     static const URI creator ;
     static const URI created ;
+    static const URI format ;
+    static const URI source ;
+    static const URI subject ;
   } ;
 
   class PRV {

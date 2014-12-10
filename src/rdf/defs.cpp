@@ -1,4 +1,3 @@
-#include "rdf.h"
 #include "defs.h"
 
 
@@ -15,6 +14,9 @@ namespace rdf {
   const URI DCT::description = DCT::NS.make_URI("description") ;
   const URI DCT::creator = DCT::NS.make_URI("creator") ;
   const URI DCT::created = DCT::NS.make_URI("created") ;
+  const URI DCT::format = DCT::NS.make_URI("format") ;
+  const URI DCT::source = DCT::NS.make_URI("source") ;
+  const URI DCT::subject = DCT::NS.make_URI("subject") ;
 
   const Namespace PRV::NS("prv", "http://purl.org/net/provenance/ns#") ;
   const URI PRV::precededBy = PRV::NS.make_URI("precededBy") ;
