@@ -52,16 +52,18 @@ class Generator(object):
     self._class = None
     self._base = None
     self._properties = { }
+    self._usednames = [ ]
 
   def save(self, fn):
   #------------------
     if len(self._classes) == 0: return
     (path, f) = os.path.split(os.path.splitext(self._file)[0])
     code = ['#include "%s.h"' % f]
-#    code.extend(['',
-#                 'using namespace rdf ;',
-#                 'using namespace bsml ;',
-#                 ''])
+    if self._usednames:
+      code.append('')
+      for n in self._usednames:
+        code.append('using namespace %s ;' % '::'.join(n))
+      code.append('')
     for c in self._classes:
       code.append('')
       mc = c[2].get('METACLASS')
@@ -101,6 +103,11 @@ class Generator(object):
   #-------------------------------------
     if self._class is not None:
       self._properties[name] = params
+
+  def use_namespace(self, name):
+  #-----------------------------
+    self._usednames.append([name])
+    return self._usednames[-1]
 
 
 class Parser(object):
@@ -144,6 +151,14 @@ class Parser(object):
       if c.kind == CursorKind.CALL_EXPR and c.displayname.startswith('_PARAMETERS_'):
         self._generator.add_property(name, *self.parse_parameters(c, c.displayname[12:]))
 
+  def parse_using(self, cursor):
+  #-----------------------------
+    ns = None
+    for c in cursor.get_children():
+      if c.kind == CursorKind.NAMESPACE_REF:
+        if ns is None: ns = self._generator.use_namespace(c.displayname)
+        else:          ns.append(c.displayname)
+
   def parse(self, cursor):
   #-----------------------
     kind = cursor.kind
@@ -178,6 +193,9 @@ class Parser(object):
 
     elif cursor.kind == CursorKind.VAR_DECL and name.startswith('_PROPERTY_'):
       self.parse_property(name[10:], cursor)
+
+    elif cursor.kind == CursorKind.USING_DIRECTIVE:
+      self.parse_using(cursor)
 
 
 if __name__ == '__main__':

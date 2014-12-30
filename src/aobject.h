@@ -45,6 +45,8 @@ int _PARAMETERS_2(const char *name, const char *property) { return 0 ; }
 
 #endif
 
+using namespace rdf ;
+
 
 namespace AObject
 /*=============*/
@@ -55,12 +57,12 @@ namespace AObject
   {
     A_OBJECT
     // Generic attributes all resources have:
-    PROPERTY_STRING(label, rdf::RDFS::label)
-    PROPERTY_STRING(comment, rdf::RDFS::comment)
-    PROPERTY_STRING(description, rdf::DCT::description)
-    PROPERTY_NODE(precededBy, rdf::PRV::precededBy)
-    PROPERTY_URI(creator, rdf::DCT::creator)
-    PROPERTY_DATETIME(created, rdf::DCT::created)
+    PROPERTY_STRING(label, RDFS::label)
+    PROPERTY_STRING(comment, RDFS::comment)
+    PROPERTY_STRING(description, DCT::description)
+    PROPERTY_NODE(precededBy, PRV::precededBy)
+    PROPERTY_URI(creator, DCT::creator)
+    PROPERTY_DATETIME(created, DCT::created)
     //, XSD.dateTime,  utils::datetime_to_isoformat, utils::isoformat_to_datetime)
 
    public:
