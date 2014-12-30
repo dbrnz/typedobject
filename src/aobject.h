@@ -10,13 +10,16 @@
 #ifdef AOC_COMPILE
 
 int _PARAMETERS_1(const char *property) { return 0 ; }
-int _PARAMETERS_2(const char *name, const char *property) { return 0 ; }
+int _PARAMETERS_2(const char *name, const char *property, ...) { return 0 ; }
 #define A_OBJECT                    static int _AOBJECT_DEFINITION = 0 ;
 #define METACLASS(CLASS)            static int _PROPERTY_METACLASS = _PARAMETERS_1(#CLASS) ;
 #define PROPERTY_STRING(NAME, P)    static int _PROPERTY_##NAME##  = _PARAMETERS_2("STRING",   #P) ;
+#define PROPERTY_INTEGER(NAME, P)   static int _PROPERTY_##NAME##  = _PARAMETERS_2("INTEGER",  #P) ;
+#define PROPERTY_DOUBLE(NAME, P)    static int _PROPERTY_##NAME##  = _PARAMETERS_2("DOUBLE",   #P) ;
 #define PROPERTY_NODE(NAME, P)      static int _PROPERTY_##NAME##  = _PARAMETERS_2("NODE",     #P) ;
-#define PROPERTY_URI(NAME, P)       static int _PROPERTY_##NAME##  = _PARAMETERS_2("URI",      #P) ;
+#define PROPERTY_URI(NAME, P, ...)  static int _PROPERTY_##NAME##  = _PARAMETERS_2("URI",      #P, #__VA_ARGS__) ;
 #define PROPERTY_DATETIME(NAME, P)  static int _PROPERTY_##NAME##  = _PARAMETERS_2("DATETIME", #P) ;
+#define PROPERTY_DURATION(NAME, P)  static int _PROPERTY_##NAME##  = _PARAMETERS_2("DURATION", #P) ;
 
 #else
 
@@ -39,9 +42,12 @@ int _PARAMETERS_2(const char *name, const char *property) { return 0 ; }
   T m_##NAME ;
 
 #define PROPERTY_STRING(NAME, P)    PROPERTY(NAME, std::string)
+#define PROPERTY_INTEGER(NAME, P)   PROPERTY(NAME, long)
+#define PROPERTY_DOUBLE(NAME, P)    PROPERTY(NAME, double)
 #define PROPERTY_NODE(NAME, P)      PROPERTY(NAME, rdf::Node)
-#define PROPERTY_URI(NAME, P)       PROPERTY(NAME, rdf::URI)
+#define PROPERTY_URI(NAME, P, ...)  PROPERTY(NAME, rdf::URI)
 #define PROPERTY_DATETIME(NAME, P)  PROPERTY(NAME, utils::Datetime)
+#define PROPERTY_DURATION(NAME, P)  PROPERTY(NAME, utils::Duration)
 
 #endif
 
