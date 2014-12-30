@@ -6,8 +6,7 @@
 int main(void)
 /*----------*/
 {
-  rdf::URI g_uri ;
-  rdf::Graph g(g_uri) ;
+  rdf::Graph g ;
 
   std::string turtle = R"(
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -76,7 +75,8 @@ int main(void)
 //  g.parseResource("file:///Users/dave/biosignalml/aobject/build/test.xml", rdf::Graph::Format::RDFXML) ;
 //  g.parseResource("test.xml", rdf::Graph::Format::RDFXML) ;
 
-  g.parseResource("http://demo.biosignalml.org/physiobank/mitdb/102/signal/ECG1") ;
+//  g.parseResource("http://demo.biosignalml.org/physiobank/mitdb/102/signal/ECG1") ;
+  g.parseResource("http://demo.biosignalml.org/physiobank/mitdb/102") ;
 
 
   std::cout << g.serialise(rdf::Graph::Format::TURTLE) << std::endl ;
