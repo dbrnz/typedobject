@@ -28,6 +28,7 @@ namespace rdf {
     static const URI format ;
     static const URI source ;
     static const URI subject ;
+    static const URI extent ;
   } ;
 
   class PRV {
