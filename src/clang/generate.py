@@ -53,8 +53,8 @@ class Generator(object):
     self._base = None
     self._properties = { }
 
-  def save(self):
-  #--------------
+  def save(self, fn):
+  #------------------
     if len(self._classes) == 0: return
     (path, f) = os.path.split(os.path.splitext(self._file)[0])
     code = ['#include "%s.h"' % f]
@@ -71,7 +71,6 @@ class Generator(object):
       for p, v in c[2].iteritems():
         if p != 'METACLASS': a.add_property(p, *v)
       code.append(str(a))
-    fn = os.path.join(path, 'aoc_%s.cpp' % f)
     output = open(fn, 'wb')
     output.write('\n'.join(code))
     output.close()
@@ -107,11 +106,12 @@ class Generator(object):
 class Parser(object):
 #====================
 
-  def __init__(self, source):
-  #--------------------------
+  def __init__(self, source, output):
+  #----------------------------------
     index = clang.cindex.Index.create()
     self._tu = index.parse(source, ['-x', 'c++', '-DAOC_COMPILE', '-Xclang', '-fsyntax-only'])
-    self._output = None
+    self._output = output
+    self._generator = None
     self._class = None
     self._base = None
     self._file = None
@@ -142,7 +142,7 @@ class Parser(object):
   #--------------------------------------
     for c in cursor.get_children():
       if c.kind == CursorKind.CALL_EXPR and c.displayname.startswith('_PARAMETERS_'):
-        self._output.add_property(name, *self.parse_parameters(c, c.displayname[12:]))
+        self._generator.add_property(name, *self.parse_parameters(c, c.displayname[12:]))
 
   def parse(self, cursor):
   #-----------------------
@@ -154,19 +154,19 @@ class Parser(object):
 
     if kind == CursorKind.TRANSLATION_UNIT:
       self._file = name
-      self._output = Generator(name)
+      self._generator = Generator(name)
       self.parse_children(cursor)
-      self._output.save()
+      self._generator.save(self._output)
 
     elif kind == CursorKind.NAMESPACE:
-      self._output.add_namespace(name)
+      self._generator.add_namespace(name)
       self.parse_children(cursor)
-      self._output.pop_namespace()
+      self._generator.pop_namespace()
 
     elif kind == CursorKind.CLASS_DECL:
       self._class = name
       self.parse_children(cursor)
-      self._output.end_class()
+      self._generator.end_class()
       self._class = None
       self._base = None
     
@@ -174,7 +174,7 @@ class Parser(object):
       self._base = name
 
     elif cursor.kind == CursorKind.VAR_DECL and name == '_AOBJECT_DEFINITION':
-      self._output.start_class(self._class, self._base)
+      self._generator.start_class(self._class, self._base)
 
     elif cursor.kind == CursorKind.VAR_DECL and name.startswith('_PROPERTY_'):
       self.parse_property(name[10:], cursor)
@@ -183,6 +183,8 @@ class Parser(object):
 if __name__ == '__main__':
 #=========================
 
-  for f in sys.argv[1:]:
-    p = Parser(f)
-    p.generate()
+  if len(sys.argv) < 3:
+    (path, f) = os.path.split(os.path.splitext(sys.argv[1])[0])
+    sys.argv.append(os.path.join(path, 'aoc_%s.cpp' % f))
+  p = Parser(sys.argv[1], sys.argv[2])
+  p.generate()
