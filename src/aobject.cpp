@@ -1,42 +1,7 @@
 #include "aobject.h"
 
-#include "rdf/rdf.h"
-#include "rdf/defs.h"
-
 
 namespace AObject {
-
-// Generated...
-
-  const rdf::URI &AObject::metaclass(void) const
-  /*------------------------------------------*/
-  {
-    static rdf::URI m_metaclass ;
-    return m_metaclass ;
-    }
-
-  void AObject::assign_from_rdf(const rdf::Node &property, const rdf::Node &value)
-  /*----------------------------------------------------------------------------*/
-  {
-    //SUPER::from_rdf(property, value) ;
-    if      (property == rdf::RDFS::label) label = value.to_string() ;
-    else if (property == rdf::RDFS::comment) comment = value.to_string() ;
-    else if (property == rdf::DCT::description) description = value.to_string() ;
-    else if (property == rdf::PRV::precededBy) precededBy = value ;
-    else if (property == rdf::DCT::creator) creator = value ;
-    else if (property == rdf::DCT::created) creator = utils::isoformat_to_datatime(value.to_string()) ;
-    }
-
-//    virtual RDF::Node to_rdf(const rdf::Graph &graph)
-//    /*----------------------------------------------*/
-//    {
-//      //SUPER::from_rdf(property, value) ;
-//      if      (property == RDFS::label) label = value.to_string() ;
-//      else if (property == DCT::creator) creator = value.to_uri() ;
-//      }
-
-
-// Hard-coded...
 
   AObject::AObject()
   /*--------------*/
@@ -44,9 +9,10 @@ namespace AObject {
   {
     }
 
-  AObject::AObject(const rdf::URI &p_uri)
-  /*-----------------------------------*/
-  : m_uri(p_uri)
+  AObject::AObject(const std::string &uri)
+  /*------------------------------------*/
+  : m_uri(uri), m_label(""), m_comment(""), m_description(""),
+    m_precededBy(), m_creator(), m_created()
   {
     }
 
@@ -56,15 +22,16 @@ namespace AObject {
     }
 
 
-  void AObject::addMetadata(const rdf::Graph &p_graph)
-  /*-------------------------------------------------*/
+  void AObject::addMetadata(const rdf::Graph &graph)
+  /*----------------------------------------------*/
   {
-    if (p_graph.contains(m_uri, rdf::RDF::type, metaclass())) {   // Needs to be sub-classes
+    if (graph.contains(m_uri, rdf::RDF::type, metaclass())) {   // Needs to be sub-classes
                                                                  // ==> virtual ?? 
-      rdf::StatementIterator statements = p_graph.getStatements(m_uri, rdf::URI(), rdf::Node()) ;
-      while (!statements.end()) {
-        assign_from_rdf(statements.get_predicate(), statements.get_object()) ;
-        ++statements ;
+      rdf::StatementIter statements = graph.getStatements(m_uri, rdf::Node(), rdf::Node()) ;
+      if (!statements.end()) {
+        do {
+          assign_from_rdf(statements.get_predicate(), statements.get_object()) ;
+          } while (!statements.next()) ;
         }
       }
 /***

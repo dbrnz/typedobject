@@ -117,6 +117,11 @@ namespace rdf {
 
     const URI &getUri(void) const ;
 
+    const bool insert(const Statement &statement) const ;
+    const bool insert(const rdf::Node &s, const rdf::Node &p, const rdf::Node &o) const ;
+
+    void addStatements(const StatementIter &statements) const ;
+
     const bool contains(const Statement &p_statement) const ;
     const bool contains(const Node &s, const Node &p, const Node &o) const ;
 

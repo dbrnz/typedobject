@@ -170,11 +170,8 @@ rdf::URI rdf::Namespace::uri(void) const
 
 rdf::Statement::Statement(const rdf::Node &s, const rdf::Node &p, const rdf::Node &o)
 /*---------------------------------------------------------------------------------*/
+: m_quad{s.c_obj(), p.c_obj(), o.c_obj(), NULL}
 {
-  m_quad[SORD_SUBJECT] = s.c_obj() ;
-  m_quad[SORD_PREDICATE] = p.c_obj() ;
-  m_quad[SORD_OBJECT] = o.c_obj() ;
-  m_quad[SORD_GRAPH] = NULL ;
   }
 
 
@@ -260,11 +257,11 @@ static void process_raptor_namespace(void *user_data, raptor_namespace *nspace)
 static void process_raptor_statement(void *user_data, raptor_statement *triple)
 /*---------------------------------------------------------------------------*/
 {
-  SordQuad quad ;
-  quad[SORD_SUBJECT] = sord_node_from_raptor_term(triple->subject) ;
-  quad[SORD_PREDICATE] = sord_node_from_raptor_term(triple->predicate) ;
-  quad[SORD_OBJECT] = sord_node_from_raptor_term(triple->object) ;
-  quad[SORD_GRAPH] = NULL ;
+  SordQuad quad = { sord_node_from_raptor_term(triple->subject),
+                    sord_node_from_raptor_term(triple->predicate),
+                    sord_node_from_raptor_term(triple->object),
+                    NULL
+                  } ;
   sord_add((SordModel *)user_data, quad) ;
   }
 
@@ -455,14 +452,37 @@ const rdf::URI &rdf::Graph::getUri(void) const
   return m_uri ;
   }
 
+
+const bool rdf::Graph::insert(const Statement &statement) const
+/*-----------------------------------------------------------*/
+{
+  return sord_add(m_model, statement.m_quad) ;
+  }
+
+const bool rdf::Graph::insert(const rdf::Node &s, const rdf::Node &p, const rdf::Node &o) const
+/*-------------------------------------------------------------------------------------------*/
+{
+  SordQuad quad = { s.c_obj(), p.c_obj(), o.c_obj(), NULL } ;
+  return sord_add(m_model, quad) ;
+  }
+
+
+void rdf::Graph::addStatements(const StatementIter &statements) const
+/*-----------------------------------------------------------------*/
+{
+  if (!statements.end()) {
+    do {
+      SordQuad quad ;
+      sord_iter_get(statements.c_obj(), quad) ;
+      sord_add(m_model, quad) ;
+      } while (!statements.next()) ;
+    }
+  }
+
 const bool rdf::Graph::contains(const Statement &statement) const
 /*-------------------------------------------------------------*/
 {
-  return sord_ask(m_model,
-                  statement.m_quad[SORD_SUBJECT],
-                  statement.m_quad[SORD_PREDICATE],
-                  statement.m_quad[SORD_OBJECT],
-                  statement.m_quad[SORD_GRAPH]) ;
+  return sord_contains(m_model, statement.m_quad) ;
   }
 
 const bool rdf::Graph::contains(const rdf::Node &s, const rdf::Node &p, const rdf::Node &o) const
