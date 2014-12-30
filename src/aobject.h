@@ -1,89 +1,49 @@
-#ifndef _AOBJECT_H
-#define _AOBJECT_H
+#ifndef AOBJECT_H
+#define AOBJECT_H
 
-#include "rdf/rdf.h"
-#include "rdf/defs.h"
+#include "rdf.h"
+#include "utils.h"
 
 #include <string>
-#include <list>
-
-/**
-
-  static const rdf::URI m_metaclass ;                           \
-  inline const std::list<const rdf::URI> metaorder(void) {      \
-    return { METACLASS, ##__VA_ARGS__ } ;                       \
-    }
-
-//    return std::list<const rdf::URI>( METACLASS, ##__VA_ARGS__ ) ;  \
-
-// Each class has a static rdfmap and a list pointing
-// to the rdfmaps of each ancestor.
 
 
-    from_rdf(graph) {
-      SUPER::from_rdf(graph) ;
-      // self maps ...
-      label = graph.get_object(m_uri, RDFS::label) ;
-      // but does graph query (<m_uri>, <property>, ?value) for each assignment
-      }
+#ifdef AOC_COMPILE
+
+int _PARAMETERS_1(const char *property) { return 0 ; }
+int _PARAMETERS_2(const char *name, const char *property) { return 0 ; }
+#define A_OBJECT                    static int _AOBJECT_DEFINITION = 0 ;
+#define METACLASS(CLASS)            static int _PROPERTY_METACLASS = _PARAMETERS_1(#CLASS) ;
+#define PROPERTY_STRING(NAME, P)    static int _PROPERTY_##NAME##  = _PARAMETERS_2("STRING",   #P) ;
+#define PROPERTY_NODE(NAME, P)      static int _PROPERTY_##NAME##  = _PARAMETERS_2("NODE",     #P) ;
+#define PROPERTY_URI(NAME, P)       static int _PROPERTY_##NAME##  = _PARAMETERS_2("URI",      #P) ;
+#define PROPERTY_DATETIME(NAME, P)  static int _PROPERTY_##NAME##  = _PARAMETERS_2("DATETIME", #P) ;
+
+#else
+
+#define A_OBJECT                          \
+ protected:                               \
+  virtual void assign_from_rdf(const rdf::Node &property, const rdf::Node &value) ;
+
+#define METACLASS(CLASS)                  \
+ public:                                  \
+  const rdf::URI &metaclass(void) const ;
 
 
-  v's having statement (m_uri, RDFS::label, value) and then "label = value".
+#define PROPERTY(NAME, T)                 \
+ public:                                  \
+  inline const T & NAME(void) const       \
+    { return m_##NAME ; }                 \
+  inline void set_##NAME(const T & value) \
+    { m_##NAME = value ; }                \
+ private:                                 \
+  T m_##NAME ;
 
-  This requires a map from "RDFS::label" to (say) "set_label()" that is
-  then called passing "value".
+#define PROPERTY_STRING(NAME, P)    PROPERTY(NAME, std::string)
+#define PROPERTY_NODE(NAME, P)      PROPERTY(NAME, rdf::Node)
+#define PROPERTY_URI(NAME, P)       PROPERTY(NAME, rdf::URI)
+#define PROPERTY_DATETIME(NAME, P)  PROPERTY(NAME, utils::Datetime)
 
-  However avoids multiple graph queries -- just the one that gets the list of
-  statements (<m_uri>, ?property, ?value).
-
-
-  Need to note both options
-
-   What about:
-
-    selfmaps[RDFS::label] = set_label ;
-
-**/
-
-
-/***
-   public:
-// Generated
-    void from_rdf(const rdf::Graph p_graph &)
-    {
-//    PROPERTY_MAP(label, RDFS::label);
-      label = graph.get_object(m_uri, RDFS::label) ;
-//    PROPERTY_MAP(creator, DCT::creator, to_rdf=PropertyMap::get_uri);
-      creator = graph.get_object(m_uri, DCT::CREATOR) ;
-
-      xxx = #from_rdf#(graph.get_object(m_uri, #property#)) ;
-      }
-
-    void to_rdf(const rdf::Graph p_graph &)
-    {
-//    PROPERTY_MAP(label, RDFS::label);
-      graph.add(m_uri, RDFS::label, label) ;
-//    PROPERTY_MAP(creator, DCT::creator, to_rdf=PropertyMap::get_uri);
-      graph.add(m_uri, DCT::CREATOR, PropertyMap::get_uri(creator)) ;
-      }
-
-  typedef void (*RdfMap)(const rdf::Graph &) ;
-
-  static const std::list<RdfMap> m_to_rdf ;  // to_rdf functions for self and parent classes
-
-***/
-
-
-
-
-#define A_OBJECT(METACLASS, ...)                   \
- public:                                           \
-  virtual const rdf::URI &metaclass(void) const {  \
-    { static rdf::URI m_metaclass = METACLASS ;    \
-      return METACLASS ;                           \
-    }
-
-#define PROPERTY_MAP(variable, property, ...)
+#endif
 
 
 namespace AObject
@@ -93,31 +53,27 @@ namespace AObject
   class AObject
   /*---------*/
   {
+    A_OBJECT
+    // Generic attributes all resources have:
+    PROPERTY_STRING(label, rdf::RDFS::label)
+    PROPERTY_STRING(comment, rdf::RDFS::comment)
+    PROPERTY_STRING(description, rdf::DCT::description)
+    PROPERTY_NODE(precededBy, rdf::PRV::precededBy)
+    PROPERTY_URI(creator, rdf::DCT::creator)
+    PROPERTY_DATETIME(created, rdf::DCT::created)
+    //, XSD.dateTime,  utils::datetime_to_isoformat, utils::isoformat_to_datetime)
+
    public:
-    virtual const rdf::URI &metaclass(void) const ;
+    virtual const rdf::URI &metaclass(void) const = 0 ;
+    inline const rdf::URI &uri() const { return m_uri ; }
 
-   protected:
-    virtual void assign_from_rdf(const rdf::Node &property, const rdf::Node &value) ;
-
-//    PROPERTY_MAP(label, RDFS::label);
-//    PROPERTY_MAP(creator, DCT::creator, to_rdf=PropertyMap::get_uri) ;
-
-  /*
-    mapping = { 'label':       PropertyMap(RDFS.label),
-                'comment':     PropertyMap(RDFS.comment),
-                'description': PropertyMap(DCT.description),
-                'precededBy':  PropertyMap(PRV.precededBy),
-                'creator':     PropertyMap(DCT.creator, to_rdf=PropertyMap.get_uri),
-                'created':     PropertyMap(DCT.created, datatype=XSD.dateTime,
-                                           to_rdf=utils.datetime_to_isoformat,
-                                           from_rdf=utils.isoformat_to_datetime),
-  */
    public:
     AObject() ;
-    AObject(const rdf::URI &p_uri) ;
+    AObject(const std::string &uri) ;
+//    AObject(const std::string &uri, const rdf::Graph &graph) ;
+
     virtual ~AObject() ;
 
-    inline const rdf::URI &uri() const { return m_uri ; }
 
     /**
     Set attributes from RDF triples in a graph.
@@ -139,20 +95,22 @@ namespace AObject
 
     void setGraph(const rdf::URI &p_graph) ;
 
-
    private:
     const rdf::URI m_uri ;
-
-// Does these come via PROPERTY_MAP defines??
-    std::string label ;
-    std::string comment ;
-    std::string description ;
-    rdf::URI precededBy ;
-    rdf::URI creator ;
-    uint64_t created ;   // ***** DATETIME type
     } ;
 
-
   } ;
+
+/**
+  mapping = { 'label':       PropertyMap(RDFS.label),
+              'comment':     PropertyMap(RDFS.comment),
+              'description': PropertyMap(DCT.description),
+              'precededBy':  PropertyMap(PRV.precededBy),
+              'creator':     PropertyMap(DCT.creator, to_rdf=PropertyMap.get_uri),
+              'created':     PropertyMap(DCT.created, datatype=XSD.dateTime,
+                                         to_rdf=utils.datetime_to_isoformat,
+                                         from_rdf=utils.isoformat_to_datetime),
+            }
+**/
 
 #endif
