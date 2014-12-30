@@ -17,6 +17,7 @@ namespace rdf {
   const URI DCT::format = DCT::NS.make_URI("format") ;
   const URI DCT::source = DCT::NS.make_URI("source") ;
   const URI DCT::subject = DCT::NS.make_URI("subject") ;
+  const URI DCT::extent = DCT::NS.make_URI("extent") ;
 
   const Namespace PRV::NS("prv", "http://purl.org/net/provenance/ns#") ;
   const URI PRV::precededBy = PRV::NS.make_URI("precededBy") ;
