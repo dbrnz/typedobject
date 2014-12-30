@@ -25,12 +25,15 @@ class AssignFromRDF(object):
     if base: self._code.append('  %s::assign_from_rdf(property, value) ;' % base)
     self._else = ''
 
-  def add_property(self, name, kind, property):
-  #--------------------------------------------
+  def add_property(self, name, kind, property, *options):
+  #------------------------------------------------------
     self._code.append('  %sif (property == %s) m_%s = ' % (self._else, property, name)
                      + ('value.to_string()'      if kind == 'STRING'
+                   else 'value.to_int()'         if kind == 'INTEGER'
+                   else 'value.to_float()'       if kind == 'DOUBLE'
                    else 'utils::make_uri(value)' if kind == 'URI'
                    else 'utils::isoformat_to_datetime(value)' if kind == 'DATETIME'
+                   else 'utils::isoduration_to_seconds(value)' if kind == 'DURATION'
                    else 'value')
                      + ' ;')
     self._else = 'else '
@@ -142,7 +145,7 @@ class Parser(object):
           s = list(c.get_children())[0]
           if s.kind == CursorKind.STRING_LITERAL and s.type.kind == TypeKind.CONSTANTARRAY:
             params.append(s.displayname[1:-1])
-    assert(len(params) == int(count))
+    assert(len(params) >= int(count))
     return params
 
   def parse_property(self, name, cursor):
