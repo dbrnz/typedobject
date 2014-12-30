@@ -17,8 +17,8 @@ set(INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(rdf)
 
-set(SOURCES ${SOURCES} bsml.cpp)
 set(SOURCES ${SOURCES} aobject.cpp recording.cpp)
+set(SOURCES ${SOURCES} ontology.cpp)
 set(SOURCES ${SOURCES} utils.cpp)
 
 set(HEADERS aobject.h recording.h)
