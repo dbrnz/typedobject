@@ -37,6 +37,18 @@ namespace rdf {
     static const URI precededBy ;
     } ;
 
+  class PROV {
+   public:
+    static const Namespace NS ;
+    static const URI wasGeneratedBy ;
+    } ;
+
+  class TL {
+   public:
+    static const Namespace NS ;
+    static const URI timeline ;
+    } ;
+
 } ;
 
 #endif

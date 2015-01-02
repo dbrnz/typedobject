@@ -22,7 +22,8 @@ class AssignFromRDF(object):
     self._code = [
       'void %s::assign_from_rdf(const rdf::Node &property, const rdf::Node &value)' % aobject,
       '{']
-    if base: self._code.append('  %s::assign_from_rdf(property, value) ;' % base)
+    if base and base != 'AObject::AObject':
+      self._code.append('  %s::assign_from_rdf(property, value) ;' % base)
     self._else = ''
 
   def add_property(self, name, kind, property, *options):
@@ -42,6 +43,39 @@ class AssignFromRDF(object):
   #-----------------
     return '\n'.join(self._code) + '\n  }\n'
 
+
+def constructor(cls):
+#--------------------
+  c = cls.split('::')
+  c.append(c[-1])
+  return '::'.join(c)
+
+
+class Constructor(object):
+#-------------------------
+
+  def __init__(self, aobject, base):
+  #---------------------------------
+#    print "B:", base, " C:", constructor(base)
+    self._code = ['%s(const std::string &uri):\n' % constructor(aobject)]
+    if base: self._code.append('  %s(uri)' % base)
+    self._comma = ',\n  ' if base else ''
+
+  def initialise(self, name, kind, *args):
+  #---------------------------------------
+    self._code.append('%sm_%s(' % (self._comma, name)
+                   + ('""'  if kind == 'STRING'
+                 else '0'   if kind == 'INTEGER'
+                 else '0.0' if kind == 'DOUBLE'
+                 else '0'   if kind == 'DATETIME'
+                 else '0.0' if kind == 'DURATION'
+                 else '')
+                    + ')')
+    self._comma = ',\n  '
+
+  def __str__(self):
+  #-----------------
+    return ''.join(self._code) + '\n{\n  }\n'
 
 
 class Generator(object):
@@ -67,14 +101,18 @@ class Generator(object):
       for n in self._usednames:
         code.append('using namespace %s ;' % '::'.join(n))
       code.append('')
-    for c in self._classes:
+    for cls in self._classes:
       code.append('')
-      mc = c[2].get('METACLASS')
-      if mc and mc[0]:
-        code.append(generate_metaclass(c[0], mc[0]))
-      a = AssignFromRDF(c[0], c[1])
-      for p, v in c[2].iteritems():
-        if p != 'METACLASS': a.add_property(p, *v)
+      mcls = cls[2].get('METACLASS')
+      if mcls and mcls[0]:
+        code.append(generate_metaclass(cls[0], mcls[0]))
+      c = Constructor(cls[0], cls[1])
+      a = AssignFromRDF(cls[0], cls[1])
+      for p, v in cls[2].iteritems():
+        if p != 'METACLASS':
+          c.initialise(p, *v)
+          a.add_property(p, *v)
+      code.append(str(c))
       code.append(str(a))
     output = open(fn, 'wb')
     output.write('\n'.join(code))

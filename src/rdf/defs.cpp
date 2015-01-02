@@ -22,6 +22,12 @@ namespace rdf {
   const Namespace PRV::NS("prv", "http://purl.org/net/provenance/ns#") ;
   const URI PRV::precededBy = PRV::NS.make_URI("precededBy") ;
 
+  const Namespace PROV::NS("prov", "http://www.w3.org/ns/prov#") ;
+  const URI PROV::wasGeneratedBy = PROV::NS.make_URI("generaratedBy") ;
+
+  const Namespace TL::NS("prv", "http://purl.org/NET/c4dm/timeline.owl#") ;
+  const URI TL::timeline = TL::NS.make_URI("timeline") ;
+
 /**
   'xsd':  'http://www.w3.org/2001/XMLSchema#',
   'rdf':  'http://www.w3.org/1999/02/22-rdf-syntax-ns#',

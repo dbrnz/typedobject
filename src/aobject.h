@@ -11,21 +11,30 @@
 
 int _PARAMETERS_1(const char *property) { return 0 ; }
 int _PARAMETERS_2(const char *name, const char *property, ...) { return 0 ; }
-#define A_OBJECT                    static int _AOBJECT_DEFINITION = 0 ;
-#define METACLASS(CLASS)            static int _PROPERTY_METACLASS = _PARAMETERS_1(#CLASS) ;
-#define PROPERTY_STRING(NAME, P)    static int _PROPERTY_##NAME##  = _PARAMETERS_2("STRING",   #P) ;
-#define PROPERTY_INTEGER(NAME, P)   static int _PROPERTY_##NAME##  = _PARAMETERS_2("INTEGER",  #P) ;
-#define PROPERTY_DOUBLE(NAME, P)    static int _PROPERTY_##NAME##  = _PARAMETERS_2("DOUBLE",   #P) ;
-#define PROPERTY_NODE(NAME, P)      static int _PROPERTY_##NAME##  = _PARAMETERS_2("NODE",     #P) ;
-#define PROPERTY_URI(NAME, P, ...)  static int _PROPERTY_##NAME##  = _PARAMETERS_2("URI",      #P, #__VA_ARGS__) ;
-#define PROPERTY_DATETIME(NAME, P)  static int _PROPERTY_##NAME##  = _PARAMETERS_2("DATETIME", #P) ;
-#define PROPERTY_DURATION(NAME, P)  static int _PROPERTY_##NAME##  = _PARAMETERS_2("DURATION", #P) ;
+#define A_OBJECT                          \
+  static int _AOBJECT_DEFINITION = 0 ;
+#define METACLASS(CLASS)                  \
+  static int _PROPERTY_METACLASS = _PARAMETERS_1(#CLASS) ;
+#define PROPERTY_STRING(NAME, P, ...)     \
+  static int _PROPERTY_##NAME##  = _PARAMETERS_2("STRING",   #P, #__VA_ARGS__) ;
+#define PROPERTY_INTEGER(NAME, P, ...)    \
+  static int _PROPERTY_##NAME##  = _PARAMETERS_2("INTEGER",  #P, #__VA_ARGS__) ;
+#define PROPERTY_DOUBLE(NAME, P, ...)     \
+  static int _PROPERTY_##NAME##  = _PARAMETERS_2("DOUBLE",   #P, #__VA_ARGS__) ;
+#define PROPERTY_NODE(NAME, P, ...)       \
+  static int _PROPERTY_##NAME##  = _PARAMETERS_2("NODE",     #P, #__VA_ARGS__) ;
+#define PROPERTY_URI(NAME, P, ...)        \
+  static int _PROPERTY_##NAME##  = _PARAMETERS_2("URI",      #P, #__VA_ARGS__) ;
+#define PROPERTY_DATETIME(NAME, P, ...)   \
+  static int _PROPERTY_##NAME##  = _PARAMETERS_2("DATETIME", #P, #__VA_ARGS__) ;
+#define PROPERTY_DURATION(NAME, P, ...)   \
+  static int _PROPERTY_##NAME##  = _PARAMETERS_2("DURATION", #P, #__VA_ARGS__) ;
 
 #else
 
 #define A_OBJECT                          \
  protected:                               \
-  virtual void assign_from_rdf(const rdf::Node &property, const rdf::Node &value) ;
+  void assign_from_rdf(const rdf::Node &property, const rdf::Node &value) ;
 
 #define METACLASS(CLASS)                  \
  public:                                  \
@@ -41,17 +50,15 @@ int _PARAMETERS_2(const char *name, const char *property, ...) { return 0 ; }
  private:                                 \
   T m_##NAME ;
 
-#define PROPERTY_STRING(NAME, P)    PROPERTY(NAME, std::string)
-#define PROPERTY_INTEGER(NAME, P)   PROPERTY(NAME, long)
-#define PROPERTY_DOUBLE(NAME, P)    PROPERTY(NAME, double)
-#define PROPERTY_NODE(NAME, P)      PROPERTY(NAME, rdf::Node)
-#define PROPERTY_URI(NAME, P, ...)  PROPERTY(NAME, rdf::URI)
-#define PROPERTY_DATETIME(NAME, P)  PROPERTY(NAME, utils::Datetime)
-#define PROPERTY_DURATION(NAME, P)  PROPERTY(NAME, utils::Duration)
+#define PROPERTY_STRING(NAME, P, ...)    PROPERTY(NAME, std::string)
+#define PROPERTY_INTEGER(NAME, P, ...)   PROPERTY(NAME, long)
+#define PROPERTY_DOUBLE(NAME, P, ...)    PROPERTY(NAME, double)
+#define PROPERTY_NODE(NAME, P, ...)      PROPERTY(NAME, rdf::Node)
+#define PROPERTY_URI(NAME, P, ...)       PROPERTY(NAME, rdf::URI)
+#define PROPERTY_DATETIME(NAME, P, ...)  PROPERTY(NAME, utils::Datetime)
+#define PROPERTY_DURATION(NAME, P, ...)  PROPERTY(NAME, utils::Duration)
 
 #endif
-
-using namespace rdf ;
 
 
 namespace AObject
@@ -61,15 +68,8 @@ namespace AObject
   class AObject
   /*---------*/
   {
-    A_OBJECT
-    // Generic attributes all resources have:
-    PROPERTY_STRING(label, RDFS::label)
-    PROPERTY_STRING(comment, RDFS::comment)
-    PROPERTY_STRING(description, DCT::description)
-    PROPERTY_NODE(precededBy, PRV::precededBy)
-    PROPERTY_URI(creator, DCT::creator)
-    PROPERTY_DATETIME(created, DCT::created)
-    //, XSD.dateTime,  utils::datetime_to_isoformat, utils::isoformat_to_datetime)
+   protected:
+    virtual void assign_from_rdf(const rdf::Node &property, const rdf::Node &value) = 0 ;
 
    public:
     virtual const rdf::URI &metaclass(void) const = 0 ;
