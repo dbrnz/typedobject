@@ -135,6 +135,12 @@ class Parser(object):
     for c in cursor.get_children():
       self.parse(c)
 
+  def parse_type(self, cursor):
+  #----------------------------
+    for c in cursor.get_children():
+      if c.kind == CursorKind.TYPE_REF and c.displayname.startswith('class '):
+        return c.displayname[6:]
+
   def parse_parameters(self, cursor, count):
   #-----------------------------------------
     params = [ ]
@@ -189,7 +195,7 @@ class Parser(object):
       self._base = None
     
     elif kind == CursorKind.CXX_BASE_SPECIFIER and self._class:
-      self._base = name
+      self._base = self.parse_type(cursor)
 
     elif cursor.kind == CursorKind.VAR_DECL and name == '_AOBJECT_DEFINITION':
       self._generator.start_class(self._class, self._base)
