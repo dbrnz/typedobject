@@ -45,7 +45,7 @@ int main(void)
   rdf::Graph g ;
 
   g.parseString(turtle, rdf::Graph::Format::TURTLE) ;
-//  std::cout << g.serialise(rdf::Graph::Format::TURTLE) << std::endl ;
+  std::cout << g.serialise(rdf::Graph::Format::TURTLE) << std::endl ;
 
   std::string recording = "http://demo.biosignalml.org/physiobank/mitdb/102" ;
 
@@ -54,7 +54,9 @@ int main(void)
   rec.addMetadata(g) ;
 
 
-  std::cout << rec.label() << rec.format() << rec.subject() << std::endl ;
+  std::cout << "Label: "        << rec.label()  << std::endl
+            << "Format: "       << rec.format() << std::endl
+            << "Investigator: " << rec.investigation() << std::endl ;
 
   }
 
