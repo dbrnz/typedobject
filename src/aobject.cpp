@@ -9,12 +9,13 @@ namespace AObject {
   {
     }
 
+
   AObject::AObject(const std::string &uri)
   /*------------------------------------*/
-  : m_uri(uri), m_label(""), m_comment(""), m_description(""),
-    m_precededBy(), m_creator(), m_created()
+  : m_uri(uri)
   {
     }
+
 
   AObject::~AObject()
   /*---------------*/
