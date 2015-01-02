@@ -26,7 +26,7 @@ namespace AObject {
   void AObject::addMetadata(const rdf::Graph &graph)
   /*----------------------------------------------*/
   {
-    if (graph.contains(m_uri, rdf::RDF::type, metaclass())) {   // Needs to be sub-classes
+    if (m_uri.is_valid() && graph.contains(m_uri, rdf::RDF::type, metaclass())) {   // Needs to be sub-classes
                                                                  // ==> virtual ?? 
       rdf::StatementIter statements = graph.getStatements(m_uri, rdf::Node(), rdf::Node()) ;
       if (!statements.end()) {
