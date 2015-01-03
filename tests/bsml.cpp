@@ -15,6 +15,7 @@ int main(void)
 @prefix ns3: <http://purl.org/NET/c4dm/timeline.owl#> .
 @prefix bsml: <http://www.biosignalml.org/ontologies/2011/04/biosignalml#> .
 @prefix ns5: <http://www.biosignalml.org/ontologies/examples/physiobank#> .
+@prefix tl: <http://purl.org/NET/c4dm/timeline.owl#> .
 
 <http://demo.biosignalml.org/physiobank/mitdb/102>
 	ns3:timeline <http://demo.biosignalml.org/physiobank/mitdb/102/timeline> ;
@@ -26,6 +27,9 @@ int main(void)
 	ns5:database <http://physionet.org/physiobank/database/mitdb> ;
 	rdfs:label "MITDB 102..." ;
 	a bsml:Recording .
+
+<http://demo.biosignalml.org/physiobank/mitdb/102/timeline>
+  a tl:RelativeTimeLine .
 
 <http://demo.biosignalml.org/physiobank/mitdb/102/annotation1>
 	dct:subject <http://demo.biosignalml.org/physiobank/mitdb/102> ;
@@ -56,7 +60,8 @@ int main(void)
 
   std::cout << "Label: "        << rec.label()  << std::endl
             << "Format: "       << rec.format() << std::endl
-            << "Investigator: " << rec.investigation() << std::endl ;
+            << "Investigator: " << rec.investigation() << std::endl
+            << "Timeline: "     << rec.timeline().uri() << std::endl ;
 
   }
 
