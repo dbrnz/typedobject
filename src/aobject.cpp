@@ -31,7 +31,7 @@ namespace AObject {
       rdf::StatementIter statements = graph.getStatements(m_uri, rdf::Node(), rdf::Node()) ;
       if (!statements.end()) {
         do {
-          assign_from_rdf(statements.get_predicate(), statements.get_object()) ;
+          assign_from_rdf(graph, statements.get_predicate(), statements.get_object()) ;
           } while (!statements.next()) ;
         }
       }
