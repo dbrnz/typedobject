@@ -20,23 +20,30 @@ class AssignFromRDF(object):
   def __init__(self, aobject, base):
   #---------------------------------
     self._code = [
-      'void %s::assign_from_rdf(const rdf::Node &property, const rdf::Node &value)' % aobject,
+      'void %s::assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property, const rdf::Node &value)' % aobject,
       '{']
     if base and base != 'AObject::AObject':
-      self._code.append('  %s::assign_from_rdf(property, value) ;' % base)
+      self._code.append('  %s::assign_from_rdf(graph, property, value) ;' % base)
     self._else = ''
 
   def add_property(self, name, kind, property, *options):
   #------------------------------------------------------
-    self._code.append('  %sif (property == %s) m_%s = ' % (self._else, property, name)
-                     + ('value.to_string()'      if kind == 'STRING'
-                   else 'value.to_int()'         if kind == 'INTEGER'
-                   else 'value.to_float()'       if kind == 'DOUBLE'
-                   else 'utils::make_uri(value)' if kind == 'URI'
-                   else 'utils::isoformat_to_datetime(value)' if kind == 'DATETIME'
-                   else 'utils::isoduration_to_seconds(value)' if kind == 'DURATION'
-                   else 'value')
-                     + ' ;')
+    action = ('m_%s = ' % name
+           + ('value.to_string()'      if kind == 'STRING'
+         else 'value.to_int()'         if kind == 'INTEGER'
+         else 'value.to_float()'       if kind == 'DOUBLE'
+         else 'utils::make_uri(value)' if kind == 'URI'
+         else 'utils::isoformat_to_datetime(value)' if kind == 'DATETIME'
+         else 'utils::isoduration_to_seconds(value)' if kind == 'DURATION'
+         else ('%s(value.to_string())' % options[0]) if kind == 'AOBJECT'
+         else 'value'))
+    if kind == 'AOBJECT':
+      self._code.append('  %sif (property == %s) {' % (self._else, property))
+      self._code.append('    %s ;' % action)
+      self._code.append('    m_%s.addMetadata(graph) ;' % name)
+      self._code.append('    }')
+    else:
+      self._code.append('  %sif (property == %s) %s ;' % (self._else, property, action))
     self._else = 'else '
 
   def __str__(self):
