@@ -26,6 +26,7 @@ namespace rdf {
   const URI PROV::wasGeneratedBy = PROV::NS.make_URI("generaratedBy") ;
 
   const Namespace TL::NS("prv", "http://purl.org/NET/c4dm/timeline.owl#") ;
+  const URI TL::RelativeTimeLine = TL::NS.make_URI("RelativeTimeLine") ;
   const URI TL::timeline = TL::NS.make_URI("timeline") ;
 
 /**
