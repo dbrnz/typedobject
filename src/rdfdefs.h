@@ -46,6 +46,7 @@ namespace rdf {
   class TL {
    public:
     static const Namespace NS ;
+    static const URI RelativeTimeLine ;
     static const URI timeline ;
     } ;
 
