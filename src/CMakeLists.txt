@@ -20,11 +20,11 @@ add_subdirectory(rdf)
 set(SOURCES ${SOURCES} ontology.cpp)
 set(SOURCES ${SOURCES} aobject.cpp)
 set(SOURCES ${SOURCES} object.cpp recording.cpp signal.cpp segment.cpp
-                       event.cpp annotation.cpp)
+                       timing.cpp event.cpp annotation.cpp)
 set(SOURCES ${SOURCES} utils.cpp)
 
 set(HEADERS ## aobject.h
-            object.h recording.h signal.h segment.h event.h annotation.h)
+            object.h recording.h signal.h segment.h timing.h event.h annotation.h)
 foreach(file ${HEADERS})
   make_aoc(GENERATED_AOC ${file})
 endforeach()
