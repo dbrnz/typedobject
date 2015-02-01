@@ -5,6 +5,7 @@
 #include "utils.h"
 
 #include <string>
+#include <set>
 
 
 #ifdef AOC_COMPILE
@@ -53,14 +54,22 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
  private:                                 \
   T m_##NAME ;
 
-#define PROPERTY_STRING(NAME, P, ...)     PROPERTY(NAME, std::string)
-#define PROPERTY_INTEGER(NAME, P, ...)    PROPERTY(NAME, long)
-#define PROPERTY_DOUBLE(NAME, P, ...)     PROPERTY(NAME, double)
-#define PROPERTY_NODE(NAME, P, ...)       PROPERTY(NAME, rdf::Node)
-#define PROPERTY_URI(NAME, P, ...)        PROPERTY(NAME, rdf::URI)
-#define PROPERTY_DATETIME(NAME, P, ...)   PROPERTY(NAME, utils::Datetime)
-#define PROPERTY_DURATION(NAME, P, ...)   PROPERTY(NAME, utils::Duration)
-#define PROPERTY_AOBJECT(T, NAME, P, ...) PROPERTY(NAME, T)
+#define PROPERTY_STRING(NAME, P)     PROPERTY(NAME, std::string)
+#define PROPERTY_INTEGER(NAME, P)    PROPERTY(NAME, long)
+#define PROPERTY_DOUBLE(NAME, P)     PROPERTY(NAME, double)
+#define PROPERTY_NODE(NAME, P)       PROPERTY(NAME, rdf::Node)
+#define PROPERTY_URI(NAME, P)        PROPERTY(NAME, rdf::URI)
+#define PROPERTY_DATETIME(NAME, P)   PROPERTY(NAME, utils::Datetime)
+#define PROPERTY_DURATION(NAME, P)   PROPERTY(NAME, utils::Duration)
+#define PROPERTY_AOBJECT(T, NAME, P) PROPERTY(NAME, T)
+
+
+#define PROPERTY_SET(NAME, T)                 PROPERTY(NAME, std::set<T>)
+
+#define PROPERTY_STRING_SET(NAME, P)     PROPERTY_SET(NAME, std::string)
+#define PROPERTY_NODE_SET(NAME, P)       PROPERTY_SET(NAME, rdf::Node)
+#define PROPERTY_URI_SET(NAME, P)        PROPERTY_SET(NAME, rdf::URI)
+#define PROPERTY_AOBJECT_SET(T, NAME, P) PROPERTY_SET(NAME, T)
 
 #endif
 
