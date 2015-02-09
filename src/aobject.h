@@ -98,6 +98,8 @@ namespace AObject
 
     virtual ~AObject() ;
 
+    std::string asString(void) const ;
+
     bool operator==(const AObject &other) const ;
 
     bool operator<(const AObject &other) const ;
