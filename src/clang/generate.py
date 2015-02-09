@@ -19,36 +19,47 @@ class AssignFromRDF(object):
 
   def __init__(self, aobject, base):
   #---------------------------------
-    self._code = [
-      'void %s::assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property, const rdf::Node &value)' % aobject,
+    self._header = [
+      'void %s::assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property,' % aobject,
+      '                         const rdf::Node &value,  const bool reverse)',
       '{']
     if base and base != 'AObject::AObject':
-      self._code.append('  %s::assign_from_rdf(graph, property, value) ;' % base)
-    self._else = ''
+      self._header.append('  %s::assign_from_rdf(graph, property, value, reverse) ;' % base)
+    self._header.append('  if (reverse) {')
+    self._setvalues = []
+    self._setreverse = []
+
+  @staticmethod
+  def _assignvalue(code, property, assignment):
+  #--------------------------------------------
+    code.append('    %sif (property == %s) %s ;'
+              % ('else ' if len(code) else '', property, assignment))
 
   def add_property(self, name, kind, property, *options):
   #------------------------------------------------------
-    action = ('m_%s = ' % name
-           + ('value.to_string()'      if kind == 'STRING'
-         else 'value.to_int()'         if kind == 'INTEGER'
-         else 'value.to_float()'       if kind == 'DOUBLE'
-         else 'utils::make_uri(value)' if kind == 'URI'
-         else 'utils::isoformat_to_datetime(value)' if kind == 'DATETIME'
-         else 'utils::isoduration_to_seconds(value)' if kind == 'DURATION'
-         else ('%s(value.to_string())' % options[0]) if kind == 'AOBJECT'
-         else 'value'))
-    if kind == 'AOBJECT':
-      self._code.append('  %sif (property == %s) {' % (self._else, property))
-      self._code.append('    %s ;' % action)
-      self._code.append('    m_%s.addMetadata(graph) ;' % name)
-      self._code.append('    }')
+##    print (name, kind, property, options)  ######################
+    name = 'm_%s' % name
+    value = (('%s(value.to_string(), graph)' % kind) if options[-1] == 'OBJECT'
+         else 'value.to_string()'                    if kind == 'std::string'
+         else 'value.to_int()'                       if kind == 'long'
+         else 'value.to_float()'                     if kind == 'double'
+         else 'utils::make_uri(value)'               if kind == 'rdf::URI'
+         else 'utils::isoformat_to_datetime(value)'  if kind == 'utils::Datetime'
+         else 'utils::isoduration_to_seconds(value)' if kind == 'utils::Duration'
+         else 'value')
+    if options[0] in ['SET', 'RSET']:
+      assign = '%s.insert(%s)' % (name, value)
     else:
-      self._code.append('  %sif (property == %s) %s ;' % (self._else, property, action))
-    self._else = 'else '
+      assign = '%s = %s' % (name, value)
+    if options[0] in ['REVERSE', 'RSET']:
+      self._assignvalue(self._setreverse, property, assign)
+    else:
+      self._assignvalue(self._setvalues, property, assign)
 
   def __str__(self):
   #-----------------
-    return '\n'.join(self._code) + '\n  }\n'
+    return '\n'.join(self._header + self._setreverse + ['    }', '  else {']
+                                  + self._setvalues  + ['    }', '  }', ''])
 
 
 def constructor(cls):

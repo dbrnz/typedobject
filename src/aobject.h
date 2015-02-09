@@ -13,26 +13,18 @@
 int _PARAMETERS_1(const char *property) { return 0 ; }
 int _PARAMETERS_2(const char *name, const char *property, ...) { return 0 ; }
 int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
-#define PROPERTY_STRING(NAME, P, ...)     \
-  static int _PROPERTY_##NAME##  = _PARAMETERS_2("STRING",   #P, #__VA_ARGS__) ;
-#define PROPERTY_INTEGER(NAME, P, ...)    \
-  static int _PROPERTY_##NAME##  = _PARAMETERS_2("INTEGER",  #P, #__VA_ARGS__) ;
-#define PROPERTY_DOUBLE(NAME, P, ...)     \
-  static int _PROPERTY_##NAME##  = _PARAMETERS_2("DOUBLE",   #P, #__VA_ARGS__) ;
-#define PROPERTY_NODE(NAME, P, ...)       \
-  static int _PROPERTY_##NAME##  = _PARAMETERS_2("NODE",     #P, #__VA_ARGS__) ;
-#define PROPERTY_URI(NAME, P, ...)        \
-  static int _PROPERTY_##NAME##  = _PARAMETERS_2("URI",      #P, #__VA_ARGS__) ;
-#define PROPERTY_DATETIME(NAME, P, ...)   \
-  static int _PROPERTY_##NAME##  = _PARAMETERS_2("DATETIME", #P, #__VA_ARGS__) ;
-#define PROPERTY_DURATION(NAME, P, ...)   \
-  static int _PROPERTY_##NAME##  = _PARAMETERS_2("DURATION", #P, #__VA_ARGS__) ;
-#define PROPERTY_AOBJECT(T, NAME, P, ...)   \
-  static int _PROPERTY_##NAME##  = _PARAMETERS_3("AOBJECT",  #P, #T, #__VA_ARGS__) ;
 #define TYPED_OBJECT(CLASS, TYPE)         \
   static int _OBJECT_DEFINITION = 0 ;     \
   static int _PROPERTY_METACLASS = _PARAMETERS_1(#TYPE) ;
 
+#define _PROPERTY(NAME, P, T, ...)        \
+  static int _PROPERTY_##NAME##  = _PARAMETERS_3(#T, #P, #__VA_ARGS__) ;
+
+#define _PROPERTY_SET(NAME, P, T, ...)    \
+  static int _PROPERTY_##NAME##  = _PARAMETERS_3(#T, #P, "SET",  #__VA_ARGS__) ;
+
+#define _PROPERTY_RSET(NAME, P, T, ...)   \
+  static int _PROPERTY_##NAME##  = _PARAMETERS_3(#T, #P, "RSET", #__VA_ARGS__) ;
 
 #else
 
@@ -47,8 +39,7 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
                                           \
   const rdf::URI &metaclass(void) const ;
 
-
-#define PROPERTY(NAME, T)                 \
+#define _PROPERTY(NAME, P, T, ...)        \
  public:                                  \
   inline const T & NAME(void) const       \
     { return m_##NAME ; }                 \
@@ -57,24 +48,35 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
  private:                                 \
   T m_##NAME ;
 
-#define PROPERTY_STRING(NAME, P)     PROPERTY(NAME, std::string)
-#define PROPERTY_INTEGER(NAME, P)    PROPERTY(NAME, long)
-#define PROPERTY_DOUBLE(NAME, P)     PROPERTY(NAME, double)
-#define PROPERTY_NODE(NAME, P)       PROPERTY(NAME, rdf::Node)
-#define PROPERTY_URI(NAME, P)        PROPERTY(NAME, rdf::URI)
-#define PROPERTY_DATETIME(NAME, P)   PROPERTY(NAME, utils::Datetime)
-#define PROPERTY_DURATION(NAME, P)   PROPERTY(NAME, utils::Duration)
-#define PROPERTY_AOBJECT(T, NAME, P) PROPERTY(NAME, T)
+#define _PROPERTY_SET(NAME, P, T, ...)    \
+ public:                                  \
+  inline const std::set<T> & NAME(void) const \
+    { return m_##NAME ; }                 \
+  inline void add_##NAME(const T & value) \
+    { m_##NAME.insert(value) ; }          \
+ private:                                 \
+  std::set<T> m_##NAME ;
 
-
-#define PROPERTY_SET(NAME, T)                 PROPERTY(NAME, std::set<T>)
-
-#define PROPERTY_STRING_SET(NAME, P)     PROPERTY_SET(NAME, std::string)
-#define PROPERTY_NODE_SET(NAME, P)       PROPERTY_SET(NAME, rdf::Node)
-#define PROPERTY_URI_SET(NAME, P)        PROPERTY_SET(NAME, rdf::URI)
-#define PROPERTY_AOBJECT_SET(T, NAME, P) PROPERTY_SET(NAME, T)
+#define _PROPERTY_RSET(NAME, P, T, ...)  _PROPERTY_SET(NAME, P, T)
 
 #endif
+
+#define PROPERTY_STRING(NAME, P)         _PROPERTY(NAME, P, std::string)
+#define PROPERTY_INTEGER(NAME, P)        _PROPERTY(NAME, P, long)
+#define PROPERTY_DOUBLE(NAME, P)         _PROPERTY(NAME, P, double)
+#define PROPERTY_NODE(NAME, P)           _PROPERTY(NAME, P, rdf::Node)
+#define PROPERTY_URI(NAME, P)            _PROPERTY(NAME, P, rdf::URI)
+#define PROPERTY_DATETIME(NAME, P)       _PROPERTY(NAME, P, utils::Datetime)
+#define PROPERTY_DURATION(NAME, P)       _PROPERTY(NAME, P, utils::Duration)
+#define PROPERTY_OBJECT(NAME, P, T)      _PROPERTY(NAME, P, T, OBJECT)
+
+#define PROPERTY_STRING_SET(NAME, P)     _PROPERTY_SET(NAME, P, std::string)
+#define PROPERTY_NODE_SET(NAME, P)       _PROPERTY_SET(NAME, P, rdf::Node)
+#define PROPERTY_URI_SET(NAME, P)        _PROPERTY_SET(NAME, P, rdf::URI)
+#define PROPERTY_OBJECT_SET(NAME, P, T)  _PROPERTY_SET(NAME, P, T, OBJECT)
+
+#define PROPERTY_URI_RSET(NAME, P)       _PROPERTY_RSET(NAME, P, rdf::URI)
+#define PROPERTY_OBJECT_RSET(NAME, P, T) _PROPERTY_RSET(NAME, P, T, OBJECT)
 
 
 namespace AObject
@@ -85,8 +87,8 @@ namespace AObject
   /*---------*/
   {
    protected:
-    virtual void assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property, const rdf::Node &value) = 0 ;
-
+    virtual void assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property,
+                                 const rdf::Node &value,  const bool reverse) = 0 ;
    public:
     virtual const rdf::URI &metaclass(void) const = 0 ;
     inline const rdf::URI &uri() const { return m_uri ; }
