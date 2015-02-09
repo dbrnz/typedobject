@@ -13,10 +13,6 @@
 int _PARAMETERS_1(const char *property) { return 0 ; }
 int _PARAMETERS_2(const char *name, const char *property, ...) { return 0 ; }
 int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
-#define A_OBJECT                          \
-  static int _AOBJECT_DEFINITION = 0 ;
-#define METACLASS(CLASS)                  \
-  static int _PROPERTY_METACLASS = _PARAMETERS_1(#CLASS) ;
 #define PROPERTY_STRING(NAME, P, ...)     \
   static int _PROPERTY_##NAME##  = _PARAMETERS_2("STRING",   #P, #__VA_ARGS__) ;
 #define PROPERTY_INTEGER(NAME, P, ...)    \
@@ -33,15 +29,22 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
   static int _PROPERTY_##NAME##  = _PARAMETERS_2("DURATION", #P, #__VA_ARGS__) ;
 #define PROPERTY_AOBJECT(T, NAME, P, ...)   \
   static int _PROPERTY_##NAME##  = _PARAMETERS_3("AOBJECT",  #P, #T, #__VA_ARGS__) ;
+#define TYPED_OBJECT(CLASS, TYPE)         \
+  static int _OBJECT_DEFINITION = 0 ;     \
+  static int _PROPERTY_METACLASS = _PARAMETERS_1(#TYPE) ;
+
 
 #else
 
-#define A_OBJECT                          \
+#define TYPED_OBJECT(CLASS, TYPE)         \
  protected:                               \
-  void assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property, const rdf::Node &value) ;
-
-#define METACLASS(CLASS)                  \
+  void assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property,  \
+                       const rdf::Node &value,  const bool reverse) ;       \
  public:                                  \
+  CLASS() { }                             \
+  CLASS(const std::string &uri) ;         \
+  CLASS(const std::string &uri, const rdf::Graph &graph) ; \
+                                          \
   const rdf::URI &metaclass(void) const ;
 
 

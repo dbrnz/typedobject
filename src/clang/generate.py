@@ -64,9 +64,16 @@ class Constructor(object):
   def __init__(self, aobject, base):
   #---------------------------------
 #    print "B:", base, " C:", constructor(base)
-    self._code = ['%s(const std::string &uri):\n' % constructor(aobject)]
-    if base: self._code.append('  %s(uri)' % base)
-    self._comma = ',\n  ' if base else ''
+    name = constructor(aobject)
+    self._code = ['%s(const std::string &uri, const rdf::Graph &graph)\n' % name,
+                  ': %s(uri)\n' % name,
+                  '{\n  this->addMetadata(graph) ;\n  }\n\n']
+    self._code.append('%s(const std::string &uri)\n' % name)
+    if base:
+      self._code.append(': %s(uri)' % base)
+      self._comma = ',\n  '
+    else:
+      self._comma = ': '
 
   def initialise(self, name, kind, *args):
   #---------------------------------------
@@ -242,7 +249,7 @@ class Parser(object):
     elif kind == CursorKind.CXX_BASE_SPECIFIER and self._class:
       self._base = self.parse_type(cursor)
 
-    elif cursor.kind == CursorKind.VAR_DECL and name == '_AOBJECT_DEFINITION':
+    elif cursor.kind == CursorKind.VAR_DECL and name == '_OBJECT_DEFINITION':
       self._generator.start_class(self._class, self._base)
 
     elif cursor.kind == CursorKind.VAR_DECL and name.startswith('_PROPERTY_'):
