@@ -35,6 +35,12 @@ namespace AObject {
     return m_uri.operator<(other.uri()) ;
     }
 
+  std::string AObject::asString(void) const
+  /*-------------------------------------*/
+  {
+    return metaclass().to_string() + ": <" + m_uri.to_string() + ">" ;
+    }
+
   void AObject::addMetadata(const rdf::Graph &graph)
   /*----------------------------------------------*/
   {
