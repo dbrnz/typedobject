@@ -19,6 +19,12 @@ namespace rdf {
     static const URI comment ;
     } ;
 
+  class OWL {
+   public:
+    static const Namespace NS ;
+    static const URI Object ;
+    } ;
+
   class DCT {
    public:
     static const Namespace NS ;
@@ -43,11 +49,20 @@ namespace rdf {
     static const URI wasGeneratedBy ;
     } ;
 
+  class TIME {
+   public:
+    static const Namespace NS ;
+    static const URI TemporalEntity ;
+    } ;
+
   class TL {
    public:
     static const Namespace NS ;
     static const URI RelativeTimeLine ;
     static const URI timeline ;
+    static const URI at ;
+    static const URI start ;
+    static const URI duration ;
     } ;
 
 } ;
