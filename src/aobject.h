@@ -95,6 +95,9 @@ namespace AObject
 
     virtual ~AObject() ;
 
+    bool operator==(const AObject &other) const ;
+
+    bool operator<(const AObject &other) const ;
 
     /**
     Set attributes from RDF triples in a graph.

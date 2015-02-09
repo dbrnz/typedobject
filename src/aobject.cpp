@@ -23,6 +23,18 @@ namespace AObject {
     }
 
 
+  bool AObject::operator==(const AObject &other) const
+  /*------------------------------------------------*/
+  {
+    return m_uri.operator==(other.uri()) ;
+    }
+
+  bool AObject::operator<(const AObject &other) const
+  /*-----------------------------------------------*/
+  {
+    return m_uri.operator<(other.uri()) ;
+    }
+
   void AObject::addMetadata(const rdf::Graph &graph)
   /*----------------------------------------------*/
   {
