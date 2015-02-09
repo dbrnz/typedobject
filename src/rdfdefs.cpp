@@ -10,6 +10,9 @@ namespace rdf {
   const URI RDFS::label = RDFS::NS.make_URI("label") ;
   const URI RDFS::comment = RDFS::NS.make_URI("comment") ;
 
+  const Namespace OWL::NS("owl", "http://www.w3.org/2002/07/owl#") ;
+  const URI OWL::Object = OWL::NS.make_URI("Object") ;
+
   const Namespace DCT::NS("dct", "http://purl.org/dc/terms/") ;
   const URI DCT::description = DCT::NS.make_URI("description") ;
   const URI DCT::creator = DCT::NS.make_URI("creator") ;
@@ -25,21 +28,19 @@ namespace rdf {
   const Namespace PROV::NS("prov", "http://www.w3.org/ns/prov#") ;
   const URI PROV::wasGeneratedBy = PROV::NS.make_URI("generaratedBy") ;
 
-  const Namespace TL::NS("prv", "http://purl.org/NET/c4dm/timeline.owl#") ;
+  const Namespace TIME::NS("time", "http://www.w3.org/2006/time#") ;
+  const URI TIME::TemporalEntity = TIME::NS.make_URI("TemporalEntity") ;
+
+  const Namespace TL::NS("tl", "http://purl.org/NET/c4dm/timeline.owl#") ;
   const URI TL::RelativeTimeLine = TL::NS.make_URI("RelativeTimeLine") ;
   const URI TL::timeline = TL::NS.make_URI("timeline") ;
+  const URI TL::at = TL::NS.make_URI("at") ;
+  const URI TL::start = TL::NS.make_URI("start") ;
+  const URI TL::duration = TL::NS.make_URI("duration") ;
 
 /**
   'xsd':  'http://www.w3.org/2001/XMLSchema#',
-  'rdf':  'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-  'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
-  'owl':  'http://www.w3.org/2002/07/owl#',
-  'dct':  'http://purl.org/dc/terms/',
-  'time': 'http://www.w3.org/2006/time#',
-  'tl':   'http://purl.org/NET/c4dm/timeline.owl#',
   'uome': 'http://www.sbpax.org/uome/list.owl#',
-  'prv':  'http://purl.org/net/provenance/ns#',
-  'prov': 'http://www.w3.org/ns/prov#',
 **/
 
   } ;
