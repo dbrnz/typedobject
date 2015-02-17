@@ -13,7 +13,10 @@ function(make_aoc output filename)
 endfunction()
 
 
-set(INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
+find_package(Boost COMPONENTS date_time)
+set(INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${Boost_INCLUDE_DIRS})
+set(LIBRARIES ${LIBRARIES} ${Boost_DATE_TIME_LIBRARY})  ## Only if Boost datetime IO
+message(${LIBRARIES})  ## Only if Boost datetime IO
 
 add_subdirectory(rdf)
 
