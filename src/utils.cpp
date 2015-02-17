@@ -5,16 +5,10 @@
 #include <string>
 
 
-rdf::URI utils::make_uri(const rdf::Node &uri)
-/*==========================================*/
 {
-  return rdf::URI(uri.to_string()) ;
   }
 
-rdf::URI utils::make_uri(const std::string &uri)
-/*============================================*/
 {
-  return rdf::URI(uri) ;
   }
 
 

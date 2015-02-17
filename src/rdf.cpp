@@ -48,6 +48,12 @@ rdf::URI::URI(const std::string &uri)
 {
   }
 
+rdf::URI::URI(const Node &uri)
+/*--------------------------*/
+: Sord::Node(sordWorld(), Sord::Node::URI, uri.to_string())
+{
+  }
+
 
 //**************************************************************************//
 
