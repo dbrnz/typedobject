@@ -10,6 +10,10 @@ namespace rdf {
   const URI RDFS::label = RDFS::NS.make_URI("label") ;
   const URI RDFS::comment = RDFS::NS.make_URI("comment") ;
 
+  const Namespace XSD::NS("xsd", "http://www.w3.org/2001/XMLSchema#") ;
+  const URI XSD::dateTime = XSD::NS.make_URI("dateTime") ;
+  const URI XSD::dayTimeDuration = XSD::NS.make_URI("dayTimeDuration") ;
+
   const Namespace OWL::NS("owl", "http://www.w3.org/2002/07/owl#") ;
   const URI OWL::Object = OWL::NS.make_URI("Object") ;
 
@@ -39,7 +43,6 @@ namespace rdf {
   const URI TL::duration = TL::NS.make_URI("duration") ;
 
 /**
-  'xsd':  'http://www.w3.org/2001/XMLSchema#',
   'uome': 'http://www.sbpax.org/uome/list.owl#',
 **/
 

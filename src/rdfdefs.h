@@ -19,6 +19,13 @@ namespace rdf {
     static const URI comment ;
     } ;
 
+  class XSD {
+   public:
+    static const Namespace NS ;
+    static const URI dateTime ;
+    static const URI dayTimeDuration ;
+    } ;
+
   class OWL {
    public:
     static const Namespace NS ;
