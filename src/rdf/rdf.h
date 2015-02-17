@@ -24,6 +24,7 @@ namespace rdf {
    public:
     URI() ;
     URI(const std::string &uri) ;
+    URI(const Node &uri) ;
     } ;
 
 
