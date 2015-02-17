@@ -8,7 +8,7 @@
 
 <http://demo.biosignalml.org/physiobank/mitdb/102>
         ns3:timeline <http://demo.biosignalml.org/physiobank/mitdb/102/timeline> ;
-        dct:extent "1806.6"^^<http://www.w3.org/2001/XMLSchema#dayTimeDuration> ;
+        dct:extent "PT1806.6S"^^<http://www.w3.org/2001/XMLSchema#dayTimeDuration> ;
         dct:format "application/x-bsml+hdf5" ;
         dct:source <http://physionet.org/physiobank/database/mitdb/102.hea> ;
         dct:subject <http://demo.biosignalml.org/physiobank/mitdb/102_patient> ;
