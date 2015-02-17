@@ -8,7 +8,7 @@
     ns4:timeline <http://demo.biosignalml.org/examples/sinewave/timeline> ;
     dct:created "2003-01-01T10:00:00+13:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
     dct:description "Startdate 01-JAN-2003 X X X" ;
-    dct:extent "5.5"^^<http://www.w3.org/2001/XMLSchema#dayTimeDuration> ;
+    dct:extent "PT5.5S"^^<http://www.w3.org/2001/XMLSchema#dayTimeDuration> ;
     dct:format "application/x-bsml+edf" ;
     dct:subject "X X X X" ;
     bsml:dataset <file:///home/dave/biosignalml/server/recordings/f12a3f1e-8784-11e2-9e2f-00163edeed03.edf> ;
@@ -90,8 +90,8 @@
     a ns4:RelativeTimeLine .
 
 <http://demo.biosignalml.org/examples/sinewave/timeline/2d053692-aa78-11e2-9e34-001c4229719c>
-    ns4:duration "1.384"^^<http://www.w3.org/2001/XMLSchema#dayTimeDuration> ;
-    ns4:start "1.36"^^<http://www.w3.org/2001/XMLSchema#dayTimeDuration> ;
+    ns4:duration "PT1.384S"^^<http://www.w3.org/2001/XMLSchema#dayTimeDuration> ;
+    ns4:start "PT1.36S" ; # ^^<http://www.w3.org/2001/XMLSchema#dayTimeDuration> ;
     ns4:timeline <http://demo.biosignalml.org/examples/sinewave/timeline> ;
     a bsml:Interval .
 
@@ -107,22 +107,22 @@
     a bsml:Instant .
 
 <http://demo.biosignalml.org/examples/sinewave/timeline/f136e980-8784-11e2-9e2f-00163edeed03>
-    ns4:at "1.1"^^<http://www.w3.org/2001/XMLSchema#dayTimeDuration> ;
+    ns4:at "PT1.1S"^^<http://www.w3.org/2001/XMLSchema#dayTimeDuration> ;
     ns4:timeline <http://demo.biosignalml.org/examples/sinewave/timeline> ;
     a bsml:Instant .
 
 <http://demo.biosignalml.org/examples/sinewave/timeline/f13705d2-8784-11e2-9e2f-00163edeed03>
-    ns4:at "2.2"^^<http://www.w3.org/2001/XMLSchema#dayTimeDuration> ;
+    ns4:at "PT2.2S"^^<http://www.w3.org/2001/XMLSchema#dayTimeDuration> ;
     ns4:timeline <http://demo.biosignalml.org/examples/sinewave/timeline> ;
     a bsml:Instant .
 
 <http://demo.biosignalml.org/examples/sinewave/timeline/f13723be-8784-11e2-9e2f-00163edeed03>
-    ns4:at "3.3"^^<http://www.w3.org/2001/XMLSchema#dayTimeDuration> ;
+    ns4:at "PT3.3S"^^<http://www.w3.org/2001/XMLSchema#dayTimeDuration> ;
     ns4:timeline <http://demo.biosignalml.org/examples/sinewave/timeline> ;
     a bsml:Instant .
 
 <http://demo.biosignalml.org/examples/sinewave/timeline/f1373ad4-8784-11e2-9e2f-00163edeed03>
-    ns4:at "4.4"^^<http://www.w3.org/2001/XMLSchema#dayTimeDuration> ;
+    ns4:at "PT4.4S"^^<http://www.w3.org/2001/XMLSchema#dayTimeDuration> ;
     ns4:timeline <http://demo.biosignalml.org/examples/sinewave/timeline> ;
     a bsml:Instant .
 
