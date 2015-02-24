@@ -1,5 +1,5 @@
-#ifndef AOBJECT_H
-#define AOBJECT_H
+#ifndef TYPED_OBJECT_H
+#define TYPED_OBJECT_H
 
 #include "rdf.h"
 #include "utils.h"
@@ -9,7 +9,7 @@
 #include <set>
 
 
-#ifdef AOC_COMPILE
+#ifdef TYPED_OBJECT_COMPILE
 
 int _PARAMETERS_1(const char *property) { return 0 ; }
 int _PARAMETERS_2(const char *name, const char *property, ...) { return 0 ; }
@@ -118,24 +118,24 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
 #define ASSIGN_DURATION(NAME, P)         _ASSIGN(NAME, P, utils::Duration)
 
 
-namespace AObject
-/*=============*/
+namespace TypedObject
+/*=================*/
 {
 
-  class AObject ;
+  class TypedObject ;
 
-  class AObjectFactory
-  /*----------------*/
+  class TypedObjectFactory
+  /*--------------------*/
   {
    public:
-    virtual AObject *create(const std::string &uri) = 0 ;
+    virtual TypedObject *create(const std::string &uri) = 0 ;
     } ;
 
 #define REGISTER_TYPE(T, CLS)                                 \
-  class CLS##Factory : public AObject::AObjectFactory {       \
+  class CLS##Factory : public TypedObject::TypedObjectFactory {       \
    public:                                                    \
-    inline CLS##Factory() { AObject::AObject::register_type(T, this) ; } \
-    virtual AObject::AObject *create(const std::string &uri) { return new CLS(uri) ; } \
+    inline CLS##Factory() { TypedObject::TypedObject::register_type(T, this) ; } \
+    virtual TypedObject::TypedObject *create(const std::string &uri) { return new CLS(uri) ; } \
     } ;                                                       \
   static CLS##Factory _global_##CLS##Factory ;                \
   static int _global_##CLS##_type = CLS::add_subtype(T) ;
@@ -144,8 +144,8 @@ namespace AObject
   static int _global_##CLS##supertype = BASE::add_subtype(T) ;
 
 
-  class AObject
-  /*---------*/
+  class TypedObject
+  /*-------------*/
   {
    protected:
     virtual void assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property,
@@ -156,13 +156,13 @@ namespace AObject
     static inline int add_subtype(const rdf::URI &T) { return 0 ; }
 
    public:
-    AObject() ;
-    AObject(const std::string &uri) ;
-    AObject(const std::string &uri, const rdf::Graph &graph) ;
+    TypedObject() ;
+    TypedObject(const std::string &uri) ;
+    TypedObject(const std::string &uri, const rdf::Graph &graph) ;
 
-    virtual ~AObject() ;
+    virtual ~TypedObject() ;
 
-    static AObject *create(const rdf::URI &T, const std::string &uri) ;
+    static TypedObject *create(const rdf::URI &T, const std::string &uri) ;
 
     template <class  T>
     static T *create(std::set<rdf::URI> &subtypes, const rdf::Node &uri, const rdf::Graph &graph)
@@ -173,7 +173,7 @@ namespace AObject
         do {
           rdf::URI type = rdf::URI(types.get_object()) ;
           if (subtypes.find(type) != subtypes.end()) {
-            AObject *obj = create(type, uri.to_string()) ;
+            TypedObject *obj = create(type, uri.to_string()) ;
             obj->add_metadata(graph) ;
             return dynamic_cast<T *>(obj) ;
             }
@@ -185,11 +185,11 @@ namespace AObject
 
     std::string to_string(void) const ;
 
-    bool operator==(const AObject &other) const ;
+    bool operator==(const TypedObject &other) const ;
 
-    bool operator<(const AObject &other) const ;
+    bool operator<(const TypedObject &other) const ;
 
-    static void register_type(const rdf::URI &T, AObjectFactory *factory) ;
+    static void register_type(const rdf::URI &T, TypedObjectFactory *factory) ;
 
     /**
     Set attributes from RDF triples in a graph.
@@ -201,7 +201,7 @@ namespace AObject
 
    private:
     rdf::URI m_uri ;
-    static std::map<rdf::URI, AObjectFactory *> &m_factories(void) ;
+    static std::map<rdf::URI, TypedObjectFactory *> &m_factories(void) ;
     } ;
 
   } ;

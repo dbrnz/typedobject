@@ -1,76 +1,76 @@
 #include "aobject.h"
 
 
-namespace AObject {
+namespace TypedObject {
 
 
-  AObject::AObject()
-  /*--------------*/
+  TypedObject::TypedObject()
+  /*----------------------*/
   : m_uri()
   {
     }
 
-  AObject::AObject(const std::string &uri)
-  /*------------------------------------*/
+  TypedObject::TypedObject(const std::string &uri)
+  /*--------------------------------------------*/
   : m_uri(uri)
   {
     }
 
-  AObject::AObject(const std::string &uri, const rdf::Graph &graph)
-  /*-------------------------------------------------------------*/
-  : AObject(uri)
+  TypedObject::TypedObject(const std::string &uri, const rdf::Graph &graph)
+  /*---------------------------------------------------------------------*/
+  : TypedObject(uri)
   {
     this->add_metadata(graph) ;
     }
 
-  AObject::~AObject()
+  TypedObject::~TypedObject()
   /*---------------*/
   {
     }
 
 
-  std::map<rdf::URI, AObjectFactory *> &AObject::m_factories(void)
-  /*------------------------------------------------------------*/
+  std::map<rdf::URI, TypedObjectFactory *> &TypedObject::m_factories(void)
+  /*--------------------------------------------------------------------*/
   {
-    static std::map<rdf::URI, AObjectFactory *> s_factories ;
+    static std::map<rdf::URI, TypedObjectFactory *> s_factories ;
     return s_factories ;
     }
 
 
-  void AObject::register_type(const rdf::URI &T, AObjectFactory *factory)
-  /*-------------------------------------------------------------------*/
+  void TypedObject::register_type(const rdf::URI &T, TypedObjectFactory *factory)
+  /*---------------------------------------------------------------------------*/
   {
-    AObject::m_factories()[T] = factory ;
+    TypedObject::m_factories()[T] = factory ;
     }
 
 
-  AObject *AObject::create(const rdf::URI &T, const std::string &uri)
-  /*---------------------------------------------------------------*/
+  TypedObject *TypedObject::create(const rdf::URI &T, const std::string &uri)
+  /*-----------------------------------------------------------------------*/
   {
-    return AObject::m_factories()[T]->create(uri) ;
+    return TypedObject::m_factories()[T]->create(uri) ;
     }
 
 
-  bool AObject::operator==(const AObject &other) const
-  /*------------------------------------------------*/
+  bool TypedObject::operator==(const TypedObject &other) const
+  /*--------------------------------------------------------*/
   {
     return m_uri.operator==(other.uri()) ;
     }
 
-  bool AObject::operator<(const AObject &other) const
-  /*-----------------------------------------------*/
+  bool TypedObject::operator<(const TypedObject &other) const
+  /*-------------------------------------------------------*/
   {
     return m_uri.operator<(other.uri()) ;
     }
 
-  std::string AObject::to_string(void) const
-  /*--------------------------------------*/
+  std::string TypedObject::to_string(void) const
+  /*------------------------------------------*/
   {
     return type().to_string() + ": <" + m_uri.to_string() + ">" ;
     }
 
-  bool AObject::add_metadata(const rdf::Graph &graph)
-  /*-----------------------------------------------*/
+  bool TypedObject::add_metadata(const rdf::Graph &graph)
+  /*---------------------------------------------------*/
   {
     if (m_uri.is_valid()) {
       if (graph.contains(m_uri, rdf::RDF::type, type())) {   // Needs to be sub-classes
