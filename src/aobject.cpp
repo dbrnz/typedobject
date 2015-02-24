@@ -16,6 +16,12 @@ namespace AObject {
   {
     }
 
+  AObject::AObject(const std::string &uri, const rdf::Graph &graph)
+  /*-------------------------------------------------------------*/
+  : AObject(uri)
+  {
+    this->add_metadata(graph) ;
+    }
 
   AObject::~AObject()
   /*---------------*/

@@ -158,7 +158,7 @@ namespace AObject
    public:
     AObject() ;
     AObject(const std::string &uri) ;
-//    AObject(const std::string &uri, const rdf::Graph &graph) ;
+    AObject(const std::string &uri, const rdf::Graph &graph) ;
 
     virtual ~AObject() ;
 
