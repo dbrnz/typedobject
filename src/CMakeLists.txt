@@ -21,7 +21,7 @@ message(${LIBRARIES})  ## Only if Boost datetime IO
 add_subdirectory(rdf)
 
 set(SOURCES ${SOURCES} ontology.cpp)
-set(SOURCES ${SOURCES} aobject.cpp)
+set(SOURCES ${SOURCES} typedobject.cpp)
 set(SOURCES ${SOURCES} object.cpp recording.cpp signal.cpp segment.cpp
                        timing.cpp event.cpp annotation.cpp)
 set(SOURCES ${SOURCES} utils.cpp)
