@@ -5,102 +5,146 @@ from clang.cindex import TypeKind, CursorKind
 
 
 
-def generate_metaclass(aobject, metaclass):
-#------------------------------------------
-  return('''const rdf::URI& %s::metaclass(void) const
+def generate_types(T, cls, base):
+#--------------------------------
+  return('''const rdf::URI& %(cls)s::type(void) const
 {
-  static rdf::URI m_metaclass = %s ;
-  return m_metaclass ;
-  }\n''' % (aobject, metaclass))
+  static rdf::URI m_type = %(T)s ;
+  return m_type ;
+  }
+  
+std::set<rdf::URI> &%(cls)s::subtypes(void)
+{
+  static std::set<rdf::URI> m_subtypes ;
+  return m_subtypes ;
+  }
+  
+
+int %(cls)s::add_subtype(const rdf::URI &T)
+{
+  %(cls)s::subtypes().insert(T) ;
+  return 0 ;
+  }
+
+REGISTER_TYPE(%(T)s, %(cls)s)
+REGISTER_SUBTYPE(%(T)s, %(cls)s, %(base)s)
+
+''' % {'T': T, 'cls': cls, 'base': base})
 
 
 class AssignFromRDF(object):
 #---------------------------
 
-  def __init__(self, aobject, base):
-  #---------------------------------
+  def __init__(self, cls, base):
+  #-----------------------------
     self._header = [
-      'void %s::assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property,' % aobject,
+      'void %s::assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property,' % cls,
       '                         const rdf::Node &value,  const bool reverse)',
       '{']
     if base and base != 'AObject::AObject':
       self._header.append('  %s::assign_from_rdf(graph, property, value, reverse) ;' % base)
-    self._header.append('  if (reverse) {')
+    self._header.append('  if (!reverse) {')
     self._setvalues = []
     self._setreverse = []
 
   @staticmethod
-  def _assignvalue(code, property, assignment):
-  #--------------------------------------------
-    code.append('    %sif (property == %s) %s ;'
-              % ('else ' if len(code) else '', property, assignment))
+  def _assignvalue(code, property, cleanup, assignment):
+  #-----------------------------------------------------
+    if cleanup == '':
+      code.append('    %sif (property == %s) %s'
+                % ('else ' if len(code) else '', property, assignment))
+    else:
+      code.append('    %sif (property == %s) {'
+                % ('else ' if len(code) else '', property))
+      code.append('      %s' % cleanup)        
+      code.append('      %s' % assignment)
+      code.append('      }')
 
   def add_property(self, name, kind, property, *options):
   #------------------------------------------------------
 ##    print (name, kind, property, options)  ######################
+    if property == 'NONE': return
     name = 'm_%s' % name
-    value = (('%s(value.to_string(), graph)' % kind) if options[-1] == 'OBJECT'
-         else 'value.to_string()'                    if kind == 'std::string'
-         else 'value.to_int()'                       if kind == 'long'
-         else 'value.to_float()'                     if kind == 'double'
-         else 'utils::make_uri(value)'               if kind == 'rdf::URI'
-         else 'utils::isoformat_to_datetime(value)'  if kind == 'utils::Datetime'
-         else 'utils::isoduration_to_seconds(value)' if kind == 'utils::Duration'
+    if 'OBJ' not in options or options[0] in ['SET', 'RSET']:
+      cleanup = ''
+    else:
+      cleanup = 'if (%s != nullptr) delete %s ;' % (name, name)
+    value = (('AObject::create<%s>(%s::subtypes(), value, graph)' % (kind, kind)) if 'OBJ' in options
+         else 'value.to_string()'      if kind == 'std::string'
+         else 'value.to_int()'         if kind == 'long'
+         else 'value.to_float()'       if kind == 'double'
+         else 'rdf::URI(value)'        if kind == 'rdf::URI'
+         else 'utils::Datetime(value)' if kind == 'utils::Datetime'
+         else 'utils::Duration(value)' if kind == 'utils::Duration'
          else 'value')
     if options[0] in ['SET', 'RSET']:
-      assign = '%s.insert(%s)' % (name, value)
+      if 'OBJ' in options:
+        assign = '\n'.join(['{',
+                         '      %s *obj = %s ;' % (kind, value),
+                         '      %s.insert(obj) ;' % name,
+                         '      }'])
+      else:
+        assign = '%s.insert(%s) ;' % (name, value)
     else:
-      assign = '%s = %s' % (name, value)
+      assign = '%s = %s ;' % (name, value)
     if options[0] in ['REVERSE', 'RSET']:
-      self._assignvalue(self._setreverse, property, assign)
+      self._assignvalue(self._setreverse, property, cleanup, assign)
     else:
-      self._assignvalue(self._setvalues, property, assign)
+      self._assignvalue(self._setvalues, property, cleanup, assign)
 
   def __str__(self):
   #-----------------
-    return '\n'.join(self._header + self._setreverse + ['    }', '  else {']
-                                  + self._setvalues  + ['    }', '  }', ''])
-
-
-def constructor(cls):
-#--------------------
-  c = cls.split('::')
-  c.append(c[-1])
-  return '::'.join(c)
+    return '\n'.join(self._header + self._setvalues  + ['    }', '  else {']
+                                  + self._setreverse + ['    }', '  }', ''])
 
 
 class Constructor(object):
 #-------------------------
 
-  def __init__(self, aobject, base):
-  #---------------------------------
+  def __init__(self, cls, base):
+  #-----------------------------
 #    print "B:", base, " C:", constructor(base)
-    name = constructor(aobject)
-    self._code = ['%s(const std::string &uri, const rdf::Graph &graph)\n' % name,
-                  ': %s(uri)\n' % name,
-                  '{\n  this->addMetadata(graph) ;\n  }\n\n']
-    self._code.append('%s(const std::string &uri)\n' % name)
+    ctr = cls + '::' + cls
+    self._ctr = [
+'''%(ctr)s(const std::string &uri, const rdf::Graph &graph)
+: %(ctr)s(uri)
+{
+  this->add_metadata(graph) ;
+  }
+
+%(ctr)s(const std::string &uri)\n''' % {'ctr': ctr}]
     if base:
-      self._code.append(': %s(uri)' % base)
+      self._ctr.append(': %s(uri)' % base)
       self._comma = ',\n  '
     else:
       self._comma = ': '
+    self._dtr = ['', '{', '  }', '', '%(cls)s::~%(cls)s()' % {'cls': cls}, '{']
 
-  def initialise(self, name, kind, *args):
-  #---------------------------------------
-    self._code.append('%sm_%s(' % (self._comma, name)
-                   + ('""'  if kind == 'STRING'
-                 else '0'   if kind == 'INTEGER'
-                 else '0.0' if kind == 'DOUBLE'
-                 else '0'   if kind == 'DATETIME'
-                 else '0.0' if kind == 'DURATION'
-                 else '')
-                    + ')')
+  def initialise(self, name, kind, prop, *options):
+  #-----------------------------------------------
+##    print name, kind, options
+    member = 'm_%s' % name
+    self._ctr.append('%s%s(' % (self._comma, member)
+                  + ('nullptr' if ('OBJ' in options and options[0] not in ['SET', 'RSET'])
+                else '""'  if kind == 'STRING'
+                else '0'   if kind == 'INTEGER'
+                else '0.0' if kind == 'DOUBLE'
+                else '0'   if kind == 'DATETIME'
+                else '0.0' if kind == 'DURATION'
+                else '')
+                   + ')')
     self._comma = ',\n  '
+    if 'OBJ' in options:
+      if options[0] not in ['SET', 'RSET']:
+        self._dtr.append('  if (%s != nullptr) delete %s ;' % (member, member))
+      else:
+        self._dtr.append('  for (const auto &e: %s) {' % member)
+        self._dtr.append('    if (e != nullptr) delete e ;')
+        self._dtr.append('    }')
 
   def __str__(self):
   #-----------------
-    return ''.join(self._code) + '\n{\n  }\n'
+    return ''.join(self._ctr) + '\n'.join(self._dtr) + '\n  }\n\n'
 
 
 class Generator(object):
@@ -113,7 +157,7 @@ class Generator(object):
     self._classes = [ ]
     self._class = None
     self._base = None
-    self._properties = { }
+    self._properties = ({ }, { })
     self._usednames = [ ]
 
   def save(self, fn):
@@ -128,17 +172,25 @@ class Generator(object):
       code.append('')
     for cls in self._classes:
       code.append('')
-      mcls = cls[2].get('METACLASS')
+      if cls[0]:
+        code.append('namespace %s {' % cls[0])
+        code.append('')
+      mcls = cls[3][0].get('TYPE')
       if mcls and mcls[0]:
-        code.append(generate_metaclass(cls[0], mcls[0]))
-      c = Constructor(cls[0], cls[1])
-      a = AssignFromRDF(cls[0], cls[1])
-      for p, v in cls[2].iteritems():
-        if p != 'METACLASS':
+        code.append(generate_types(mcls[0], cls[1], cls[2]))
+      c = Constructor(cls[1], cls[2])
+      a = AssignFromRDF(cls[1], cls[2])
+      for p, v in cls[3][0].iteritems():
+        if p != 'TYPE':
           c.initialise(p, *v)
           a.add_property(p, *v)
+      for p, v in cls[3][1].iteritems():
+        a.add_property(p, *v)
       code.append(str(c))
       code.append(str(a))
+      if cls[0]:
+        code.append('} ;')
+        code.append('')
     output = open(fn, 'wb')
     output.write('\n'.join(code))
     output.close()
@@ -159,16 +211,20 @@ class Generator(object):
   def end_class(self):
   #-------------------
     if self._class is not None:
-      fullname = (('::'.join(self._namespaces) + '::') if self._namespaces else "") + self._class
-      self._classes.append((fullname, self._base, self._properties))
+      self._classes.append(('::'.join(self._namespaces), self._class, self._base, self._properties))
       self._class = None
       self._base = None
-      self._properties = { }
+      self._properties = ({ }, { })
 
   def add_property(self, name, *params):
   #-------------------------------------
     if self._class is not None:
-      self._properties[name] = params
+      self._properties[0][name] = params
+
+  def add_assignment(self, name, *params):
+  #-------------------------------------
+    if self._class is not None:
+      self._properties[1][name] = params
 
   def use_namespace(self, name):
   #-----------------------------
@@ -223,6 +279,12 @@ class Parser(object):
       if c.kind == CursorKind.CALL_EXPR and c.displayname.startswith('_PARAMETERS_'):
         self._generator.add_property(name, *self.parse_parameters(c, c.displayname[12:]))
 
+  def parse_assignment(self, name, cursor):
+  #----------------------------------------
+    for c in cursor.get_children():
+      if c.kind == CursorKind.CALL_EXPR and c.displayname.startswith('_PARAMETERS_'):
+        self._generator.add_assignment(name, *self.parse_parameters(c, c.displayname[12:]))
+
   def parse_using(self, cursor):
   #-----------------------------
     ns = None
@@ -265,6 +327,9 @@ class Parser(object):
 
     elif cursor.kind == CursorKind.VAR_DECL and name.startswith('_PROPERTY_'):
       self.parse_property(name[10:], cursor)
+
+    elif cursor.kind == CursorKind.VAR_DECL and name.startswith('_ASSIGN_'):
+      self.parse_assignment(name[8:], cursor)
 
     elif cursor.kind == CursorKind.USING_DIRECTIVE:
       self.parse_using(cursor)
