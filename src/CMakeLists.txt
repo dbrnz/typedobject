@@ -1,15 +1,15 @@
 function(make_aoc output filename)
   get_filename_component(base ${filename} NAME_WE)
-  set(aoc_file ${CMAKE_CURRENT_BINARY_DIR}/aoc_${base}.cpp)
-  set(${output} ${${output}} ${aoc_file} PARENT_SCOPE)
+  set(tobj_file ${CMAKE_CURRENT_BINARY_DIR}/tobj_${base}.cpp)
+  set(${output} ${${output}} ${tobj_file} PARENT_SCOPE)
   add_custom_command(
-    OUTPUT ${aoc_file}
+    OUTPUT ${tobj_file}
     COMMAND python ${CMAKE_SOURCE_DIR}/src/clang/aoc.py
                    ${CMAKE_CURRENT_SOURCE_DIR}/${filename}
-                   ${aoc_file}
+                   ${tobj_file}
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${filename}
     )
-  set_source_files_properties(${aoc_file} PROPERTIES GENERATED TRUE)
+  set_source_files_properties(${tobj_file} PROPERTIES GENERATED TRUE)
 endfunction()
 
 

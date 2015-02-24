@@ -41,7 +41,7 @@ class AssignFromRDF(object):
       'void %s::assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property,' % cls,
       '                         const rdf::Node &value,  const bool reverse)',
       '{']
-    if base and base != 'AObject::AObject':
+    if base and base != 'TypedObject::TypedObject':
       self._header.append('  %s::assign_from_rdf(graph, property, value, reverse) ;' % base)
     self._header.append('  if (!reverse) {')
     self._setvalues = []
@@ -69,7 +69,7 @@ class AssignFromRDF(object):
       cleanup = ''
     else:
       cleanup = 'if (%s != nullptr) delete %s ;' % (name, name)
-    value = (('AObject::create<%s>(%s::subtypes(), value, graph)' % (kind, kind)) if 'OBJ' in options
+    value = (('TypedObject::create<%s>(%s::subtypes(), value, graph)' % (kind, kind)) if 'OBJ' in options
          else 'value.to_string()'      if kind == 'std::string'
          else 'value.to_int()'         if kind == 'long'
          else 'value.to_float()'       if kind == 'double'
@@ -238,7 +238,7 @@ class Parser(object):
   def __init__(self, source, output):
   #----------------------------------
     index = clang.cindex.Index.create()
-    self._tu = index.parse(source, ['-x', 'c++', '-DAOC_COMPILE', '-Xclang', '-fsyntax-only'])
+    self._tu = index.parse(source, ['-x', 'c++', '-DTYPED_OBJECT_COMPILE', '-Xclang', '-fsyntax-only'])
     self._output = output
     self._generator = None
     self._class = None
@@ -340,6 +340,6 @@ if __name__ == '__main__':
 
   if len(sys.argv) < 3:
     (path, f) = os.path.split(os.path.splitext(sys.argv[1])[0])
-    sys.argv.append(os.path.join(path, 'aoc_%s.cpp' % f))
+    sys.argv.append(os.path.join(path, 'tobj_%s.cpp' % f))
   p = Parser(sys.argv[1], sys.argv[2])
   p.generate()
