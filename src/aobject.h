@@ -100,7 +100,7 @@ namespace AObject
 
     virtual ~AObject() ;
 
-    std::string asString(void) const ;
+    std::string to_string(void) const ;
 
     bool operator==(const AObject &other) const ;
 
@@ -112,7 +112,7 @@ namespace AObject
     :param graph: A graph of RDF statements.
     :type graph: :class:`~biosignalml.rdf.Graph`
     **/
-    void addMetadata(const rdf::Graph &p_graph) ;
+    bool add_metadata(const rdf::Graph &p_graph) ;
 
     /**
     Create a new instance of a resource, setting attributes from RDF triples in a graph.
@@ -122,9 +122,9 @@ namespace AObject
     :type graph: :class:`~biosignalml.rdf.Graph`
     :rtype: :class:`AbstractObject` or a sub-class.
     **/
-    static AObject *createFromGraph(const rdf::Graph &p_graph, const rdf::URI &p_uri) ;
+    static AObject *create_from_graph(const rdf::Graph &p_graph, const rdf::URI &p_uri) ;
 
-    void setGraph(const rdf::URI &p_graph) ;
+    void set_graph(const rdf::URI &p_graph) ;
 
    private:
     rdf::URI m_uri ;
