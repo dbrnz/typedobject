@@ -35,14 +35,14 @@ namespace AObject {
     return m_uri.operator<(other.uri()) ;
     }
 
-  std::string AObject::asString(void) const
-  /*-------------------------------------*/
+  std::string AObject::to_string(void) const
+  /*--------------------------------------*/
   {
     return metaclass().to_string() + ": <" + m_uri.to_string() + ">" ;
     }
 
-  void AObject::addMetadata(const rdf::Graph &graph)
-  /*----------------------------------------------*/
+  bool AObject::add_metadata(const rdf::Graph &graph)
+  /*-----------------------------------------------*/
   {
     if (m_uri.is_valid() && graph.contains(m_uri, rdf::RDF::type, metaclass())) {   // Needs to be sub-classes
                                                                  // ==> virtual ?? 
@@ -76,8 +76,8 @@ std::map<rdf::URI, ClassFactory *>
 
 */
 
-  AObject *AObject::createFromGraph(const rdf::Graph &p_graph, const rdf::URI &p_uri)
-  /*-------------------------------------------------------------------------------*/
+  AObject *AObject::create_from_graph(const rdf::Graph &p_graph, const rdf::URI &p_uri)
+  /*---------------------------------------------------------------------------------*/
   {
 
 /*    get type from graph: (uri a ?type)
@@ -100,8 +100,8 @@ std::map<rdf::URI, ClassFactory *>
     */ return NULL ;
     }
 
-  void AObject::setGraph(const rdf::URI &p_graph)
-  /*-------------------------------------------*/
+  void AObject::set_graph(const rdf::URI &p_graph)
+  /*--------------------------------------------*/
   {
 
     }
