@@ -3,12 +3,12 @@
 
 namespace AObject {
 
+
   AObject::AObject()
   /*--------------*/
   : m_uri()
   {
     }
-
 
   AObject::AObject(const std::string &uri)
   /*------------------------------------*/
@@ -20,6 +20,28 @@ namespace AObject {
   AObject::~AObject()
   /*---------------*/
   {
+    }
+
+
+  std::map<rdf::URI, AObjectFactory *> &AObject::m_factories(void)
+  /*------------------------------------------------------------*/
+  {
+    static std::map<rdf::URI, AObjectFactory *> s_factories ;
+    return s_factories ;
+    }
+
+
+  void AObject::register_type(const rdf::URI &T, AObjectFactory *factory)
+  /*-------------------------------------------------------------------*/
+  {
+    AObject::m_factories()[T] = factory ;
+    }
+
+
+  AObject *AObject::create(const rdf::URI &T, const std::string &uri)
+  /*---------------------------------------------------------------*/
+  {
+    return AObject::m_factories()[T]->create(uri) ;
     }
 
 
@@ -38,43 +60,32 @@ namespace AObject {
   std::string AObject::to_string(void) const
   /*--------------------------------------*/
   {
-    return metaclass().to_string() + ": <" + m_uri.to_string() + ">" ;
+    return type().to_string() + ": <" + m_uri.to_string() + ">" ;
     }
 
   bool AObject::add_metadata(const rdf::Graph &graph)
   /*-----------------------------------------------*/
   {
-    if (m_uri.is_valid() && graph.contains(m_uri, rdf::RDF::type, metaclass())) {   // Needs to be sub-classes
-                                                                 // ==> virtual ?? 
-      rdf::StatementIter statements = graph.getStatements(m_uri, rdf::Node(), rdf::Node()) ;
-      if (!statements.end()) {
-        do {
-          assign_from_rdf(graph, statements.get_predicate(), statements.get_object(), false) ;
-          } while (!statements.next()) ;
-        }
-      rdf::StatementIter rstatements = graph.getStatements(rdf::Node(), rdf::Node(), m_uri) ;
-      if (!rstatements.end()) {
-        do {
-          assign_from_rdf(graph, rstatements.get_predicate(), rstatements.get_subject(), true) ;
-          } while (!rstatements.next()) ;
+    if (m_uri.is_valid()) {
+      if (graph.contains(m_uri, rdf::RDF::type, type())) {   // Needs to be sub-classes
+        rdf::StatementIter statements = graph.getStatements(m_uri, rdf::Node(), rdf::Node()) ;
+        if (!statements.end()) {
+          do {
+            assign_from_rdf(graph, statements.get_predicate(), statements.get_object(), false) ;
+            } while (!statements.next()) ;
+          }
+        rdf::StatementIter rstatements = graph.getStatements(rdf::Node(), rdf::Node(), m_uri) ;
+        if (!rstatements.end()) {
+          do {
+            assign_from_rdf(graph, rstatements.get_predicate(), rstatements.get_subject(), true) ;
+            } while (!rstatements.next()) ;
+          }
+        return true ;
         }
       }
+    return false ;
     }
 
-/*
-class ClassFactory
-{
-  virtual AObject *create(void) = 0 ;
-  } ;
-
-class RecordingFactory : public ClassFactory
-{
-  Recording *create(void) { return new Recording }
-  } ;
-
-std::map<rdf::URI, ClassFactory *>
-
-*/
 
   AObject *AObject::create_from_graph(const rdf::Graph &p_graph, const rdf::URI &p_uri)
   /*---------------------------------------------------------------------------------*/
