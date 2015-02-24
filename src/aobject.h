@@ -199,18 +199,6 @@ namespace AObject
     **/
     bool add_metadata(const rdf::Graph &p_graph) ;
 
-    /**
-    Create a new instance of a resource, setting attributes from RDF triples in a graph.
-
-    :param uri: The URI for the resource.
-    :param graph: A RDF graph.
-    :type graph: :class:`~biosignalml.rdf.Graph`
-    :rtype: :class:`AbstractObject` or a sub-class.
-    **/
-    static AObject *create_from_graph(const rdf::Graph &p_graph, const rdf::URI &p_uri) ;
-
-    void set_graph(const rdf::URI &p_graph) ;
-
    private:
     rdf::URI m_uri ;
     static std::map<rdf::URI, AObjectFactory *> &m_factories(void) ;
