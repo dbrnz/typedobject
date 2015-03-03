@@ -235,10 +235,11 @@ class Generator(object):
 class Parser(object):
 #====================
 
-  def __init__(self, source, output):
-  #----------------------------------
+  def __init__(self, source, output, options=[]):
+  #----------------------------------------------
     index = clang.cindex.Index.create()
-    self._tu = index.parse(source, ['-x', 'c++', '-DTYPED_OBJECT_COMPILE', '-Xclang', '-fsyntax-only'])
+    defopts = ['-x', 'c++', '-DTYPED_OBJECT_COMPILE', '-Xclang', '-fsyntax-only']
+    self._tu = index.parse(source, defopts + options)
     self._output = output
     self._generator = None
     self._class = None
@@ -341,5 +342,5 @@ if __name__ == '__main__':
   if len(sys.argv) < 3:
     (path, f) = os.path.split(os.path.splitext(sys.argv[1])[0])
     sys.argv.append(os.path.join(path, 'tobj_%s.cpp' % f))
-  p = Parser(sys.argv[1], sys.argv[2])
+  p = Parser(sys.argv[-2], sys.argv[-1], sys.argv[1:-2])
   p.generate()
