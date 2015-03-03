@@ -1,4 +1,4 @@
-#include "rdf/rdf.h"
+#include "rdf.h"
 
 #include <iostream>
 

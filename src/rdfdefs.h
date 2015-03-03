@@ -1,5 +1,5 @@
-#ifndef RDF_DEFS_H
-#define RDF_DEFS_H
+#ifndef TYPED_OBJECTS_RDFDEFS_H
+#define TYPED_OBJECTS_RDFDEFS_H
 
 #include "rdf.h"
 

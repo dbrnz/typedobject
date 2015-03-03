@@ -1,40 +1,49 @@
-function(make_aoc output filename)
-  get_filename_component(base ${filename} NAME_WE)
-  set(tobj_file ${CMAKE_CURRENT_BINARY_DIR}/tobj_${base}.cpp)
-  set(${output} ${${output}} ${tobj_file} PARENT_SCOPE)
-  add_custom_command(
-    OUTPUT ${tobj_file}
-    COMMAND python ${CMAKE_SOURCE_DIR}/src/clang/aoc.py
-                   ${CMAKE_CURRENT_SOURCE_DIR}/${filename}
-                   ${tobj_file}
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${filename}
-    )
-  set_source_files_properties(${tobj_file} PROPERTIES GENERATED TRUE)
-endfunction()
-
-
+# Find Boost date time package:
+#
 find_package(Boost COMPONENTS date_time)
-set(INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${Boost_INCLUDE_DIRS})
-set(LIBRARIES ${LIBRARIES} ${Boost_DATE_TIME_LIBRARY})  ## Only if Boost datetime IO
-message(${LIBRARIES})  ## Only if Boost datetime IO
+set(INCLUDES ${CMAKE_CURRENT_SOURCE_DIR} ${Boost_INCLUDE_DIRS})
+set(LIBS ${Boost_DATE_TIME_LIBRARY})  ## Only if Boost datetime IO
 
-add_subdirectory(rdf)
 
-set(SOURCES ${SOURCES} ontology.cpp)
-set(SOURCES ${SOURCES} typedobject.cpp)
-set(SOURCES ${SOURCES} object.cpp recording.cpp signal.cpp segment.cpp
-                       timing.cpp event.cpp annotation.cpp)
-set(SOURCES ${SOURCES} utils.cpp)
+# Use pkg-config to find RDF libraries:
+#
+find_package(PkgConfig)
 
-set(HEADERS ## aobject.h
-            object.h recording.h signal.h segment.h timing.h event.h annotation.h)
-foreach(file ${HEADERS})
-  make_aoc(GENERATED_AOC ${file})
+
+# Find sord and its dependencies:
+#
+pkg_check_modules(SORD QUIET sord-0)
+
+set(INCLUDES ${INCLUDES} ${SORD_INCLUDE_DIRS})
+add_definitions(${SORD_CFLAGS_OTHER})
+
+set(LIBNUM 1)
+foreach(LIBRARY_NAME ${SORD_LIBRARIES})
+  find_library(LIBRARY${LIBNUM} ${LIBRARY_NAME} PATHS ${SORD_LIBRARY_DIRS})
+  set(LIBS ${LIBS} ${LIBRARY${LIBNUM}})
+  MATH(EXPR LIBNUM "${LIBNUM}+1")
 endforeach()
 
-source_group("" FILES ${SOURCES})
-source_group(aoc FILES ${GENERATED_AOC})
-add_library(aobject SHARED ${SOURCES} ${GENERATED_AOC})
 
-target_include_directories(aobject PUBLIC ${INCLUDE_DIRS})
-target_link_libraries(aobject ${LIBRARIES})
+# Find raptor:
+#
+pkg_check_modules(RAPTOR QUIET raptor2)
+
+set(INCLUDES ${INCLUDES} ${RAPTOR_INCLUDE_DIRS})
+add_definitions(${RAPTOR_CFLAGS_OTHER})
+
+find_library(LIBRARY${LIBNUM} ${RAPTOR_LIBRARIES} PATHS ${RAPTOR_LIBRARY_DIRS})
+set(LIBS ${LIBS} ${LIBRARY${LIBNUM}})
+
+#
+
+set(SOURCES typedobject.cpp
+            rdf.cpp
+            rdfdefs.cpp
+            utils.cpp
+            )
+
+add_library(aobject SHARED ${SOURCES})
+
+target_include_directories(aobject PUBLIC ${INCLUDES})
+target_link_libraries(aobject ${LIBS})

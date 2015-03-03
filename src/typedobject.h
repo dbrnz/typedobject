@@ -2,6 +2,7 @@
 #define TYPED_OBJECT_H
 
 #include "rdf.h"
+#include "rdfdefs.h"
 #include "utils.h"
 
 #include <string>

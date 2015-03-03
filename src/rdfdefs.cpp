@@ -1,5 +1,4 @@
-#include "defs.h"
-
+#include "rdfdefs.h"
 
 namespace rdf {
 
