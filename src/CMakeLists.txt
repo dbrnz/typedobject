@@ -43,7 +43,7 @@ set(SOURCES typedobject.cpp
             utils.cpp
             )
 
-add_library(aobject SHARED ${SOURCES})
+add_library(typedobject SHARED ${SOURCES})
 
-target_include_directories(aobject PUBLIC ${INCLUDES})
-target_link_libraries(aobject ${LIBS})
+target_include_directories(typedobject PUBLIC ${INCLUDES})
+target_link_libraries(typedobject ${LIBS})
