@@ -1,7 +1,6 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
 project("Abstract Objects in C++")
-
 
 # We use C++11
 if (UNIX)
@@ -9,9 +8,6 @@ if (UNIX)
 endif()
 
 
-
 enable_testing()
-
 add_subdirectory(src)
-
 add_subdirectory(tests)
