@@ -25,6 +25,7 @@ namespace utils {
     Datetime(const rdf::Node &node) ;
     std::string to_string(void) const ;
     rdf::Literal to_literal(void) ;
+    bool is_valid(void) const ;
    private:
     boost::posix_time::ptime m_time ;
     } ;
@@ -36,6 +37,7 @@ namespace utils {
     Duration(const rdf::Node &node) ;
     std::string to_string(void) const ;
     rdf::Literal to_literal(void) ;
+    bool is_valid(void) const ;
    private:
     boost::posix_time::time_duration m_duration ;
     static const char *scan_decimal(const char *s, long *number, long *fraction, long *places,

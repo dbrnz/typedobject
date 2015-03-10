@@ -31,6 +31,11 @@ rdf::Literal utils::Datetime::to_literal(void)
   return rdf::Literal(this->to_string(), rdf::XSD::dateTime) ;
   }
 
+bool utils::Datetime::is_valid(void) const
+/*--------------------------------------*/
+{
+  return !m_time.is_special() ;
+  }
 
 
 const char *utils::Duration::scan_decimal(const char *s, long *number, long *fraction, long *places,
@@ -176,4 +181,10 @@ rdf::Literal utils::Duration::to_literal(void)
 /*------------------------------------------*/
 {
   return rdf::Literal(this->to_string(), rdf::XSD::dayTimeDuration) ;
+  }
+
+bool utils::Duration::is_valid(void) const
+/*--------------------------------------*/
+{
+  return !m_duration.is_special() ;
   }
