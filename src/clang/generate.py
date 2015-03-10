@@ -97,6 +97,51 @@ class AssignFromRDF(object):
     return '\n'.join(self._header + self._setvalues  + ['    }', '  else {']
                                   + self._setreverse + ['    }', '  }', ''])
 
+class SaveToRDF(object):
+#-----------------------
+
+  def __init__(self, cls, base):
+  #-----------------------------
+    self._header = [
+      'void %s::save_as_rdf(const rdf::Graph &graph)' % cls,
+      '{']
+    self._footer = ['  }', '']
+    if base and base != 'TypedObject::TypedObject':
+      self._footer.insert(0, '  %s::save_as_rdf(graph) ;' % base)
+    self._getvalues = []
+
+  def save_property(self, name, kind, property, *options):
+  #-------------------------------------------------------
+    if property == 'NONE': return
+
+    if options[0] in ['REVERSE', 'RSET']:
+      save = '  for (auto value : %(name)s) value->save_metadata(graph) ;'
+    elif 'OBJ' not in options or options[0] == 'SET':
+      value = (     'rdf::Literal(%(name)s)' if kind == 'std::string'
+               else 'rdf::Literal(%(name)s)' if kind == 'long'
+               else 'rdf::Literal(%(name)s)' if kind == 'double'
+               else '%(name)s.to_literal()'  if kind == 'utils::Datetime'
+               else '%(name)s.to_literal()'  if kind == 'utils::Duration'
+               else '%(name)s')
+      if options[0] == 'SET':
+        save = ('  for (auto value : %(name)s) graph.insert(uri(), DCT::source, '
+                + value % {'name': 'value'}
+                + ') ;')
+      else:
+        save = ('  graph.insert(uri(), %(prop)s, '
+                + value
+                + ') ;')
+    elif 'OBJ' in options:
+      save = """  if (%(name)s != nullptr) {
+    graph.insert(uri(), %(prop)s, %(name)s->uri()) ;
+    %(name)s->save_metadata(graph) ;
+    }"""
+    self._getvalues.append(save % { 'prop': property, 'name': 'm_' + name})
+
+  def __str__(self):
+  #-----------------
+    return '\n'.join(self._header + self._getvalues + self._footer)
+
 
 class Constructor(object):
 #-------------------------
@@ -180,14 +225,18 @@ class Generator(object):
         code.append(generate_types(mcls[0], cls[1], cls[2]))
       c = Constructor(cls[1], cls[2])
       a = AssignFromRDF(cls[1], cls[2])
+      s = SaveToRDF(cls[1], cls[2])
       for p, v in cls[3][0].iteritems():
         if p != 'TYPE':
           c.initialise(p, *v)
           a.add_property(p, *v)
+          s.save_property(p, *v)
       for p, v in cls[3][1].iteritems():
         a.add_property(p, *v)
+        s.save_property(p, *v)
       code.append(str(c))
       code.append(str(a))
+      code.append(str(s))
       if cls[0]:
         code.append('} ;')
         code.append('')

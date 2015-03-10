@@ -92,5 +92,22 @@ namespace TypedObject {
     return false ;
     }
 
+  void TypedObject::save_metadata(const rdf::Graph &graph)
+  /*----------------------------------------------------*/
+  {
+    if (m_uri.is_valid()) {
+      graph.insert(m_uri, rdf::RDF::type, type()) ;
+      save_as_rdf(graph) ;
+      }
+    }
+
+  std::string TypedObject::serialise_metadata(const rdf::Graph::Format format)
+  /*------------------------------------------------------------------------*/
+  {
+    rdf::Graph g ;
+    save_metadata(g) ;
+    return g.serialise(format) ;
+    }
+
 
   } ;

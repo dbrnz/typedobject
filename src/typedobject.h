@@ -46,6 +46,7 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
  protected:                               \
   void assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property,  \
                        const rdf::Node &value,  const bool reverse) ;       \
+  void save_as_rdf(const rdf::Graph &graph) ;                               \
  public:                                  \
   CLASS() { }                             \
   CLASS(const std::string &uri) ;         \
@@ -151,6 +152,7 @@ namespace TypedObject
    protected:
     virtual void assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property,
                                  const rdf::Node &value,  const bool reverse) = 0 ;
+    virtual void save_as_rdf(const rdf::Graph &graph) = 0 ;
    public:
     virtual const rdf::URI &type(void) const = 0 ;
     inline const rdf::URI &uri() const { return m_uri ; }
@@ -199,6 +201,16 @@ namespace TypedObject
     :type graph: :class:`~biosignalml.rdf.Graph`
     **/
     bool add_metadata(const rdf::Graph &p_graph) ;
+
+    /**
+    Save attributes as RDF triples in a graph.
+
+    :param graph: A graph of RDF statements.
+    :type graph: :class:`~biosignalml.rdf.Graph`
+    **/
+    void save_metadata(const rdf::Graph &p_graph) ;
+
+    std::string serialise_metadata(const rdf::Graph::Format format=rdf::Graph::Format::RDFXML) ;
 
    private:
     rdf::URI m_uri ;
