@@ -94,8 +94,11 @@ class AssignFromRDF(object):
 
   def __str__(self):
   #-----------------
-    return '\n'.join(self._header + self._setvalues  + ['    }', '  else {']
-                                  + self._setreverse + ['    }', '  }', ''])
+    return '\n'.join(self._header
+                    + self._setvalues
+                    + ((['    }', '  else {'] + self._setreverse) if self._setreverse else [])
+                    + ['    }', '  }', ''])
+
 
 class SaveToRDF(object):
 #-----------------------
