@@ -20,7 +20,7 @@ namespace utils {
 
   class Datetime {
    public:
-    Datetime() { }
+    Datetime(): m_time(boost::date_time::not_a_date_time) { }
     Datetime(const std::string &dt) ;
     Datetime(const rdf::Node &node) ;
     std::string to_string(void) const ;
@@ -32,7 +32,7 @@ namespace utils {
 
   class Duration {
    public:
-    Duration() { }
+    Duration(): m_duration(boost::date_time::not_a_date_time) { }
     Duration(const std::string &dt, const bool strict=false) ;
     Duration(const rdf::Node &node) ;
     std::string to_string(void) const ;

@@ -7,7 +7,7 @@
 
 #include <string>
 #include <list>
-
+#include <cmath>
 
 //**************************************************************************//
 
@@ -51,6 +51,16 @@ namespace rdf {
     Literal(const std::string &s, const std::string &language) ;
     Literal(Decimal d, unsigned frac_digits) ;
     Literal(Integer i) ;
+
+    class Constants {
+     public:
+      static const std::string EMPTY_STRING ;
+      static const rdf::Decimal EMPTY_DECIMAL ;
+      static const rdf::Integer EMPTY_INTEGER ;
+      } ;
+    inline static bool not_empty(const std::string &s) { return (s != Constants::EMPTY_STRING) ; }
+    inline static bool not_empty(const Decimal d) { return std::isfinite(d) ; }
+    inline static bool not_empty(const Integer i) { return (i != Constants::EMPTY_INTEGER) ; }
 
    private:
     static SordNode *sord_datatype_node(const std::string &s, const rdf::URI &datatype) ;

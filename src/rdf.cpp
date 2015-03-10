@@ -11,6 +11,7 @@
 
 #include <string>
 #include <stdio.h>
+#include <cmath>
 
 //**************************************************************************//
 
@@ -102,6 +103,15 @@ rdf::Literal::Literal(rdf::Integer i)
 : Sord::Node(sordWorld(), sord_integer_node(i), false)
 {
   }
+
+const std::string rdf::Literal::Constants::EMPTY_STRING = "" ;
+/*---------------------------------------------------*/
+
+const rdf::Decimal rdf::Literal::Constants::EMPTY_DECIMAL = std::nan("") ;
+/*-----------------------------------------------------*/
+
+const rdf::Integer rdf::Literal::Constants::EMPTY_INTEGER = std::numeric_limits<rdf::Integer>::lowest() ;
+/*-----------------------------------------------------*/
 
 
 SordNode *rdf::Literal::sord_datatype_node(const std::string &s, const rdf::URI &datatype)

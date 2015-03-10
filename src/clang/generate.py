@@ -117,20 +117,28 @@ class SaveToRDF(object):
     if options[0] in ['REVERSE', 'RSET']:
       save = '  for (auto value : %(name)s) value->save_metadata(graph) ;'
     elif 'OBJ' not in options or options[0] == 'SET':
+      # Only save non-empty values...
+      if kind in ['std::string', 'rdf::Decimal', 'rdf::Integer']:
+        valid = 'rdf::Literal::not_empty(%(name)s)'
+      else:
+        valid = '%(name)s.is_valid()'
+
       value = (     'rdf::Literal(%(name)s)' if kind == 'std::string'
                else 'rdf::Literal(%(name)s)' if kind == 'rdf::Integer'
                else 'rdf::Literal(%(name)s)' if kind == 'rdf::Decimal'
                else '%(name)s.to_literal()'  if kind == 'utils::Datetime'
                else '%(name)s.to_literal()'  if kind == 'utils::Duration'
                else '%(name)s')
+
       if options[0] == 'SET':
-        save = ('  for (auto value : %(name)s) graph.insert(uri(), DCT::source, '
-                + value % {'name': 'value'}
-                + ') ;')
+        save = ('  for (auto value : %(name)s)'
+                + ' if (%s)' % (valid % {'name': 'value'})
+                + ' graph.insert(uri(), DCT::source, %s) ;' % (value % {'name': 'value'})
+                )
       else:
-        save = ('  graph.insert(uri(), %(prop)s, '
-                + value
-                + ') ;')
+        save = ('  if (%s)' % valid
+                + ' graph.insert(uri(), %(prop)s, ' + value + ') ;'
+                )
     elif 'OBJ' in options:
       save = """  if (%(name)s != nullptr) {
     graph.insert(uri(), %(prop)s, %(name)s->uri()) ;
@@ -171,11 +179,11 @@ class Constructor(object):
     member = 'm_%s' % name
     self._ctr.append('%s%s(' % (self._comma, member)
                   + ('nullptr' if ('OBJ' in options and options[0] not in ['SET', 'RSET'])
-                else '""'  if kind == 'STRING'
-                else '0'   if kind == 'INTEGER'
-                else '0.0' if kind == 'DOUBLE'
-                else '0'   if kind == 'DATETIME'
-                else '0.0' if kind == 'DURATION'
+                else 'rdf::Literal::Constants::EMPTY_STRING'  if kind == 'std::string'
+                else 'rdf::Literal::Constants::EMPTY_INTEGER' if kind == 'rdf::Integer'
+                else 'rdf::Literal::Constants::EMPTY_DECIMAL' if kind == 'rdf::Decimal'
+#                else '0'   if kind == 'utils::Datetime'
+#                else '0.0' if kind == 'utils::Duration'
                 else '')
                    + ')')
     self._comma = ',\n  '
