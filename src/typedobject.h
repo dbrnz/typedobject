@@ -100,8 +100,8 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
 #endif
 
 #define PROPERTY_STRING(NAME, P)         _PROPERTY(NAME, P, std::string)
-#define PROPERTY_INTEGER(NAME, P)        _PROPERTY(NAME, P, long)
-#define PROPERTY_DOUBLE(NAME, P)         _PROPERTY(NAME, P, double)
+#define PROPERTY_INTEGER(NAME, P)        _PROPERTY(NAME, P, rdf::Integer)
+#define PROPERTY_DECIMAL(NAME, P)        _PROPERTY(NAME, P, rdf::Decimal)
 #define PROPERTY_NODE(NAME, P)           _PROPERTY(NAME, P, rdf::Node)
 #define PROPERTY_URI(NAME, P)            _PROPERTY(NAME, P, rdf::URI)
 #define PROPERTY_DATETIME(NAME, P)       _PROPERTY(NAME, P, utils::Datetime)
@@ -167,7 +167,7 @@ namespace TypedObject
 
     static TypedObject *create(const rdf::URI &T, const std::string &uri) ;
 
-    template <class  T>
+    template <class T>
     static T *create(std::set<rdf::URI> &subtypes, const rdf::Node &uri, const rdf::Graph &graph)
     /*-----------------------------------------------------------------------------------------*/
     {

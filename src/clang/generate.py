@@ -71,8 +71,8 @@ class AssignFromRDF(object):
       cleanup = 'if (%s != nullptr) delete %s ;' % (name, name)
     value = (('TypedObject::create<%s>(%s::subtypes(), value, graph)' % (kind, kind)) if 'OBJ' in options
          else 'value.to_string()'      if kind == 'std::string'
-         else 'value.to_int()'         if kind == 'long'
-         else 'value.to_float()'       if kind == 'double'
+         else 'value.to_int()'         if kind == 'rdf::Integer'
+         else 'value.to_float()'       if kind == 'rdf::Decimal'
          else 'rdf::URI(value)'        if kind == 'rdf::URI'
          else 'utils::Datetime(value)' if kind == 'utils::Datetime'
          else 'utils::Duration(value)' if kind == 'utils::Duration'
@@ -118,8 +118,8 @@ class SaveToRDF(object):
       save = '  for (auto value : %(name)s) value->save_metadata(graph) ;'
     elif 'OBJ' not in options or options[0] == 'SET':
       value = (     'rdf::Literal(%(name)s)' if kind == 'std::string'
-               else 'rdf::Literal(%(name)s)' if kind == 'long'
-               else 'rdf::Literal(%(name)s)' if kind == 'double'
+               else 'rdf::Literal(%(name)s)' if kind == 'rdf::Integer'
+               else 'rdf::Literal(%(name)s)' if kind == 'rdf::Decimal'
                else '%(name)s.to_literal()'  if kind == 'utils::Datetime'
                else '%(name)s.to_literal()'  if kind == 'utils::Duration'
                else '%(name)s')

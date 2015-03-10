@@ -91,14 +91,14 @@ rdf::Literal::Literal(const std::string &s, const std::string &language)
 {
   }
 
-rdf::Literal::Literal(double d, unsigned frac_digits)
-/*-------------------------------------------------*/
+rdf::Literal::Literal(rdf::Decimal d, unsigned frac_digits)
+/*-------------------------------------------------------*/
 : Sord::Node(sordWorld(), sord_decimal_node(d, frac_digits), false)
 {
   }
 
-rdf::Literal::Literal(int64_t i)
-/*----------------------------*/
+rdf::Literal::Literal(rdf::Integer i)
+/*---------------------------------*/
 : Sord::Node(sordWorld(), sord_integer_node(i), false)
 {
   }
@@ -120,7 +120,7 @@ SordNode *rdf::Literal::sord_language_node(const std::string &s, const std::stri
   return sord_node_from_serd_node(&val, NULL, &lang) ;
   }
 
-SordNode *rdf::Literal::sord_decimal_node(double d, unsigned frac_digits)
+SordNode *rdf::Literal::sord_decimal_node(rdf::Decimal d, unsigned frac_digits)
 /*---------------------------------------------------------------------*/
 {
   const SerdNode val = serd_node_new_decimal(d, frac_digits) ;
@@ -128,7 +128,7 @@ SordNode *rdf::Literal::sord_decimal_node(double d, unsigned frac_digits)
   return sord_node_from_serd_node(&val, &type, NULL) ;
   }
 
-SordNode *rdf::Literal::sord_integer_node(int64_t i)
+SordNode *rdf::Literal::sord_integer_node(rdf::Integer i)
 /*------------------------------------------------*/
 {
   const SerdNode val = serd_node_new_integer(i) ;

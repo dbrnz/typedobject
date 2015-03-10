@@ -13,6 +13,11 @@
 
 namespace rdf {
 
+  typedef int64_t Integer ;
+  /*---------------------*/
+
+  typedef double Decimal ;
+  /*--------------------*/
 
   typedef Sord::Node Node ;
   /*---------------------*/
@@ -44,14 +49,14 @@ namespace rdf {
     Literal(const std::string &s) ;
     Literal(const std::string &s, const rdf::URI &datatype) ;
     Literal(const std::string &s, const std::string &language) ;
-    Literal(double d, unsigned frac_digits) ;
-    Literal(int64_t i) ;
+    Literal(Decimal d, unsigned frac_digits) ;
+    Literal(Integer i) ;
 
    private:
     static SordNode *sord_datatype_node(const std::string &s, const rdf::URI &datatype) ;
     static SordNode *sord_language_node(const std::string &s, const std::string &language) ;
-    static SordNode *sord_decimal_node(double d, unsigned frac_digits) ;
-    static SordNode *sord_integer_node(int64_t i) ;
+    static SordNode *sord_decimal_node(Decimal d, unsigned frac_digits) ;
+    static SordNode *sord_integer_node(Integer i) ;
     static SordNode *sord_node_from_serd_node(const SerdNode *node, const SerdNode *type, const SerdNode *lang) ;
     } ;
 
