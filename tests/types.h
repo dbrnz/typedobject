@@ -7,6 +7,14 @@
 
 using namespace rdf ;
 
+class TEST {
+ public:
+  static const Namespace NS ;
+  static const URI string ;
+  static const URI decimal ;
+  static const URI integer ;
+  static const URI object ;
+  } ;
 
 namespace test {
 
@@ -15,7 +23,9 @@ namespace test {
   {
     TYPED_OBJECT(Object, OWL::Object)
 
-    PROPERTY_STRING(label, RDFS::label)
+    PROPERTY_STRING(string, TEST::string)
+    PROPERTY_DECIMAL(decimal, TEST::decimal)
+    PROPERTY_INTEGER(integer, TEST::integer)
     PROPERTY_DATETIME(starttime, DCT::created)
     PROPERTY_DURATION(duration, DCT::extent)
     PROPERTY_NODE(investigator, DCT::creator)
