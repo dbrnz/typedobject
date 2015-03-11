@@ -43,7 +43,6 @@ class AssignFromRDF(object):
       '{']
     if base and base != 'TypedObject::TypedObject':
       self._header.append('  %s::assign_from_rdf(graph, property, value, reverse) ;' % base)
-    self._header.append('  if (!reverse) {')
     self._setvalues = []
     self._setreverse = []
 
@@ -94,10 +93,17 @@ class AssignFromRDF(object):
 
   def __str__(self):
   #-----------------
-    return '\n'.join(self._header
-                    + self._setvalues
-                    + ((['    }', '  else {'] + self._setreverse) if self._setreverse else [])
-                    + ['    }', '  }', ''])
+    if self._setvalues:
+      return '\n'.join(self._header
+                      + ['  if (!reverse) {'] + self._setvalues
+                      + ((['    }', '  else {'] + self._setreverse) if self._setreverse else [])
+                      + ['    }', '  }', ''])
+    elif self._setreverse:
+      return '\n'.join(self._header
+                      + ['  if (reverse) {'] + self._setreverse
+                      + ['    }', '  }', ''])
+    else:
+      return '\n'.join(self._header + ['  }', ''])
 
 
 class SaveToRDF(object):
