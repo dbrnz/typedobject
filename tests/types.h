@@ -1,7 +1,7 @@
 #ifndef TEST_TYPES
 #define TEST_TYPES
 
-#include "typedobject.h"
+#include "typedobject/typedobject.h"
 
 #include <string>
 

@@ -1,7 +1,7 @@
 #ifndef TYPED_OBJECTS_RDFDEFS_H
 #define TYPED_OBJECTS_RDFDEFS_H
 
-#include "rdf.h"
+#include "typedobject/rdf.h"
 
 
 namespace rdf {

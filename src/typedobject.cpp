@@ -1,4 +1,4 @@
-#include "typedobject.h"
+#include "typedobject/typedobject.h"
 
 
 namespace TypedObject {

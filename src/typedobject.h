@@ -1,9 +1,9 @@
 #ifndef TYPED_OBJECT_H
 #define TYPED_OBJECT_H
 
-#include "rdf.h"
-#include "rdfdefs.h"
-#include "utils.h"
+#include "typedobject/rdf.h"
+#include "typedobject/rdfdefs.h"
+#include "typedobject/utils.h"
 
 #include <string>
 #include <map>
