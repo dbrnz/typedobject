@@ -37,7 +37,7 @@ namespace rdf {
   /*---------------------*/
   {
    public:
-    BNode(void) ;
+    BNode() ;
     BNode(const std::string &s) ;
     } ;
 
@@ -46,6 +46,7 @@ namespace rdf {
   /*-----------------------*/
   {
    public:
+    Literal() ;
     Literal(const std::string &s) ;
     Literal(const std::string &s, const rdf::URI &datatype) ;
     Literal(const std::string &s, const std::string &language) ;

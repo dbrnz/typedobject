@@ -58,8 +58,8 @@ rdf::URI::URI(const Node &uri)
 
 //**************************************************************************//
 
-rdf::BNode::BNode(void)
-/*-------------------*/
+rdf::BNode::BNode()
+/*---------------*/
 : Sord::Node(sordWorld(), Sord::Node::BLANK, "")
 {
   }
@@ -73,8 +73,14 @@ rdf::BNode::BNode(const std::string &s)
 
 //**************************************************************************//
 
+rdf::Literal::Literal()
+/*-------------------*/
+: Sord::Node()
+{
+  }
+
 rdf::Literal::Literal(const std::string &s)
-/*-------------------------------------------*/
+/*---------------------------------------*/
 : Sord::Node(sordWorld(), Sord::Node::LITERAL, s)
 {
   }
