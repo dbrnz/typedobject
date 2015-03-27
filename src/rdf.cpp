@@ -418,7 +418,7 @@ std::string rdf::Graph::serialise(
                                          &base_uri,
                                          Sord::string_sink, &result) ;
     serd_env_foreach(sordWorld().prefixes().c_obj(), (SerdPrefixSink)serd_writer_set_prefix, writer) ;
-    for (const auto prefix : prefixes) {
+    for (auto const &prefix : prefixes) {
       serd_writer_set_prefix(writer, prefix.name().to_serd_node(), prefix.uri().to_serd_node()) ;
       }
     sord_write(m_model, writer, 0) ;
@@ -431,7 +431,7 @@ std::string rdf::Graph::serialise(
     raptor_serializer *serialiser = raptor_new_serializer(raptorWorld(), get_raptor_format(format)) ;
 //    if (serialiser == NULL) throw Exception("Unable to create graph serialiser") ;
     serd_env_foreach(sordWorld().prefixes().c_obj(), (SerdPrefixSink)set_raptor_prefix, serialiser) ;
-    for (auto prefix : prefixes) {
+    for (auto const &prefix : prefixes) {
       set_raptor_prefix((SerdWriter *)serialiser, prefix.name().to_serd_node(), prefix.uri().to_serd_node()) ;
       }
 

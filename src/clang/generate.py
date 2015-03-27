@@ -124,7 +124,7 @@ class SaveToRDF(object):
     if property == 'NONE': return
 
     if options[0] in ['REVERSE', 'RSET']:
-      save = '  for (auto value : %(name)s) value->save_metadata(graph) ;'
+      save = '  for (auto const &value : %(name)s) value->save_metadata(graph) ;'
     elif 'OBJ' not in options or options[0] == 'SET':
       # Only save non-empty values...
       if kind in ['std::string', 'rdf::Decimal', 'rdf::Integer']:
@@ -140,7 +140,7 @@ class SaveToRDF(object):
                else '%(name)s')
 
       if options[0] == 'SET':
-        save = ('  for (auto value : %(name)s)'
+        save = ('  for (auto const &value : %(name)s)'
                 + ' if (%s)' % (valid % {'name': 'value'})
                 + ' graph.insert(uri(), DCT::source, %s) ;' % (value % {'name': 'value'})
                 )
@@ -200,7 +200,7 @@ class Constructor(object):
       if options[0] not in ['SET', 'RSET']:
         self._dtr.append('  if (%s != nullptr) delete %s ;' % (member, member))
       else:
-        self._dtr.append('  for (const auto &e: %s) {' % member)
+        self._dtr.append('  for (auto const &e: %s) {' % member)
         self._dtr.append('    if (e != nullptr) delete e ;')
         self._dtr.append('    }')
 
