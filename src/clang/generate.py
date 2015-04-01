@@ -254,8 +254,9 @@ class Generator(object):
       code.append('')
     for cls in self._classes:
       code.append('')
-      if cls[0]:
-        code.append('namespace %s {' % cls[0])
+      namespaces = cls[0].split('::')
+      for n in namespaces:
+        code.append('namespace %s {' % n)
         code.append('')
       mcls = cls[3][0].get('TYPE')
       if mcls and mcls[0]:
@@ -276,7 +277,7 @@ class Generator(object):
       code.append(str(c))
       code.append(str(a))
       code.append(str(s))
-      if cls[0]:
+      for n in namespaces:
         code.append('} ;')
         code.append('')
     output = open(fn, 'wb')
