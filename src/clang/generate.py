@@ -80,7 +80,7 @@ class AssignFromRDF(object):
       if 'OBJ' in options:
         assign = '\n'.join(['{',
                          '      %s *obj = %s ;' % (kind, value),
-                         '      %s.insert(obj) ;' % name,
+                         '      if (obj != nullptr) %s.insert(obj) ;' % name,
                          '      }'])
       else:
         assign = '%s.insert(%s) ;' % (name, value)
@@ -208,6 +208,22 @@ class Constructor(object):
   def preset(self, name, value):
   #-----------------------------
     self._preset.append('  set_%s(%s) ;' % (name, value))
+
+
+## Only if there are restrictions/presets...
+#  bool CLS::satisfies_restrictions(const rdf::Graph &graph)
+#  {
+##
+## We want to go from name of attribute (format) to its property (DCT::format)
+## Have this at (super-)class declaration in PROPERTY_type(attribute, property) statement.
+##
+## Each class has a (static) map, initially the same as the parent's
+##
+#    return (graph.contains(uri(), m_filterprop1, m_filtervalue1)
+#         && graph.contains(uri(), m_filterprop2, m_filtervalue2)
+#         && ...) ;
+#    }
+
 
   def __str__(self):
   #-----------------

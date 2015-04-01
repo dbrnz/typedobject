@@ -69,11 +69,20 @@ namespace TypedObject {
     return type().to_string() + ": <" + m_uri.to_string() + ">" ;
     }
 
+
+  bool TypedObject::satisfies_restrictions(const rdf::Graph &graph)
+  /*-------------------------------------------------------------*/
+  {
+    return true ;
+    }
+
+
   bool TypedObject::add_metadata(const rdf::Graph &graph)
   /*---------------------------------------------------*/
   {
     if (m_uri.is_valid()) {
-      if (graph.contains(m_uri, rdf::RDF::type, type())) {   // Needs to be sub-classes
+      if (graph.contains(m_uri, rdf::RDF::type, type())               // Needs to be sub-classes
+       && satisfies_restrictions(graph)) {
         rdf::StatementIter statements = graph.getStatements(m_uri, rdf::Node(), rdf::Node()) ;
         if (!statements.end()) {
           do {

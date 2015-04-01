@@ -159,6 +159,8 @@ namespace TypedObject
     virtual void assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property,
                                  const rdf::Node &value,  const bool reverse) = 0 ;
     virtual void save_as_rdf(const rdf::Graph &graph) = 0 ;
+    virtual bool satisfies_restrictions(const rdf::Graph &graph) ;
+
    public:
     virtual const rdf::URI &type(void) const = 0 ;
     inline const rdf::URI &uri() const { return m_uri ; }
@@ -183,8 +185,8 @@ namespace TypedObject
           rdf::URI type = rdf::URI(types.get_object()) ;
           if (subtypes.find(type) != subtypes.end()) {
             TypedObject *obj = create(type, uri.to_string()) ;
-            obj->add_metadata(graph) ;
-            return dynamic_cast<T *>(obj) ;
+            if (obj->add_metadata(graph)) return dynamic_cast<T *>(obj) ;
+            else delete obj ;
             }
           } while (!types.next()) ;
         }
