@@ -180,7 +180,8 @@ class Constructor(object):
       self._comma = ',\n  '
     else:
       self._comma = ': '
-    self._dtr = ['', '{', '  }', '', '%(cls)s::~%(cls)s()' % {'cls': cls}, '{']
+    self._preset = ['', '{']
+    self._dtr = ['', '  }', '', '%(cls)s::~%(cls)s()' % {'cls': cls}, '{']
 
   def initialise(self, name, kind, prop, *options):
   #-----------------------------------------------
@@ -204,9 +205,13 @@ class Constructor(object):
         self._dtr.append('    if (e != nullptr) delete e ;')
         self._dtr.append('    }')
 
+  def preset(self, name, value):
+  #-----------------------------
+    self._preset.append('  set_%s(%s) ;' % (name, value))
+
   def __str__(self):
   #-----------------
-    return ''.join(self._ctr) + '\n'.join(self._dtr) + '\n  }\n\n'
+    return ''.join(self._ctr) + '\n'.join(self._preset) + '\n'.join(self._dtr) + '\n  }\n\n'
 
 
 class Generator(object):
@@ -219,7 +224,7 @@ class Generator(object):
     self._classes = [ ]
     self._class = None
     self._base = None
-    self._properties = ({ }, { })
+    self._properties = ({ }, { }, { })
     self._usednames = [ ]
 
   def save(self, hdr, fn):
@@ -250,6 +255,8 @@ class Generator(object):
       for p, v in cls[3][1].iteritems():
         a.add_property(p, *v)
         s.save_property(p, *v)
+      for p, v in cls[3][2].iteritems():  ###
+        c.preset(p, v[0])
       code.append(str(c))
       code.append(str(a))
       code.append(str(s))
@@ -279,7 +286,7 @@ class Generator(object):
       self._classes.append(('::'.join(self._namespaces), self._class, self._base, self._properties))
       self._class = None
       self._base = None
-      self._properties = ({ }, { })
+      self._properties = ({ }, { }, { })
 
   def add_property(self, name, *params):
   #-------------------------------------
@@ -290,6 +297,11 @@ class Generator(object):
   #-------------------------------------
     if self._class is not None:
       self._properties[1][name] = params
+
+  def add_restriction(self, name, *params):
+  #----------------------------------------
+    if self._class is not None:
+      self._properties[2][name] = params
 
   def use_namespace(self, name):
   #-----------------------------
@@ -352,6 +364,12 @@ class Parser(object):
       if c.kind == CursorKind.CALL_EXPR and c.displayname.startswith('_PARAMETERS_'):
         self._generator.add_assignment(name, *self.parse_parameters(c, c.displayname[12:]))
 
+  def parse_restriction(self, name, cursor):
+  #-----------------------------------------
+    for c in cursor.get_children():
+      if c.kind == CursorKind.CALL_EXPR and c.displayname.startswith('_PARAMETERS_'):
+        self._generator.add_restriction(name, *self.parse_parameters(c, c.displayname[12:]))
+
   def parse_using(self, cursor):
   #-----------------------------
     ns = None
@@ -397,6 +415,9 @@ class Parser(object):
 
     elif cursor.kind == CursorKind.VAR_DECL and name.startswith('_ASSIGN_'):
       self.parse_assignment(name[8:], cursor)
+
+    elif cursor.kind == CursorKind.VAR_DECL and name.startswith('_RESTRICT_'):
+      self.parse_restriction(name[10:], cursor)
 
     elif cursor.kind == CursorKind.USING_DIRECTIVE:
       self.parse_using(cursor)

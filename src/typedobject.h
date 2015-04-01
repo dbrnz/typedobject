@@ -40,6 +40,9 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
 #define _ASSIGN(NAME, P, T, ...)          \
   static int _ASSIGN_##NAME##    = _PARAMETERS_3(#T, #P, #__VA_ARGS__) ;
 
+#define _RESTRICTION(NAME, VALUE, ...)   \
+  static int _RESTRICT_##NAME##  = _PARAMETERS_2(#VALUE, #__VA_ARGS__) ;
+
 #else
 
 #define TYPED_OBJECT(CLASS, TYPE)         \
@@ -96,6 +99,7 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
 #define _PROPERTY_OBJ_RSET(NAME, P, T, ...)  _PROPERTY_OBJ_SET(NAME, P, T)
 
 #define _ASSIGN(NAME, P, T, ...)
+#define _RESTRICTION(NAME, VALUE, ...)
 
 #endif
 
@@ -118,6 +122,8 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
 
 #define ASSIGN_DATETIME(NAME, P)         _ASSIGN(NAME, P, utils::Datetime)
 #define ASSIGN_DURATION(NAME, P)         _ASSIGN(NAME, P, utils::Duration)
+
+#define RESTRICTION(NAME, VALUE)         _RESTRICTION(NAME, VALUE)
 
 
 namespace TypedObject
