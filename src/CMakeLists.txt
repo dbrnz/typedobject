@@ -1,7 +1,7 @@
 # Find Boost date time package:
 #
 find_package(Boost COMPONENTS date_time)
-set(INCLUDES ${CMAKE_CURRENT_SOURCE_DIR} ${Boost_INCLUDE_DIRS})
+set(INCLUDES ${Boost_INCLUDE_DIRS})
 set(LIBS ${Boost_DATE_TIME_LIBRARY})  ## Only if Boost datetime IO
 
 
