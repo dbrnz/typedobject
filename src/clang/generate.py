@@ -222,11 +222,10 @@ class Generator(object):
     self._properties = ({ }, { })
     self._usednames = [ ]
 
-  def save(self, fn):
-  #------------------
+  def save(self, hdr, fn):
+  #-----------------------
     if len(self._classes) == 0: return
-    (path, f) = os.path.split(os.path.splitext(self._file)[0])
-    code = ['#include "%s.h"' % f]
+    code = ['#include "%s"' % hdr]
     if self._usednames:
       code.append('')
       for n in self._usednames:
@@ -301,11 +300,12 @@ class Generator(object):
 class Parser(object):
 #====================
 
-  def __init__(self, source, output, options=[]):
-  #----------------------------------------------
+  def __init__(self, path, header, output, options=[]):
+  #----------------------------------------------------
     index = clang.cindex.Index.create()
     defopts = ['-x', 'c++', '-DTYPED_OBJECT_COMPILE', '-Xclang', '-fsyntax-only']
-    self._tu = index.parse(source, defopts + options)
+    self._header = header
+    self._tu = index.parse(os.path.join(path, header), defopts + options)
     self._output = output
     self._generator = None
     self._class = None
@@ -372,7 +372,7 @@ class Parser(object):
       self._file = name
       self._generator = Generator(name)
       self.parse_children(cursor)
-      self._generator.save(self._output)
+      self._generator.save(self._header, self._output)
 
     elif kind == CursorKind.NAMESPACE:
       self._generator.add_namespace(name)
@@ -405,8 +405,7 @@ class Parser(object):
 if __name__ == '__main__':
 #=========================
 
-  if len(sys.argv) < 3:
-    (path, f) = os.path.split(os.path.splitext(sys.argv[1])[0])
-    sys.argv.append(os.path.join(path, 'tobj_%s.cpp' % f))
-  p = Parser(sys.argv[-2], sys.argv[-1], sys.argv[1:-2])
+  if len(sys.argv) < 4:
+    sys.exit("Usage: %s [OPTIONS] SOURCE_DIR HEADER_FILE OUTPUT_PATH")
+  p = Parser(sys.argv[-3], sys.argv[-2], sys.argv[-1], sys.argv[1:-3])
   p.generate()
