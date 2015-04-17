@@ -176,7 +176,9 @@ class Constructor(object):
 
 %(ctr)s(const std::string &uri)\n''' % {'ctr': ctr}]
     if base:
-      self._ctr.append(': %s(uri)' % base)
+      b = base.split('::')
+      if len(b) > 1 and b[-2] == b[-1]: del b[-1]
+      self._ctr.append(': %s(uri)' % '::'.join(b))
       self._comma = ',\n  '
     else:
       self._comma = ': '
