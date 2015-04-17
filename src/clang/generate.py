@@ -287,7 +287,6 @@ class Generator(object):
       for n in namespaces:
         code.append('} ;')
         code.append('')
-    output = open(fn, 'wb')
     output.write('\n'.join(code))
     output.close()
 
