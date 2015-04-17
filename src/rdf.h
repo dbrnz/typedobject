@@ -1,5 +1,5 @@
-#ifndef RDF_RDF_H
-#define RDF_RDF_H
+#ifndef TYPEDOBJECT_RDF_H
+#define TYPEDOBJECT_RDF_H
 
 //**************************************************************************//
 

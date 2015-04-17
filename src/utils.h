@@ -1,8 +1,8 @@
-#ifndef TYPED_OBJECT_UTILS_H
-#define TYPED_OBJECT_UTILS_H
+#ifndef TYPEDOBJECT_UTILS_H
+#define TYPEDOBJECT_UTILS_H
 
-#include "typedobject/rdf.h"
-#include "typedobject/rdfdefs.h"
+#include "rdf.h"
+#include "rdfdefs.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp> // _types.hpp>
 

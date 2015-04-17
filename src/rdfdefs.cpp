@@ -1,4 +1,4 @@
-#include "typedobject/rdfdefs.h"
+#include "rdfdefs.h"
 
 namespace rdf {
 
