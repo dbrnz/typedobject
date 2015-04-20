@@ -130,6 +130,8 @@ namespace TypedObject
 /*=================*/
 {
 
+  const std::string VERSION = "0.0.5" ;
+
   class TypedObject ;
 
   class TypedObjectFactory
