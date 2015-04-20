@@ -11,7 +11,7 @@ function(typedobject_generate generated_files header_file)
     OUTPUT ${gen_file}
     COMMAND python ${typedobject_DIR}/src/clang/generate.py
                    -I${CMAKE_SOURCE_DIR}/src
-                   -I${typedobject_DIR}/src
+                   -I${typedobject_DIR}/include
                    ${CMAKE_CURRENT_SOURCE_DIR}
                    ${header_file}
                    ${gen_file}
