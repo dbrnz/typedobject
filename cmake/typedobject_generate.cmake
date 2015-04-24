@@ -15,7 +15,7 @@ function(typedobject_generate generated_files header_file)
                    ${CMAKE_CURRENT_SOURCE_DIR}
                    ${header_file}
                    ${gen_file}
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${header_file}
+    DEPENDS ${header_file}
     )
   set_source_files_properties(${gen_file} PROPERTIES GENERATED TRUE)
 endfunction()
