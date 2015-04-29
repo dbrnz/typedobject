@@ -1,38 +1,39 @@
 #ifndef TYPEDOBJECTS_RDFDEFS_H
 #define TYPEDOBJECTS_RDFDEFS_H
 
+#include "globals.h"
 #include "rdf.h"
 
 
 namespace rdf {
 
-  class RDF {
+  class TYPEDOBJECT_EXPORT RDF {
    public:
     static const Namespace NS ;
     static const URI type ;
     } ;
 
-  class RDFS {
+  class TYPEDOBJECT_EXPORT RDFS {
    public:
     static const Namespace NS ;
     static const URI label ;
     static const URI comment ;
     } ;
 
-  class XSD {
+  class TYPEDOBJECT_EXPORT XSD {
    public:
     static const Namespace NS ;
     static const URI dateTime ;
     static const URI dayTimeDuration ;
     } ;
 
-  class OWL {
+  class TYPEDOBJECT_EXPORT OWL {
    public:
     static const Namespace NS ;
     static const URI Object ;
     } ;
 
-  class DCT {
+  class TYPEDOBJECT_EXPORT DCT {
    public:
     static const Namespace NS ;
     static const URI description ;
@@ -44,25 +45,25 @@ namespace rdf {
     static const URI extent ;
   } ;
 
-  class PRV {
+  class TYPEDOBJECT_EXPORT PRV {
    public:
     static const Namespace NS ;
     static const URI precededBy ;
     } ;
 
-  class PROV {
+  class TYPEDOBJECT_EXPORT PROV {
    public:
     static const Namespace NS ;
     static const URI wasGeneratedBy ;
     } ;
 
-  class TIME {
+  class TYPEDOBJECT_EXPORT TIME {
    public:
     static const Namespace NS ;
     static const URI TemporalEntity ;
     } ;
 
-  class TL {
+  class TYPEDOBJECT_EXPORT TL {
    public:
     static const Namespace NS ;
     static const URI RelativeTimeLine ;
@@ -72,6 +73,6 @@ namespace rdf {
     static const URI duration ;
     } ;
 
-} ;
+  } ;
 
 #endif

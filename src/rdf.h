@@ -1,6 +1,8 @@
 #ifndef TYPEDOBJECT_RDF_H
 #define TYPEDOBJECT_RDF_H
 
+#include "globals.h"
+
 //**************************************************************************//
 
 #include <sord/sordmm.hpp>
@@ -23,8 +25,11 @@ namespace rdf {
   /*---------------------*/
 
 
-  class URI : public Node
-  /*-------------------*/
+
+
+
+  class TYPEDOBJECT_EXPORT URI : public Node
+  /*--------------------------------------*/
   {
    public:
     URI() ;
@@ -33,8 +38,8 @@ namespace rdf {
     } ;
 
 
-  class BNode : public Node
-  /*---------------------*/
+  class TYPEDOBJECT_EXPORT BNode : public Node
+  /*----------------------------------------*/
   {
    public:
     BNode() ;
@@ -42,8 +47,8 @@ namespace rdf {
     } ;
 
 
-  class Literal : public Node
-  /*-----------------------*/
+  class TYPEDOBJECT_EXPORT Literal : public Node
+  /*------------------------------------------*/
   {
    public:
     Literal() ;
@@ -76,8 +81,8 @@ namespace rdf {
   /*------------------------------*/
 
 
-  class Namespace
-  /*-----------*/
+  class TYPEDOBJECT_EXPORT Namespace
+  /*------------------------------*/
   {
    public:
     Namespace(const std::string &name, const std::string &uri) ;
@@ -93,8 +98,8 @@ namespace rdf {
     } ;
 
 
-  class Statement
-  /*-----------*/
+  class TYPEDOBJECT_EXPORT Statement
+  /*------------------------------*/
   {
    public:
     Statement(const Node &s, const Node &p, const Node &o) ;
@@ -106,8 +111,8 @@ namespace rdf {
     } ;
 
 
-  class Graph
-  /*-------*/
+  class TYPEDOBJECT_EXPORT Graph
+  /*--------------------------*/
   {
    public:
     Graph() ;

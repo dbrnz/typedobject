@@ -1,6 +1,7 @@
 #ifndef TYPEDOBJECT_TYPEDOBJECT_H
 #define TYPEDOBJECT_TYPEDOBJECT_H
 
+#include "globals.h"
 #include "rdf.h"
 #include "rdfdefs.h"
 #include "utils.h"
@@ -132,10 +133,10 @@ namespace TypedObject
 
   const std::string VERSION = "0.0.5" ;
 
-  class TypedObject ;
+  class TYPEDOBJECT_EXPORT TypedObject ;
 
-  class TypedObjectFactory
-  /*--------------------*/
+  class TYPEDOBJECT_EXPORT TypedObjectFactory
+  /*---------------------------------------*/
   {
    public:
     virtual TypedObject *create(const std::string &uri) = 0 ;
@@ -154,8 +155,8 @@ namespace TypedObject
   static int _global_##CLS##supertype = BASE::add_subtype(T) ;
 
 
-  class TypedObject
-  /*-------------*/
+  class TYPEDOBJECT_EXPORT TypedObject
+  /*--------------------------------*/
   {
    protected:
     virtual void assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property,

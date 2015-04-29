@@ -1,6 +1,7 @@
 #ifndef TYPEDOBJECT_UTILS_H
 #define TYPEDOBJECT_UTILS_H
 
+#include "globals.h"
 #include "rdf.h"
 #include "rdfdefs.h"
 
@@ -12,13 +13,17 @@
 
 namespace utils {
 
-  class TimeException : public std::range_error {
+  class TYPEDOBJECT_EXPORT TimeException : public std::range_error
+  /*------------------------------------------------------------*/
+  {
    public:
     TimeException(const std::string &reason)
      : std::range_error(reason) { }
     } ;
 
-  class Datetime {
+  class TYPEDOBJECT_EXPORT Datetime
+  /*------------------------------*/
+  {
    public:
     Datetime(): m_time(boost::date_time::not_a_date_time) { }
     Datetime(const std::string &dt) ;
@@ -30,7 +35,9 @@ namespace utils {
     boost::posix_time::ptime m_time ;
     } ;
 
-  class Duration {
+  class TYPEDOBJECT_EXPORT Duration
+  /*-----------------------------*/
+  {
    public:
     Duration(): m_duration(boost::date_time::not_a_date_time) { }
     Duration(const std::string &dt, const bool strict=false) ;
