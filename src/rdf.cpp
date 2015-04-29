@@ -192,8 +192,11 @@ rdf::URI rdf::Namespace::uri(void) const
 
 rdf::Statement::Statement(const rdf::Node &s, const rdf::Node &p, const rdf::Node &o)
 /*---------------------------------------------------------------------------------*/
-: m_quad{s.c_obj(), p.c_obj(), o.c_obj(), NULL}
 {
+  m_quad[0] = s.c_obj() ;
+  m_quad[1] = p.c_obj() ;
+  m_quad[2] = o.c_obj() ;
+  m_quad[3] = NULL ;
   }
 
 
