@@ -20,10 +20,9 @@ endif()
 #
 find_package(PkgConfig)
 
-
 # Find sord and its dependencies:
 #
-pkg_check_modules(SORD QUIET sord-0)
+pkg_check_modules(SORD REQUIRED sord-0)
 
 set(INCLUDES ${INCLUDES} ${SORD_INCLUDE_DIRS})
 add_definitions(${SORD_CFLAGS_OTHER})
@@ -38,7 +37,7 @@ endforeach()
 
 # Find raptor:
 #
-pkg_check_modules(RAPTOR QUIET raptor2)
+pkg_check_modules(RAPTOR REQUIRED raptor2)
 
 set(INCLUDES ${INCLUDES} ${RAPTOR_INCLUDE_DIRS})
 add_definitions(${RAPTOR_CFLAGS_OTHER})
