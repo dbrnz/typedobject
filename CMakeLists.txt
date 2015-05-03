@@ -102,7 +102,7 @@ install(
 
 install(
   FILES
-    src/clang/generate.py
+    bin/generate.py
   DESTINATION
     ${ConfigPackageLocation}/bin
   COMPONENT
