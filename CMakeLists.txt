@@ -12,6 +12,7 @@ endif()
 
 SET(typedobject_DIR ${CMAKE_CURRENT_LIST_DIR})
 include(${typedobject_DIR}/cmake/typedobject_generate.cmake)
+include(GenerateExportHeader)
 
 add_subdirectory(src)
 
@@ -20,6 +21,10 @@ add_subdirectory(tests)
 add_library(typedobject SHARED ${SOURCES})
 
 target_include_directories(typedobject PUBLIC ${INCLUDES})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
 
 target_link_libraries(typedobject ${LIBS})
+
+generate_export_header(typedobject)
 

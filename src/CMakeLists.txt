@@ -56,10 +56,6 @@ if(WIN32)
   message("LIBS: " ${LIBS})
 endif()
 
-add_definitions(-DTYPEDOBJECT_BUILD)
-
-add_definitions(-DTYPEDOBJECT_STATIC)
-
 
 set(INCLUDES ${INCLUDES} PARENT_SCOPE)
 set(LIBS     ${LIBS}     PARENT_SCOPE)

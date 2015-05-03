@@ -1,7 +1,7 @@
 #ifndef TYPEDOBJECT_TYPEDOBJECT_H
 #define TYPEDOBJECT_TYPEDOBJECT_H
 
-#include "globals.h"
+#include "typedobject_export.h"
 #include "rdf.h"
 #include "rdfdefs.h"
 #include "utils.h"
@@ -133,6 +133,12 @@ namespace TypedObject
 
   const std::string VERSION = "0.0.5" ;
 
+#ifdef TYPED_OBJECT_COMPILE
+
+  class TypedObject { } ;
+
+#else
+
   class TYPEDOBJECT_EXPORT TypedObject ;
 
   class TYPEDOBJECT_EXPORT TypedObjectFactory
@@ -227,6 +233,8 @@ namespace TypedObject
     rdf::URI m_uri ;
     static std::map<rdf::URI, TypedObjectFactory *> &m_factories(void) ;
     } ;
+
+#endif
 
   } ;
 

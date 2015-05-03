@@ -1,7 +1,7 @@
 #ifndef TYPEDOBJECT_RDF_H
 #define TYPEDOBJECT_RDF_H
 
-#include "globals.h"
+#include "typedobject_export.h"
 
 //**************************************************************************//
 
