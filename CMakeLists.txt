@@ -6,6 +6,8 @@ if (UNIX)
   add_definitions(-std=c++11)  # Use C++11
 elseif(WIN32)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+
+  add_definitions(-DRAPTOR_STATIC)
 endif()
 
 SET(typedobject_DIR ${CMAKE_CURRENT_LIST_DIR})
@@ -15,3 +17,9 @@ add_subdirectory(src)
 
 enable_testing()
 add_subdirectory(tests)
+add_library(typedobject SHARED ${SOURCES})
+
+target_include_directories(typedobject PUBLIC ${INCLUDES})
+
+target_link_libraries(typedobject ${LIBS})
+

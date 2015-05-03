@@ -47,8 +47,6 @@ set(LIBS ${LIBS} ${LIBRARY${LIBNUM}})
 
 #
 if(WIN32)
-  add_definitions(-DRAPTOR_STATIC)
-
   SET(LIBS ${LIBS}
            c:/utils/lib/libxml2.lib
            c:/utils/lib/libxslt.lib
@@ -62,13 +60,14 @@ add_definitions(-DTYPEDOBJECT_BUILD)
 
 add_definitions(-DTYPEDOBJECT_STATIC)
 
-set(SOURCES typedobject.cpp
-            rdf.cpp
-            rdfdefs.cpp
-            utils.cpp
-            )
 
-add_library(typedobject SHARED ${SOURCES})
+set(INCLUDES ${INCLUDES} PARENT_SCOPE)
+set(LIBS     ${LIBS}     PARENT_SCOPE)
 
-target_include_directories(typedobject PUBLIC ${INCLUDES})
-target_link_libraries(typedobject ${LIBS})
+set(SOURCES ${SOURCES}
+            ${CMAKE_CURRENT_SOURCE_DIR}/typedobject.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/rdf.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/rdfdefs.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/utils.cpp
+    PARENT_SCOPE
+    )
