@@ -430,19 +430,19 @@ class Parser(object):
     elif kind == CursorKind.CXX_BASE_SPECIFIER and self._class:
       self._base = self.parse_type(cursor)
 
-    elif cursor.kind == CursorKind.VAR_DECL and name == '_OBJECT_DEFINITION':
+    elif kind == CursorKind.VAR_DECL and name == '_OBJECT_DEFINITION':
       self._generator.start_class(self._class, self._base)
 
-    elif cursor.kind == CursorKind.VAR_DECL and name.startswith('_PROPERTY_'):
+    elif kind == CursorKind.VAR_DECL and name.startswith('_PROPERTY_'):
       self.parse_property(name[10:], cursor)
 
-    elif cursor.kind == CursorKind.VAR_DECL and name.startswith('_ASSIGN_'):
+    elif kind == CursorKind.VAR_DECL and name.startswith('_ASSIGN_'):
       self.parse_assignment(name[8:], cursor)
 
-    elif cursor.kind == CursorKind.VAR_DECL and name.startswith('_RESTRICT_'):
+    elif kind == CursorKind.VAR_DECL and name.startswith('_RESTRICT_'):
       self.parse_restriction(name[10:], cursor)
 
-    elif cursor.kind == CursorKind.USING_DIRECTIVE:
+    elif kind == CursorKind.USING_DIRECTIVE:
       self.parse_using(cursor)
 
 
