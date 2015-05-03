@@ -7,7 +7,7 @@ set(Boost_USE_STATIC_RUNTIME    OFF)
 find_package(Boost COMPONENTS date_time)
 
 if(Boost_FOUND)
-  set(INCLUDES ${Boost_INCLUDE_DIRS})
+  set(INCLUDES ${INCLUDES} ${Boost_INCLUDE_DIRS})
   LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
   set(LIBS ${Boost_DATE_TIME_LIBRARY})
 else()
