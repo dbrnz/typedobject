@@ -55,10 +55,10 @@ namespace rdf {
     Node() ;
     Node(NodeImpl * node) ;
     Node(const Node & other) ;
-    Node(Node && other) noexcept ;
-    virtual ~Node() noexcept ;
+    Node(Node && other) ;
+    virtual ~Node() ;
     Node & operator=(const Node & other) ;
-    Node & operator=(Node && other) noexcept ;
+    Node & operator=(Node && other) ;
 
     NodeImpl *node(void) const ;
 
@@ -91,9 +91,9 @@ namespace rdf {
     URI(const std::string & uri) ;
     URI(const Node & uri) ;
     URI(const URI & other) ;
-    URI(URI && other) noexcept ;
+    URI(URI && other) ;
     URI & operator=(const URI & other) ;
-    URI & operator=(URI && other) noexcept ;
+    URI & operator=(URI && other) ;
     } ;
 
 
@@ -104,9 +104,9 @@ namespace rdf {
     BNode() ;
     BNode(const std::string & s) ;
     BNode(const BNode & other) ;
-    BNode(BNode && other) noexcept ;
+    BNode(BNode && other) ;
     BNode & operator=(const BNode & other) ;
-    BNode & operator=(BNode && other) noexcept ;
+    BNode & operator=(BNode && other) ;
     } ;
 
 
@@ -121,9 +121,9 @@ namespace rdf {
     Literal(Decimal d, unsigned frac_digits) ;
     Literal(Integer i) ;
     Literal(const Literal & other) ;
-    Literal(Literal && other) noexcept ;
+    Literal(Literal && other) ;
     Literal & operator=(const Literal & other) ;
-    Literal & operator=(Literal && other) noexcept ;
+    Literal & operator=(Literal && other) ;
 
     class Constants {
      public:
@@ -161,10 +161,10 @@ namespace rdf {
     Statement() ;
     Statement(const Node & s, const Node & p, const Node & o) ;
     Statement(const Statement & other) ;
-    Statement(Statement && other) noexcept ;
-    virtual ~Statement() noexcept ;
+    Statement(Statement && other) ;
+    virtual ~Statement() ;
     Statement & operator=(const Statement & other) ;
-    Statement & operator=(Statement && other) noexcept ;
+    Statement & operator=(Statement && other) ;
 
    private:
     StmntImpl *m_stmnt ;
@@ -178,7 +178,7 @@ namespace rdf {
    public:
     StatementIter() ;
     StatementIter(IterImpl * iter) ;
-    virtual ~StatementIter() noexcept ;
+    virtual ~StatementIter() ;
 
     bool end(void) const ;
     bool next(void) const ;
@@ -200,7 +200,7 @@ namespace rdf {
    public:
     Graph() ;
     Graph(const std::string & uri) ;
-    virtual ~Graph() noexcept ;
+    virtual ~Graph() ;
 
     enum class Format {
       UNKNOWN = 0,

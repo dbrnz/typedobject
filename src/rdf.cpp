@@ -46,15 +46,15 @@ rdf::Node::Node(const rdf::Node & other)
 {
   }
 
-rdf::Node::Node(rdf::Node && other) noexcept
-/*----------------------------------------*/
+rdf::Node::Node(rdf::Node && other)
+/*-------------------------------*/
 : m_node(other.m_node)
 {
   other.m_node = nullptr;
   }
 
-rdf::Node::~Node() noexcept
-/*-----------------------*/
+rdf::Node::~Node()
+/*--------------*/
 {
   if (m_node != nullptr) delete m_node ;
   }
@@ -67,8 +67,8 @@ rdf::Node & rdf::Node::operator=(const rdf::Node & other)
   return *this ;
   }
 
-rdf::Node & rdf::Node::operator=(rdf::Node && other) noexcept
-/*---------------------------------------------------------*/
+rdf::Node & rdf::Node::operator=(rdf::Node && other)
+/*------------------------------------------------*/
 {
   std::swap(m_node, other.m_node) ;
   return *this ;
@@ -102,7 +102,7 @@ bool rdf::Node::is_valid(void) const
   }
 
 bool rdf::Node::is_literal_type(const char *type_uri) const
-/*--------------------------------*/
+/*-------------------------------------------------------*/
 {
   return m_node->is_literal_type(type_uri) ;
   }
@@ -189,8 +189,8 @@ rdf::URI::URI(const rdf::URI & other)
 {
   }
 
-rdf::URI::URI(rdf::URI && other) noexcept
-/*-------------------------------------*/
+rdf::URI::URI(rdf::URI && other)
+/*----------------------------*/
 : rdf::Node(std::move(other))
 {
   }
@@ -201,8 +201,8 @@ rdf::URI & rdf::URI::operator=(const rdf::URI & other)
   return static_cast<URI &>(rdf::Node::operator=(other)) ;
   }
 
-rdf::URI & rdf::URI::operator=(rdf::URI && other) noexcept
-/*------------------------------------------------------*/
+rdf::URI & rdf::URI::operator=(rdf::URI && other)
+/*---------------------------------------------*/
 {
   return static_cast<URI &>(rdf::Node::operator=(std::move(other))) ;
   }
@@ -228,8 +228,8 @@ rdf::BNode::BNode(const rdf::BNode & other)
 {
   }
 
-rdf::BNode::BNode(rdf::BNode && other) noexcept
-/*-------------------------------------------*/
+rdf::BNode::BNode(rdf::BNode && other)
+/*----------------------------------*/
 : rdf::Node(std::move(other))
 {
   }
@@ -240,8 +240,8 @@ rdf::BNode & rdf::BNode::operator=(const rdf::BNode & other)
   return static_cast<BNode &>(rdf::Node::operator=(other)) ;
   }
 
-rdf::BNode & rdf::BNode::operator=(rdf::BNode && other) noexcept
-/*-------------------------------------------------------------*/
+rdf::BNode & rdf::BNode::operator=(rdf::BNode && other)
+/*---------------------------------------------------*/
 {
   return static_cast<BNode &>(rdf::Node::operator=(std::move(other))) ;
   }
@@ -293,8 +293,8 @@ rdf::Literal::Literal(const rdf::Literal & other)
 {
   }
 
-rdf::Literal::Literal(rdf::Literal && other) noexcept
-/*-------------------------------------------------*/
+rdf::Literal::Literal(rdf::Literal && other)
+/*----------------------------------------*/
 : rdf::Node(std::move(other))
 {
   }
@@ -305,8 +305,8 @@ rdf::Literal & rdf::Literal::operator=(const rdf::Literal & other)
   return static_cast<Literal &>(rdf::Node::operator=(other)) ;
   }
 
-rdf::Literal & rdf::Literal::operator=(rdf::Literal && other) noexcept
-/*------------------------------------------------------------------*/
+rdf::Literal & rdf::Literal::operator=(rdf::Literal && other)
+/*---------------------------------------------------------*/
 {
   return static_cast<Literal &>(rdf::Node::operator=(std::move(other))) ;
   }
@@ -373,15 +373,15 @@ rdf::Statement::Statement(const rdf::Statement & other)
 {
   }
 
-rdf::Statement::Statement(rdf::Statement && other) noexcept
-/*-------------------------------------------------------*/
+rdf::Statement::Statement(rdf::Statement && other)
+/*----------------------------------------------*/
 : m_stmnt(other.m_stmnt)
 {
   other.m_stmnt = nullptr ;
   }
 
-rdf::Statement::~Statement() noexcept
-/*---------------------------------*/
+rdf::Statement::~Statement()
+/*------------------------*/
 {
   if (m_stmnt != nullptr) delete m_stmnt ;
   }
@@ -394,8 +394,8 @@ rdf::Statement & rdf::Statement::operator=(const rdf::Statement & other)
   return *this ;
   }
 
-rdf::Statement & rdf::Statement::operator=(rdf::Statement && other) noexcept
-/*------------------------------------------------------------------------*/
+rdf::Statement & rdf::Statement::operator=(rdf::Statement && other)
+/*---------------------------------------------------------------*/
 {
   std::swap(m_stmnt, other.m_stmnt) ;
   return *this ;
@@ -416,8 +416,8 @@ rdf::StatementIter::StatementIter(IterImpl *iter)
 {
   }
 
-rdf::StatementIter::~StatementIter() noexcept
-/*-----------------------------------------*/
+rdf::StatementIter::~StatementIter()
+/*--------------------------------*/
 {
   if (m_iter != nullptr) delete m_iter ;
   }
@@ -475,8 +475,8 @@ rdf::Graph::Graph(const std::string &uri)
 {
   }
 
-rdf::Graph::~Graph() noexcept
-/*-------------------------*/
+rdf::Graph::~Graph()
+/*----------------*/
 {
   if (m_graph != nullptr) delete m_graph ;
   }
