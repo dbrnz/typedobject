@@ -18,7 +18,7 @@
  *                                                                           *
  *****************************************************************************/
 
-#include "typedobject/rdf.h"
+#include "rdf.h"
 
 #include <iostream>
 

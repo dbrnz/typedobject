@@ -21,7 +21,7 @@
 #ifndef TEST_TYPES
 #define TEST_TYPES
 
-#include "typedobject/typedobject.h"
+#include "typedobject.h"
 
 #include <string>
 
