@@ -1,3 +1,5 @@
+set(LIBNUM 1)
+
 ### Find Boost date time package:
 #
 set(Boost_USE_STATIC_LIBS        ON)
@@ -8,14 +10,11 @@ find_package(Boost COMPONENTS date_time)
 #
 if(Boost_FOUND)
   set(INCLUDES ${INCLUDES} ${Boost_INCLUDE_DIRS})
-  LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
-  set(LIBS ${Boost_DATE_TIME_LIBRARY})
+  set(LIBS ${LIBS} ${Boost_DATE_TIME_LIBRARY})
 else()
   message(ERROR "Can't find Boost date time library")
 endif()
 ###
-
-
 
 ### Use pkg-config to find RDF libraries:
 #
@@ -29,10 +28,9 @@ pkg_check_modules(SORD REQUIRED sord-0)
 set(INCLUDES ${INCLUDES} ${SORD_INCLUDE_DIRS})
 #
 add_definitions(${SORD_CFLAGS_OTHER})
-
-set(LIBNUM 1)
 #
 foreach(LIBRARY_NAME ${SORD_LIBRARIES})
+  unset(LIBRARY${LIBNUM} CACHE)
   find_library(LIBRARY${LIBNUM} ${LIBRARY_NAME} PATHS ${SORD_LIBRARY_DIRS})
   set(LIBS ${LIBS} ${LIBRARY${LIBNUM}})
   MATH(EXPR LIBNUM "${LIBNUM}+1")
@@ -47,6 +45,7 @@ set(INCLUDES ${INCLUDES} ${RAPTOR_INCLUDE_DIRS})
 #
 add_definitions(${RAPTOR_CFLAGS_OTHER})
 #
+unset(LIBRARY${LIBNUM} CACHE)
 find_library(LIBRARY${LIBNUM} ${RAPTOR_LIBRARIES} PATHS ${RAPTOR_LIBRARY_DIRS})
 set(LIBS ${LIBS} ${LIBRARY${LIBNUM}})
 #
