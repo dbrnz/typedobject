@@ -68,6 +68,7 @@ set(LIBS     ${LIBS}     PARENT_SCOPE)
 set(SOURCES ${SOURCES}
             ${CMAKE_CURRENT_SOURCE_DIR}/typedobject.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/rdf.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/rdfimpl.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/rdfdefs.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/utils.cpp
     PARENT_SCOPE
