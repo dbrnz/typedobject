@@ -56,7 +56,6 @@ if(WIN32)
            c:/utils/lib/iconv.lib
            c:/utils/lib/zlib.lib
       )
-  message("LIBS: " ${LIBS})
 endif()
 ###
 
