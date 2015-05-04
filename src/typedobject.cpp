@@ -44,7 +44,7 @@ namespace TypedObject {
     }
 
   TypedObject::~TypedObject()
-  /*---------------*/
+  /*-----------------------*/
   {
     }
 
@@ -103,13 +103,13 @@ namespace TypedObject {
     if (m_uri.is_valid()) {
       if (graph.contains(m_uri, rdf::RDF::type, type())               // Needs to be sub-classes
        && satisfies_restrictions(graph)) {
-        rdf::StatementIter statements = graph.getStatements(m_uri, rdf::Node(), rdf::Node()) ;
+        rdf::StatementIter statements = graph.get_statements(m_uri, rdf::Node(), rdf::Node()) ;
         if (!statements.end()) {
           do {
             assign_from_rdf(graph, statements.get_predicate(), statements.get_object(), false) ;
             } while (!statements.next()) ;
           }
-        rdf::StatementIter rstatements = graph.getStatements(rdf::Node(), rdf::Node(), m_uri) ;
+        rdf::StatementIter rstatements = graph.get_statements(rdf::Node(), rdf::Node(), m_uri) ;
         if (!rstatements.end()) {
           do {
             assign_from_rdf(graph, rstatements.get_predicate(), rstatements.get_subject(), true) ;

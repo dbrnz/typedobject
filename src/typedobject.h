@@ -133,6 +133,9 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
 #define PROPERTY_DURATION(NAME, P)       _PROPERTY(NAME, P, utils::Duration)
 #define PROPERTY_OBJECT(NAME, P, T)      _PROPERTY_OBJ(NAME, P, T)
 
+// What is the difference between URI, NODE, and OBJECT properties??
+// Could URI and NODE be combined? And renamed to RESOURCE??
+
 #define PROPERTY_STRING_SET(NAME, P)     _PROPERTY_SET(NAME, P, std::string)
 #define PROPERTY_NODE_SET(NAME, P)       _PROPERTY_SET(NAME, P, rdf::Node)
 #define PROPERTY_URI_SET(NAME, P)        _PROPERTY_SET(NAME, P, rdf::URI)
@@ -208,7 +211,7 @@ namespace TypedObject
     static T *create(std::set<rdf::URI> &subtypes, const rdf::Node &uri, const rdf::Graph &graph)
     /*-----------------------------------------------------------------------------------------*/
     {
-      rdf::StatementIter types = graph.getStatements(uri, rdf::RDF::type, rdf::Node()) ;
+      rdf::StatementIter types = graph.get_statements(uri, rdf::RDF::type, rdf::Node()) ;
       if (!types.end()) {
         do {
           rdf::URI type = rdf::URI(types.get_object()) ;

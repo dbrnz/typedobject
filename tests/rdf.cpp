@@ -90,13 +90,13 @@ int main(void)
 </rdf:RDF>
   )" ;
 
-//  g.parseString(turtle, rdf::Graph::Format::TURTLE) ;
-//  g.parseString(xml, rdf::Graph::Format::RDFXML, "http://base.org") ;
-//  g.parseResource("file:///Users/dave/biosignalml/aobject/build/test.xml", rdf::Graph::Format::RDFXML) ;
-//  g.parseResource("test.xml", rdf::Graph::Format::RDFXML) ;
+//  g.parse_string(turtle, rdf::Graph::Format::TURTLE) ;
+//  g.parse_string(xml, rdf::Graph::Format::RDFXML, "http://base.org") ;
+//  g.parse_resource("file:///Users/dave/biosignalml/aobject/build/test.xml", rdf::Graph::Format::RDFXML) ;
+//  g.parse_resource("test.xml", rdf::Graph::Format::RDFXML) ;
 
-//  g.parseResource("http://demo.biosignalml.org/physiobank/mitdb/102/signal/ECG1") ;
-  g.parseResource("http://demo.biosignalml.org/physiobank/mitdb/102") ;
+//  g.parse_resource("http://demo.biosignalml.org/physiobank/mitdb/102/signal/ECG1") ;
+  g.parse_resource("http://demo.biosignalml.org/physiobank/mitdb/102") ;
 
 
   std::cout << g.serialise(rdf::Graph::Format::TURTLE) << std::endl ;
