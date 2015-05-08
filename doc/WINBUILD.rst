@@ -19,8 +19,9 @@ These notes install libraries into a Unix-like directory structure under
 Visual C
 --------
 
-The appropriate Visual C environment needs to be first setup by running
-``vcvarsall.bat``. For 64-bit compiles under VS2013 the command is: ::
+Visual Studio 2013 is required to build ``typedobject``. After installing
+VS2013, the appropriate Visual C environment needs to be first setup by running
+``vcvarsall.bat``. For 64-bit compiles the command is: ::
 
   "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" amd64 
 
@@ -247,7 +248,7 @@ sord
   ``python waf configure``.
 
 
-Boost Date Time
+Boost date-time
 ---------------
 
 * Download and extract the latest version of Boost from
@@ -262,7 +263,10 @@ Boost Date Time
 
 * For a debug version of the library use ``variant=debug`` when running ``b2``.
 
-* Windows: BOOST_ROOT=C:\boost_1_58_0
+* Set the ``BOOST_ROOT`` environment variable to the directory where Boost was
+  installed: ::
+
+    set BOOST_ROOT=C:\boost_1_58_0
 
 
 libclang
