@@ -7,5 +7,5 @@ if (NOT WIN32)
 endif (NOT WIN32)
 
 set(typedobject_INCLUDE_DIR "${_IMPORT_PREFIX}/include")
-set(typedobject_LIBRARY_DIRS "${_IMPORT_PREFIX}/lib")
+set(typedobject_LIBRARY_DIR "${_IMPORT_PREFIX}/lib")
 
