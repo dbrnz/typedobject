@@ -268,11 +268,9 @@ class Generator(object):
 
   def save(self, hdr, fn):
   #-----------------------
+    if len(self._classes) == 0: return
     output = open(fn, 'wb')
     output.write('// Generated at: %s\n' % datetime.datetime.now())
-    if len(self._classes) == 0:
-      output.close()
-      return
     code = ['#include "%s"' % hdr]
     if self._usednames:
       code.append('')
