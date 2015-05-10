@@ -47,13 +47,17 @@ installation and within CMake scripts.
 Python
 -------
 
-Python 2.7 is required to run some build scripts and for the typedobject code
+Python 2.7 is required to run some build scripts and the code
 generation utility.
 
 * Get and run the Windows installer for the latest 2.7 release
   (https://www.python.org/ftp/python/2.7.9/python-2.7.9.msi).
 
 * Extend the PATH by adding ``c:\Python27;c:\Python27\Scripts``.
+
+* The ``py2exe`` utility is used for producing a standalone execuatable of the
+  code generator. It can be downloaded and installed from
+  http://sourceforge.net/projects/py2exe/files/py2exe/0.6.9/
 
 
 zlib
