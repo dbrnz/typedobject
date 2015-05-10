@@ -126,12 +126,13 @@ namespace rdf {
     Literal & operator=(const Literal & other) ;
     Literal & operator=(Literal && other) ;
 
-    class Constants {
+    class TYPEDOBJECT_EXPORT Constants {
      public:
       static const char *       EMPTY_STRING ;
       static const rdf::Decimal EMPTY_DECIMAL ;
       static const rdf::Integer EMPTY_INTEGER ;
       } ;
+
     inline static bool not_empty(const std::string &s) { return (s != Constants::EMPTY_STRING) ; }
     inline static bool not_empty(const Decimal d) { return std::isfinite(d) ; }
     inline static bool not_empty(const Integer i) { return (i != Constants::EMPTY_INTEGER) ; }
