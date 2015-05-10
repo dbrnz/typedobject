@@ -128,7 +128,7 @@ namespace rdf {
 
     class Constants {
      public:
-      static const std::string EMPTY_STRING ;
+      static const char *       EMPTY_STRING ;
       static const rdf::Decimal EMPTY_DECIMAL ;
       static const rdf::Integer EMPTY_INTEGER ;
       } ;

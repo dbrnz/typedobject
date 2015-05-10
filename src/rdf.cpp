@@ -312,7 +312,7 @@ rdf::Literal & rdf::Literal::operator=(rdf::Literal && other)
   }
 
 
-const std::string rdf::Literal::Constants::EMPTY_STRING
+const char * rdf::Literal::Constants::EMPTY_STRING
 /*---------------------------------------------------*/
 = "" ;
 
