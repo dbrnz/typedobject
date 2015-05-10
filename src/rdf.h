@@ -119,7 +119,7 @@ namespace rdf {
     Literal(const std::string & s) ;
     Literal(const std::string & s, const rdf::URI & datatype) ;
     Literal(const std::string & s, const std::string & language) ;
-    Literal(Decimal d, unsigned frac_digits) ;
+    Literal(Decimal d, unsigned frac_digits=7) ;
     Literal(Integer i) ;
     Literal(const Literal & other) ;
     Literal(Literal && other) ;
