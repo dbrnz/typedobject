@@ -33,12 +33,7 @@ generate_export_header(typedobject)
 
 target_include_directories(typedobject PUBLIC ${INCLUDES})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
-foreach(LN ${LIBS})
-  message("L: " ${LN})
-endforeach()
 target_link_libraries(typedobject ${LIBS})
-
 
 set_property(TARGET typedobject PROPERTY VERSION ${TypedObject_VERSION})
 set_property(TARGET typedobject PROPERTY SOVERSION 3)
