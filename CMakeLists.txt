@@ -11,11 +11,13 @@ if (UNIX)
   add_definitions(-std=c++11)  # Use C++11
 elseif(WIN32)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-
   add_definitions(-DRAPTOR_STATIC)
 endif()
 
+### Use pkg-config to find libraries:
+find_package(PkgConfig)
 
+### CMake helpers...
 include(GenerateExportHeader)
 include(CMakePackageConfigHelpers)
 
@@ -23,18 +25,20 @@ include(cmake/typedobject_generate.cmake)
 
 add_subdirectory(src)
 
-
 enable_testing()
 add_subdirectory(tests)
 
-
-add_library(typedobject STATIC ${SOURCES})
+add_library(typedobject SHARED ${SOURCES})
+generate_export_header(typedobject)
 
 target_include_directories(typedobject PUBLIC ${INCLUDES})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+foreach(LN ${LIBS})
+  message("L: " ${LN})
+endforeach()
 target_link_libraries(typedobject ${LIBS})
 
-generate_export_header(typedobject)
 
 set_property(TARGET typedobject PROPERTY VERSION ${TypedObject_VERSION})
 set_property(TARGET typedobject PROPERTY SOVERSION 3)

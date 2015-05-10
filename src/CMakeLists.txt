@@ -1,62 +1,47 @@
-set(LIBNUM 1)
-
 ### Find Boost date time package:
-#
 set(Boost_USE_STATIC_LIBS        ON)
 set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
-#
+if(WIN32)
+  add_definitions(-DBOOST_ALL_NO_LIB)
+endif()
 find_package(Boost COMPONENTS date_time)
-#
+
 if(Boost_FOUND)
   set(INCLUDES ${INCLUDES} ${Boost_INCLUDE_DIRS})
-  set(LIBS ${LIBS} ${Boost_DATE_TIME_LIBRARY})
+  set(LIBS ${LIBS} ${Boost_LIBRARIES})
 else()
   message(ERROR "Can't find Boost date time library")
 endif()
 ###
 
-### Use pkg-config to find RDF libraries:
-#
-find_package(PkgConfig)
-###
 
 ### Find sord and its dependencies:
-#
 pkg_check_modules(SORD REQUIRED sord-0)
-#
+
 set(INCLUDES ${INCLUDES} ${SORD_INCLUDE_DIRS})
-#
 add_definitions(${SORD_CFLAGS_OTHER})
-#
+
 foreach(LIBRARY_NAME ${SORD_LIBRARIES})
-  unset(LIBRARY${LIBNUM} CACHE)
-  find_library(LIBRARY${LIBNUM} ${LIBRARY_NAME} PATHS ${SORD_LIBRARY_DIRS})
-  set(LIBS ${LIBS} ${LIBRARY${LIBNUM}})
-  MATH(EXPR LIBNUM "${LIBNUM}+1")
+  unset(LIBNAME CACHE)
+  find_library(LIBNAME ${LIBRARY_NAME} PATHS ${SORD_LIBRARY_DIRS})
+  set(LIBS ${LIBS} ${LIBNAME})
 endforeach()
 ###
 
-### Find Raptor:
-#
+
+### Find Raptor and its dependencies:
 pkg_check_modules(RAPTOR REQUIRED raptor2)
-#
+
 set(INCLUDES ${INCLUDES} ${RAPTOR_INCLUDE_DIRS})
-#
 add_definitions(${RAPTOR_CFLAGS_OTHER})
-#
-unset(LIBRARY${LIBNUM} CACHE)
-find_library(LIBRARY${LIBNUM} ${RAPTOR_LIBRARIES} PATHS ${RAPTOR_LIBRARY_DIRS})
-set(LIBS ${LIBS} ${LIBRARY${LIBNUM}})
-#
-if(WIN32)
-  SET(LIBS ${LIBS}
-           c:/utils/lib/libxml2.lib
-           c:/utils/lib/libxslt.lib
-           c:/utils/lib/iconv.lib
-           c:/utils/lib/zlib.lib
-      )
-endif()
+
+message("LIBRARY_NAME ${RAPTOR_LIBRARIES}")
+foreach(LIBRARY_NAME ${RAPTOR_LIBRARIES})
+  unset(LIBNAME CACHE)
+  find_library(LIBNAME ${LIBRARY_NAME} PATHS ${RAPTOR_LIBRARY_DIRS})
+  set(LIBS ${LIBS} ${LIBNAME})
+endforeach()
 ###
 
 
