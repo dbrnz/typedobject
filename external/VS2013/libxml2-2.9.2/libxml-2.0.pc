@@ -1,0 +1,11 @@
+prefix=c:/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libXML
+Version: 2.9.2
+Description: libXML library version 2.
+Requires: iconv zlib
+Libs: -L${libdir} -llibxml2_a
+Cflags: -I${includedir} LIBXML_STATIC
