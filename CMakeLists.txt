@@ -21,7 +21,6 @@ find_package(PkgConfig)
 include(GenerateExportHeader)
 include(CMakePackageConfigHelpers)
 
-include(cmake/typedobject_generate.cmake)
 set(INCLUDES $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>)
 
 add_subdirectory(src)
