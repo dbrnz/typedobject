@@ -22,6 +22,7 @@ include(GenerateExportHeader)
 include(CMakePackageConfigHelpers)
 
 include(cmake/typedobject_generate.cmake)
+set(INCLUDES $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>)
 
 add_subdirectory(src)
 
@@ -29,7 +30,9 @@ enable_testing()
 add_subdirectory(tests)
 
 add_library(typedobject SHARED ${SOURCES})
-generate_export_header(typedobject)
+generate_export_header(typedobject
+                        EXPORT_FILE_NAME
+                        ${CMAKE_SOURCE_DIR}/include/typedobject/typedobject_export.h)
 
 target_include_directories(typedobject PUBLIC ${INCLUDES})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
@@ -50,18 +53,13 @@ install(TARGETS typedobject EXPORT typedobjectTargets
   )
 
 install(
-  FILES
-    src/typedobject.h
-    src/rdf.h
-    src/rdfdefs.h
-    src/utils.h
-    "${CMAKE_CURRENT_BINARY_DIR}/typedobject_export.h"
+  DIRECTORY
+    ${CMAKE_SOURCE_DIR}/include/typedobject
   DESTINATION
-    include/typedobject
+    include
   COMPONENT
     Devel
   )
-
 
 write_basic_package_version_file(
   "${CMAKE_CURRENT_BINARY_DIR}/typedobject/typedobjectConfigVersion.cmake"

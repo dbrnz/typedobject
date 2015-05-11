@@ -18,7 +18,7 @@
  *                                                                           *
  *****************************************************************************/
 
-#include "utils.h"
+#include "typedobject/utils.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp> // _types.hpp>
 
