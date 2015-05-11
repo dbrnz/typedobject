@@ -1,4 +1,4 @@
-function(typedobject_generate generated_files header_file)
+function(typedobject_generate generated_files header_file includes)
 
   string(LENGTH ${CMAKE_SOURCE_DIR} srclen)
   get_filename_component(dir ${header_file} DIRECTORY)
@@ -13,11 +13,15 @@ function(typedobject_generate generated_files header_file)
   set(gen_file ${CMAKE_BINARY_DIR}/${dir}/tobj_${base}.cpp)
   set(${generated_files} ${${generated_files}} ${gen_file} PARENT_SCOPE)
 
+  set(include_list)
+  foreach(file ${includes})
+    set(include_list ${include_list} "-I${file} ")
+  endforeach()
+
   add_custom_command(
     OUTPUT ${gen_file}
     COMMAND python ${typedobject_DIR}/bin/generate.py
-                   -I${CMAKE_SOURCE_DIR}/src
-                   -I${typedobject_DIR}/src
+                   ${include_list}
                    ${CMAKE_CURRENT_SOURCE_DIR}
                    ${header_file}
                    ${gen_file}
