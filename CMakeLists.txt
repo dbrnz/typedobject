@@ -1,8 +1,14 @@
 cmake_minimum_required(VERSION 3.0)
 
-
 project("TypedObjectLib")
 set(TypedObject_VERSION 0.0.5)
+
+### CMake helpers...
+include(GenerateExportHeader)
+include(CMakePackageConfigHelpers)
+
+### Use pkg-config to find libraries:
+find_package(PkgConfig)
 
 
 set(typedobject_DIR ${CMAKE_SOURCE_DIR})
@@ -13,13 +19,6 @@ elseif(WIN32)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
   add_definitions(-DRAPTOR_STATIC)
 endif()
-
-### Use pkg-config to find libraries:
-find_package(PkgConfig)
-
-### CMake helpers...
-include(GenerateExportHeader)
-include(CMakePackageConfigHelpers)
 
 set(INCLUDES $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>)
 
