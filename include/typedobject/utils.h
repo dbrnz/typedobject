@@ -50,9 +50,14 @@ namespace utils {
   {
    public:
     Datetime() ;
-    Datetime(const std::string &dt) ;
-    Datetime(const rdf::Node &node) ;
+    Datetime(const std::string & dt) ;
+    Datetime(const rdf::Node & node) ;
+    Datetime(const Datetime & other) ;
+    Datetime(Datetime && other) ;
     virtual ~Datetime() ;
+    Datetime & operator=(const Datetime & other) ;
+    Datetime & operator=(Datetime && other) ;
+
     std::string to_string(void) const ;
     rdf::Literal to_literal(void) ;
     bool is_valid(void) const ;
@@ -66,9 +71,14 @@ namespace utils {
   {
    public:
     Duration() ;
-    Duration(const std::string &dt, const bool strict=false) ;
-    Duration(const rdf::Node &node) ;
+    Duration(const std::string & dt, const bool strict=false) ;
+    Duration(const rdf::Node & node) ;
+    Duration(const Duration & other) ;
+    Duration(Duration && other) ;
     virtual ~Duration() ;
+    Duration & operator=(const Duration & other) ;
+    Duration & operator=(Duration && other) ;
+
     std::string to_string(void) const ;
     rdf::Literal to_literal(void) ;
     bool is_valid(void) const ;

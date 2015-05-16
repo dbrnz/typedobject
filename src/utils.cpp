@@ -216,24 +216,52 @@ utils::Datetime::Datetime()
 {
   }
 
-utils::Datetime::Datetime(const std::string &dt)
-/*--------------------------------------------*/
+utils::Datetime::Datetime(const std::string & dt)
+/*---------------------------------------------*/
 : m_datetime(new DatetimeImpl(dt))
 {
   }
 
-utils::Datetime::Datetime(const rdf::Node &node)
-/*--------------------------------------------*/
+utils::Datetime::Datetime(const rdf::Node & node)
+/*---------------------------------------------*/
 {
   if (!node.is_literal_type(rdf::XSD::dateTime.to_string().c_str()))
     throw utils::TimeException("Not a XSD dateTime: '" + node.to_string() + "'") ;
   m_datetime = new DatetimeImpl(node.to_string()) ;
   }
 
+utils::Datetime::Datetime(const utils::Datetime & other)
+/*----------------------------------------------------*/
+: m_datetime((other.m_datetime != nullptr) ? new DatetimeImpl(*other.m_datetime) : nullptr)
+{
+  }
+
+utils::Datetime::Datetime(utils::Datetime && other)
+/*-----------------------------------------------*/
+: m_datetime(other.m_datetime)
+{
+  other.m_datetime = nullptr;
+  }
+
 utils::Datetime::~Datetime()
 /*------------------------*/
 {
   if (m_datetime != nullptr) delete m_datetime ;
+  }
+
+utils::Datetime & utils::Datetime::operator=(const utils::Datetime & other)
+/*-----------------------------------------------------------------------*/
+{
+  utils::Datetime datetime(other) ;
+  *this = std::move(datetime) ;
+  return *this ;
+  }
+
+utils::Datetime & utils::Datetime::operator=(utils::Datetime && other)
+/*------------------------------------------------------------------*/
+{
+  std::swap(m_datetime, other.m_datetime) ;
+  return *this ;
   }
 
 std::string utils::Datetime::to_string(void) const
@@ -263,24 +291,52 @@ utils::Duration::Duration()
 {
   }
 
-utils::Duration::Duration(const std::string &dt, const bool strict)
-/*---------------------------------------------------------------*/
+utils::Duration::Duration(const std::string & dt, const bool strict)
+/*----------------------------------------------------------------*/
 : m_duration(new DurationImpl(dt, strict))
 {
   }
 
-utils::Duration::Duration(const rdf::Node &node)
-/*--------------------------------------------*/
+utils::Duration::Duration(const rdf::Node & node)
+/*---------------------------------------------*/
 : utils::Duration(node.to_string(),
                   node.is_literal_type(rdf::XSD::dayTimeDuration.to_string().c_str()))
 
 {
   }
 
+utils::Duration::Duration(const utils::Duration & other)
+/*----------------------------------------------------*/
+: m_duration((other.m_duration != nullptr) ? new DurationImpl(*other.m_duration) : nullptr)
+{
+  }
+
+utils::Duration::Duration(utils::Duration && other)
+/*-----------------------------------------------*/
+: m_duration(other.m_duration)
+{
+  other.m_duration = nullptr;
+  }
+
 utils::Duration::~Duration()
 /*------------------------*/
 {
   if (m_duration != nullptr) delete m_duration ;
+  }
+
+utils::Duration & utils::Duration::operator=(const utils::Duration & other)
+/*-----------------------------------------------------------------------*/
+{
+  utils::Duration duration(other) ;
+  *this = std::move(duration) ;
+  return *this ;
+  }
+
+utils::Duration & utils::Duration::operator=(utils::Duration && other)
+/*------------------------------------------------------------------*/
+{
+  std::swap(m_duration, other.m_duration) ;
+  return *this ;
   }
 
 std::string utils::Duration::to_string(void) const
