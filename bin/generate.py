@@ -94,8 +94,8 @@ class AssignFromRDF(object):
          else 'value.to_int()'         if kind == 'rdf::Integer'
          else 'value.to_float()'       if kind == 'rdf::Decimal'
          else 'rdf::URI(value)'        if kind == 'rdf::URI'
-         else 'utils::Datetime(value)' if kind == 'utils::Datetime'
-         else 'utils::Duration(value)' if kind == 'utils::Duration'
+         else 'xsd::Datetime(value)' if kind == 'xsd::Datetime'
+         else 'xsd::Duration(value)' if kind == 'xsd::Duration'
          else 'value')
     if options[0] in ['SET', 'RSET']:
       if 'OBJ' in options:
@@ -156,8 +156,8 @@ class SaveToRDF(object):
       value = (     'rdf::Literal(%(name)s)' if kind == 'std::string'
                else 'rdf::Literal(%(name)s)' if kind == 'rdf::Integer'
                else 'rdf::Literal(%(name)s)' if kind == 'rdf::Decimal'
-               else '%(name)s.to_literal()'  if kind == 'utils::Datetime'
-               else '%(name)s.to_literal()'  if kind == 'utils::Duration'
+               else '%(name)s.to_literal()'  if kind == 'xsd::Datetime'
+               else '%(name)s.to_literal()'  if kind == 'xsd::Duration'
                else '%(name)s')
 
       if options[0] == 'SET':
@@ -215,8 +215,8 @@ class Constructor(object):
                 else 'rdf::Literal::Constants::EMPTY_STRING'  if kind == 'std::string'
                 else 'rdf::Literal::Constants::EMPTY_INTEGER' if kind == 'rdf::Integer'
                 else 'rdf::Literal::Constants::EMPTY_DECIMAL' if kind == 'rdf::Decimal'
-#                else '0'   if kind == 'utils::Datetime'
-#                else '0.0' if kind == 'utils::Duration'
+#                else '0'   if kind == 'xsd::Datetime'
+#                else '0.0' if kind == 'xsd::Duration'
                 else '')
                    + ')')
     self._comma = ',\n  '

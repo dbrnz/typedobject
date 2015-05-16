@@ -24,7 +24,7 @@
 #include <typedobject/typedobject_export.h>
 #include <typedobject/rdf.h>
 #include <typedobject/rdfdefs.h>
-#include <typedobject/utils.h>
+#include <typedobject/xsd.h>
 
 #include <string>
 #include <map>
@@ -129,8 +129,8 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
 #define PROPERTY_DECIMAL(NAME, P)        _PROPERTY(NAME, P, rdf::Decimal)
 #define PROPERTY_NODE(NAME, P)           _PROPERTY(NAME, P, rdf::Node)
 #define PROPERTY_URI(NAME, P)            _PROPERTY(NAME, P, rdf::URI)
-#define PROPERTY_DATETIME(NAME, P)       _PROPERTY(NAME, P, utils::Datetime)
-#define PROPERTY_DURATION(NAME, P)       _PROPERTY(NAME, P, utils::Duration)
+#define PROPERTY_DATETIME(NAME, P)       _PROPERTY(NAME, P, xsd::Datetime)
+#define PROPERTY_DURATION(NAME, P)       _PROPERTY(NAME, P, xsd::Duration)
 #define PROPERTY_OBJECT(NAME, P, T)      _PROPERTY_OBJ(NAME, P, T)
 
 // What is the difference between URI, NODE, and OBJECT properties??
@@ -144,8 +144,8 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
 #define PROPERTY_URI_RSET(NAME, P)       _PROPERTY_RSET(NAME, P, rdf::URI)
 #define PROPERTY_OBJECT_RSET(NAME, P, T) _PROPERTY_OBJ_RSET(NAME, P, T, OBJ)
 
-#define ASSIGN_DATETIME(NAME, P)         _ASSIGN(NAME, P, utils::Datetime)
-#define ASSIGN_DURATION(NAME, P)         _ASSIGN(NAME, P, utils::Duration)
+#define ASSIGN_DATETIME(NAME, P)         _ASSIGN(NAME, P, xsd::Datetime)
+#define ASSIGN_DURATION(NAME, P)         _ASSIGN(NAME, P, xsd::Duration)
 
 #define RESTRICTION(NAME, VALUE)         _RESTRICTION(NAME, VALUE)
 

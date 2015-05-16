@@ -18,19 +18,18 @@
  *                                                                           *
  *****************************************************************************/
 
-#ifndef TYPEDOBJECT_UTILS_H
-#define TYPEDOBJECT_UTILS_H
+#ifndef TYPEDOBJECT_XSD_H
+#define TYPEDOBJECT_XSD_H
 
 #include <typedobject/typedobject_export.h>
 #include <typedobject/rdf.h>
 #include <typedobject/rdfdefs.h>
 
-
 #include <stdexcept>
 #include <string>
 
 
-namespace utils {
+namespace xsd {
 
   class DatetimeImpl ;           // Declare forward
   class DurationImpl ;           // Declare forward
