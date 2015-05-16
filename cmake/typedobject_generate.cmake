@@ -15,7 +15,7 @@ function(typedobject_generate generated_files header_file includes)
 
   set(include_list)
   foreach(file ${includes})
-    set(include_list ${include_list} "-I\"${file}\" ")
+    set(include_list ${include_list} -I"${file}")
   endforeach()
 
   add_custom_command(
