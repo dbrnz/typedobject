@@ -18,6 +18,9 @@
  *                                                                           *
  *****************************************************************************/
 
+#ifndef TYPEDOBJECT_RDFIMPL_H
+#define TYPEDOBJECT_RDFIMPL_H
+
 #include <sord/sordmm.hpp>
 #include <sord/sord.h>
 #include <serd/serd.h>
@@ -99,3 +102,4 @@ namespace rdf {
 
   } ;
 
+#endif
