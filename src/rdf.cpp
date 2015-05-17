@@ -166,7 +166,7 @@ bool rdf::Node::to_bool(void) const
 
 rdf::URI::URI()
 /*-----------*/
-: rdf::Node(new rdf::NodeImpl())
+: rdf::Node()
 {
   }
 
