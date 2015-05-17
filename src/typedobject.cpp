@@ -82,6 +82,12 @@ namespace TypedObject {
     return m_uri.operator<(other.uri()) ;
     }
 
+  bool TypedObject::is_valid(void) const
+  /*----------------------------------*/
+  {
+    return m_uri.is_valid() ;
+    }
+
   std::string TypedObject::to_string(void) const
   /*------------------------------------------*/
   {

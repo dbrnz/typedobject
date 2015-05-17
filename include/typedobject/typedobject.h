@@ -233,12 +233,11 @@ namespace TypedObject
       return nullptr ;
       }
 
-
-    std::string to_string(void) const ;
-
     bool operator==(const TypedObject &other) const ;
-
     bool operator<(const TypedObject &other) const ;
+
+    bool is_valid(void) const ;
+    std::string to_string(void) const ;
 
     static void register_type(const rdf::URI &T, TypedObjectFactory *factory) ;
 
