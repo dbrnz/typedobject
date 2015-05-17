@@ -16,9 +16,10 @@ const URI TEST::object = TEST::NS.make_URI("object") ;
 int main(void)
 /*----------*/
 {
-  std::string object_uri = "http://example.org/object" ;
+  std::string object_uri1 = "http://example.org/object/1" ;
+  std::string object_uri2 = "http://example.org/object/2" ;
 
-  example::Object object(object_uri) ;
+  example::Object object(object_uri1) ;
 
   object.set_string("Some string") ;
   object.set_integer(3) ;
@@ -32,9 +33,14 @@ int main(void)
 
   rdf::Graph graph ;
   graph.parse_string(turtle, rdf::Graph::Format::TURTLE) ;
-  example::Object from_rdf(object_uri, graph) ;
 
-  std::cout << "String:       " << from_rdf.string()  << std::endl
+  example::RestrictedObject from_rdf(object_uri1, graph) ;  // Restricted to "integer == 3"
+                                                           // So how do we fail??
+  // Also how do we fail if "object_uri a Object" isn't in graph ???
+
+  std::cout << "Valid:        " << from_rdf.is_valid() << std::endl
+            << "URI:          " << from_rdf.uri().to_string() << std::endl
+            << "String:       " << from_rdf.string()  << std::endl
             << "Integer:      " << from_rdf.integer() << std::endl
             << "Decimal:      " << from_rdf.decimal() << std::endl
             << "Starttime:    " << from_rdf.starttime().to_string() << std::endl
