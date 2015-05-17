@@ -28,13 +28,19 @@ int main(void)
   object.set_investigator(rdf::URI("http://example.org/investigator")) ;
 
   std::string turtle = object.serialise_metadata(rdf::Graph::Format::TURTLE) ;
+  std::cout << turtle << std::endl ;
 
   rdf::Graph graph ;
   graph.parse_string(turtle, rdf::Graph::Format::TURTLE) ;
-
-  std::cout << turtle << std::endl ;
-
   example::Object from_rdf(object_uri, graph) ;
-  std::cout << from_rdf.serialise_metadata(rdf::Graph::Format::TURTLE) << std::endl ;
 
+  std::cout << "String:       " << from_rdf.string()  << std::endl
+            << "Integer:      " << from_rdf.integer() << std::endl
+            << "Decimal:      " << from_rdf.decimal() << std::endl
+            << "Starttime:    " << from_rdf.starttime().to_string() << std::endl
+            << "Duration:     " << from_rdf.duration().to_string() << std::endl
+            << "Investigator: " << from_rdf.investigator().to_string() << std::endl
+            << std::endl ;
+
+  std::cout << from_rdf.serialise_metadata(rdf::Graph::Format::TURTLE) << std::endl ;
   }
