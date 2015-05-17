@@ -21,7 +21,8 @@
 #include "typedobject/xsd.h"
 #include "xsdimpl.h"
 
-#include <boost/date_time/posix_time/posix_time.hpp> // _types.hpp>
+#include <boost/algorithm/string/replace.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <math.h>
 #include <sstream>
@@ -35,14 +36,27 @@ xsd::DatetimeImpl::DatetimeImpl()
 
 xsd::DatetimeImpl::DatetimeImpl(const std::string &dt)
 /*--------------------------------------------------*/
-: m_ptime(boost::posix_time::time_from_string(dt))
 {
+  try {
+    // xsd:dateTime has 'T' as the time separator
+    // (see http://www.w3.org/TR/xmlschema-2/#dateTime)
+    // whereas Boost expects a blank character.
+    m_ptime = boost::posix_time::time_from_string(boost::replace_first_copy(dt, "T", " ")) ;
+    }
+  catch (boost::exception & e) {
+    m_ptime = boost::date_time::not_a_date_time ;
+    }
   }
 
 std::string xsd::DatetimeImpl::to_string(void) const
 /*------------------------------------------------*/
 {
-  return boost::posix_time::to_iso_extended_string(m_ptime) ;
+  try {
+    return boost::posix_time::to_iso_extended_string(m_ptime) ;
+    }
+  catch (boost::exception & e) {
+    return "" ;
+    }
   }
 
 bool xsd::DatetimeImpl::is_valid(void) const
