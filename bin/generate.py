@@ -49,7 +49,6 @@ int %(cls)s::add_subtype(const rdf::URI &T)
 
 REGISTER_TYPE(%(T)s, %(cls)s)
 REGISTER_SUBTYPE(%(T)s, %(cls)s, %(base)s)
-
 ''' % {'T': T, 'cls': cls, 'base': base})
 
 
@@ -152,14 +151,12 @@ class SaveToRDF(object):
         valid = 'rdf::Literal::not_empty(%(name)s)'
       else:
         valid = '%(name)s.is_valid()'
-
       value = (     'rdf::Literal(%(name)s)' if kind == 'std::string'
                else 'rdf::Literal(%(name)s)' if kind == 'xsd::Integer'
                else 'rdf::Literal(%(name)s)' if kind == 'xsd::Decimal'
                else '%(name)s.to_literal()'  if kind == 'xsd::Datetime'
                else '%(name)s.to_literal()'  if kind == 'xsd::Duration'
                else '%(name)s')
-
       if options[0] == 'SET':
         save = ('  for (auto const &value : %(name)s)'
                 + ' if (%s)' % (valid % {'name': 'value'})
@@ -216,8 +213,6 @@ class Constructor(object):
                 else 'rdf::Literal::Constants::EMPTY_STRING'  if kind == 'std::string'
                 else 'rdf::Literal::Constants::EMPTY_INTEGER' if kind == 'xsd::Integer'
                 else 'rdf::Literal::Constants::EMPTY_DECIMAL' if kind == 'xsd::Decimal'
-#                else '0'   if kind == 'xsd::Datetime'
-#                else '0.0' if kind == 'xsd::Duration'
                 else '')
                    + ')')
     self._comma = ',\n  '
