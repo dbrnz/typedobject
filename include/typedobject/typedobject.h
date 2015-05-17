@@ -67,7 +67,11 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
 #else
 
 #define TYPED_OBJECT(CLASS, TYPE)         \
+ private:                                 \
+  static std::map<std::string, rdf::Node> m_properties ;                    \
  protected:                               \
+  bool satisfies_restrictions(const rdf::Graph &graph) ;                    \
+  static rdf::Node get_property(const std::string &name) ;                  \
   void assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property,  \
                        const rdf::Node &value,  const bool reverse) ;       \
   void save_as_rdf(const rdf::Graph &graph) ;                               \
@@ -120,7 +124,7 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
 #define _PROPERTY_OBJ_RSET(NAME, P, T, ...)  _PROPERTY_OBJ_SET(NAME, P, T)
 
 #define _ASSIGN(NAME, P, T, ...)
-#define _RESTRICTION(NAME, VALUE, ...)
+#define _RESTRICTION(NAME, VALUE, T, ...)
 
 #endif
 
@@ -147,7 +151,10 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
 #define ASSIGN_DATETIME(NAME, P)         _ASSIGN(NAME, P, xsd::Datetime)
 #define ASSIGN_DURATION(NAME, P)         _ASSIGN(NAME, P, xsd::Duration)
 
-#define RESTRICTION(NAME, VALUE)         _RESTRICTION(NAME, VALUE)
+#define RESTRICT_STING(NAME, VALUE)      _RESTRICTION(NAME, VALUE, std::string)
+#define RESTRICT_INTEGER(NAME, VALUE)    _RESTRICTION(NAME, VALUE, xsd::Integer)
+#define RESTRICT_DECIMAL(NAME, VALUE)    _RESTRICTION(NAME, VALUE, xsd::Decimal)
+#define RESTRICT_URI(NAME, VALUE)        _RESTRICTION(NAME, VALUE, rdf::URI)
 
 
 namespace TypedObject
@@ -192,6 +199,7 @@ namespace TypedObject
                                  const rdf::Node &value,  const bool reverse) = 0 ;
     virtual void save_as_rdf(const rdf::Graph &graph) = 0 ;
     virtual bool satisfies_restrictions(const rdf::Graph &graph) ;
+    static rdf::Node get_property(const std::string &name) ;
 
    public:
     virtual const rdf::URI &type(void) const = 0 ;

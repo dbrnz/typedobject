@@ -54,10 +54,12 @@ namespace example {
 
     } ;
 
-  class SubObject : public Object
-  /*---------------------------*/
+  class RestrictedObject : public Object
+  /*----------------------------------*/
   {
-    TYPED_OBJECT(SubObject, OWL::Object)
+    TYPED_OBJECT(RestrictedObject, OWL::Object)
+
+    RESTRICT_INTEGER(integer, 3)
 
     } ;
 

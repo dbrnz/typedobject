@@ -187,6 +187,7 @@ class Constructor(object):
   def __init__(self, cls, base):
   #-----------------------------
 #    print "B:", base, " C:", constructor(base)
+    self._class = cls
     ctr = cls + '::' + cls
     self._ctr = [
 '''%(ctr)s(const std::string &uri, const rdf::Graph &graph)
@@ -196,15 +197,15 @@ class Constructor(object):
   }
 
 %(ctr)s(const std::string &uri)\n''' % {'ctr': ctr}]
-    if base:
-      b = base.split('::')
-      if len(b) > 1 and b[-2] == b[-1]: del b[-1]
-      self._ctr.append(': %s(uri)' % '::'.join(b))
-      self._comma = ',\n  '
-    else:
-      self._comma = ': '
-    self._preset = ['', '{']
+    b = base.split('::')
+    if len(b) > 1 and b[-2] == b[-1]: del b[-1]
+    self._ctr.append(': %s(uri)' % '::'.join(b))
+    self._comma = ',\n  '
+    self._base = '::'.join(b)
     self._dtr = ['', '  }', '', '%(cls)s::~%(cls)s()' % {'cls': cls}, '{']
+    self._props = [ ]
+    self._preset = ['', '{']
+    self._restrict = [ ]
 
   def initialise(self, name, kind, prop, *options):
   #-----------------------------------------------
@@ -228,29 +229,45 @@ class Constructor(object):
         self._dtr.append('    if (e != nullptr) delete e ;')
         self._dtr.append('    }')
 
-  def preset(self, name, value):
-  #-----------------------------
+  def add_property(self, name, kind, property, *options):
+  #------------------------------------------------------
+    self._props.append('  {"%s", %s},' % (name, property))
+
+  def preset(self, name, value, kind):
+  #-----------------------------------
     self._preset.append('  set_%s(%s) ;' % (name, value))
-
-
-## Only if there are restrictions/presets...
-#  bool CLS::satisfies_restrictions(const rdf::Graph &graph)
-#  {
-##
-## We want to go from name of attribute (format) to its property (DCT::format)
-## Have this at (super-)class declaration in PROPERTY_type(attribute, property) statement.
-##
-## Each class has a (static) map, initially the same as the parent's
-##
-#    return (graph.contains(uri(), m_filterprop1, m_filtervalue1)
-#         && graph.contains(uri(), m_filterprop2, m_filtervalue2)
-#         && ...) ;
-#    }
-
+    self._restrict.append('graph.contains(uri(), get_property("%s"), %s)'
+      % (name, ('rdf::Literal(%(cast)s(%(value)s))'
+                   if kind in ['std::string', 'xsd::Integer', 'xsd::Decimal']
+           else '%(value)s.to_literal()'
+                   if kind in ['xsd::Datetime', 'xsd::Duration']
+           else '%(value)s') % {'value': value, 'cast': kind}))
 
   def __str__(self):
   #-----------------
-    return ''.join(self._ctr) + '\n'.join(self._preset) + '\n'.join(self._dtr) + '\n  }\n\n'
+    code = [''.join(self._ctr),
+            '\n'.join(self._preset),
+            '\n'.join(self._dtr) + '\n  }\n\n',
+           ]
+    code.append('std::map<std::string, rdf::Node> %s::m_properties {' % self._class)
+    code.extend(self._props)
+    code.extend('  } ;\n')
+    code.append('''
+rdf::Node %(cls)s::get_property(const std::string & name)
+{
+  auto entry = m_properties.find(name) ;
+  if (entry != m_properties.end()) return entry->second ;
+  else                             return %(base)s::get_property(name) ;
+  }
+
+bool %(cls)s::satisfies_restrictions(const rdf::Graph &graph)
+{
+  return %(base)s::satisfies_restrictions(graph)%(cond)s ;
+  }
+''' % {'cls': self._class, 'base': self._base,
+       'cond': ('\n  && ' + '\n && '.join(self._restrict)) if self._restrict else ''
+      })
+    return '\n'.join(code)
 
 
 class Generator(object):
@@ -292,13 +309,14 @@ class Generator(object):
       for p, v in cls[3][0].iteritems():
         if p != 'TYPE':
           c.initialise(p, *v)
+          c.add_property(p, *v)
           a.add_property(p, *v)
           s.save_property(p, *v)
       for p, v in cls[3][1].iteritems():
         a.add_property(p, *v)
         s.save_property(p, *v)
       for p, v in cls[3][2].iteritems():  ###
-        c.preset(p, v[0])
+        c.preset(p, *v)
       code.append(str(c))
       code.append(str(a))
       code.append(str(s))

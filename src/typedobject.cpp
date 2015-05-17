@@ -96,6 +96,11 @@ namespace TypedObject {
     return true ;
     }
 
+  rdf::Node TypedObject::get_property(const std::string & name)
+  /*---------------------------------------------------------*/
+  {
+    return rdf::Node() ;
+    }
 
   bool TypedObject::add_metadata(const rdf::Graph &graph)
   /*---------------------------------------------------*/
