@@ -35,6 +35,12 @@ namespace rdf {
 
 namespace xsd {
 
+  typedef int64_t Integer ;
+  /*---------------------*/
+
+  typedef double Decimal ;
+  /*---------------------*/
+
   class DatetimeImpl ;           // Declare forward
   class DurationImpl ;           // Declare forward
 

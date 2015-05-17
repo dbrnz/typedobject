@@ -43,8 +43,8 @@ namespace rdf {
 
     static NodeImpl *sord_datatype_node(const std::string &s, const rdf::URI &datatype) ;
     static NodeImpl *sord_language_node(const std::string &s, const std::string &language) ;
-    static NodeImpl *sord_decimal_node(Decimal d, unsigned frac_digits) ;
-    static NodeImpl *sord_integer_node(Integer i) ;
+    static NodeImpl *sord_decimal_node(xsd::Decimal d, unsigned frac_digits) ;
+    static NodeImpl *sord_integer_node(xsd::Integer i) ;
     static NodeImpl *sord_node_from_serd_node(const SerdNode *node, const SerdNode *type, const SerdNode *lang) ;
     } ;
 

@@ -22,6 +22,7 @@
 #define TYPEDOBJECT_RDF_H
 
 #include <typedobject/typedobject_export.h>
+#include <typedobject/xsd.h>
 
 //**************************************************************************//
 
@@ -40,13 +41,6 @@ namespace rdf {
   class GraphImpl ;                  // Declare forward
 
   class Graph ;                      // Declare forward for VS2013
-
-
-  typedef int64_t Integer ;
-  /*---------------------*/
-
-  typedef double Decimal ;
-  /*--------------------*/
 
 
   class TYPEDOBJECT_EXPORT Node
@@ -119,8 +113,8 @@ namespace rdf {
     Literal(const std::string & s) ;
     Literal(const std::string & s, const rdf::URI & datatype) ;
     Literal(const std::string & s, const std::string & language) ;
-    Literal(Decimal d, unsigned frac_digits=7) ;
-    Literal(Integer i) ;
+    Literal(xsd::Decimal d, unsigned frac_digits=7) ;
+    Literal(xsd::Integer i) ;
     Literal(const Literal & other) ;
     Literal(Literal && other) ;
     Literal & operator=(const Literal & other) ;
@@ -128,14 +122,14 @@ namespace rdf {
 
     class TYPEDOBJECT_EXPORT Constants {
      public:
-      static const char *       EMPTY_STRING ;
-      static const rdf::Decimal EMPTY_DECIMAL ;
-      static const rdf::Integer EMPTY_INTEGER ;
+      static const char * EMPTY_STRING ;
+      static const xsd::Decimal EMPTY_DECIMAL ;
+      static const xsd::Integer EMPTY_INTEGER ;
       } ;
 
     inline static bool not_empty(const std::string &s) { return (s != Constants::EMPTY_STRING) ; }
-    inline static bool not_empty(const Decimal d) { return std::isfinite(d) ; }
-    inline static bool not_empty(const Integer i) { return (i != Constants::EMPTY_INTEGER) ; }
+    inline static bool not_empty(const xsd::Decimal d) { return std::isfinite(d) ; }
+    inline static bool not_empty(const xsd::Integer i) { return (i != Constants::EMPTY_INTEGER) ; }
     } ;
 
 

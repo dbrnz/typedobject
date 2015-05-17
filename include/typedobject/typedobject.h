@@ -125,8 +125,8 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
 #endif
 
 #define PROPERTY_STRING(NAME, P)         _PROPERTY(NAME, P, std::string)
-#define PROPERTY_INTEGER(NAME, P)        _PROPERTY(NAME, P, rdf::Integer)
-#define PROPERTY_DECIMAL(NAME, P)        _PROPERTY(NAME, P, rdf::Decimal)
+#define PROPERTY_INTEGER(NAME, P)        _PROPERTY(NAME, P, xsd::Integer)
+#define PROPERTY_DECIMAL(NAME, P)        _PROPERTY(NAME, P, xsd::Decimal)
 #define PROPERTY_NODE(NAME, P)           _PROPERTY(NAME, P, rdf::Node)
 #define PROPERTY_URI(NAME, P)            _PROPERTY(NAME, P, rdf::URI)
 #define PROPERTY_DATETIME(NAME, P)       _PROPERTY(NAME, P, xsd::Datetime)

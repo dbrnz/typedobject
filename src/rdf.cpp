@@ -274,13 +274,13 @@ rdf::Literal::Literal(const std::string &s, const std::string &language)
 {
   }
 
-rdf::Literal::Literal(rdf::Decimal d, unsigned frac_digits)
+rdf::Literal::Literal(xsd::Decimal d, unsigned frac_digits)
 /*-------------------------------------------------------*/
 : rdf::Node(rdf::NodeImpl::sord_decimal_node(d, frac_digits))
 {
   }
 
-rdf::Literal::Literal(rdf::Integer i)
+rdf::Literal::Literal(xsd::Integer i)
 /*---------------------------------*/
 : rdf::Node(rdf::NodeImpl::sord_integer_node(i))
 {
@@ -316,13 +316,13 @@ const char * rdf::Literal::Constants::EMPTY_STRING
 /*---------------------------------------------------*/
 = "" ;
 
-const rdf::Decimal rdf::Literal::Constants::EMPTY_DECIMAL
+const xsd::Decimal rdf::Literal::Constants::EMPTY_DECIMAL
 /*-----------------------------------------------------*/
  = std::nan("") ;
 
-const rdf::Integer rdf::Literal::Constants::EMPTY_INTEGER
+const xsd::Integer rdf::Literal::Constants::EMPTY_INTEGER
 /*-----------------------------------------------------*/
- = std::numeric_limits<rdf::Integer>::lowest() ;
+ = std::numeric_limits<xsd::Integer>::lowest() ;
 
 
 //**************************************************************************//

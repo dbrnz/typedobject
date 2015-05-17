@@ -90,10 +90,10 @@ class AssignFromRDF(object):
     else:
       cleanup = 'if (%s != nullptr) delete %s ;' % (name, name)
     value = (('TypedObject::create<%s>(%s::subtypes(), value, graph)' % (kind, kind)) if 'OBJ' in options
-         else 'value.to_string()'      if kind == 'std::string'
-         else 'value.to_int()'         if kind == 'rdf::Integer'
-         else 'value.to_float()'       if kind == 'rdf::Decimal'
-         else 'rdf::URI(value)'        if kind == 'rdf::URI'
+         else 'value.to_string()'    if kind == 'std::string'
+         else 'value.to_int()'       if kind == 'xsd::Integer'
+         else 'value.to_float()'     if kind == 'xsd::Decimal'
+         else 'rdf::URI(value)'      if kind == 'rdf::URI'
          else 'xsd::Datetime(value)' if kind == 'xsd::Datetime'
          else 'xsd::Duration(value)' if kind == 'xsd::Duration'
          else 'value')
@@ -148,14 +148,14 @@ class SaveToRDF(object):
       save = '  for (auto const &value : %(name)s) value->save_metadata(graph) ;'
     elif 'OBJ' not in options or options[0] == 'SET':
       # Only save non-empty values...
-      if kind in ['std::string', 'rdf::Decimal', 'rdf::Integer']:
+      if kind in ['std::string', 'xsd::Decimal', 'xsd::Integer']:
         valid = 'rdf::Literal::not_empty(%(name)s)'
       else:
         valid = '%(name)s.is_valid()'
 
       value = (     'rdf::Literal(%(name)s)' if kind == 'std::string'
-               else 'rdf::Literal(%(name)s)' if kind == 'rdf::Integer'
-               else 'rdf::Literal(%(name)s)' if kind == 'rdf::Decimal'
+               else 'rdf::Literal(%(name)s)' if kind == 'xsd::Integer'
+               else 'rdf::Literal(%(name)s)' if kind == 'xsd::Decimal'
                else '%(name)s.to_literal()'  if kind == 'xsd::Datetime'
                else '%(name)s.to_literal()'  if kind == 'xsd::Duration'
                else '%(name)s')
@@ -213,8 +213,8 @@ class Constructor(object):
     self._ctr.append('%s%s(' % (self._comma, member)
                   + ('nullptr' if ('OBJ' in options and options[0] not in ['SET', 'RSET'])
                 else 'rdf::Literal::Constants::EMPTY_STRING'  if kind == 'std::string'
-                else 'rdf::Literal::Constants::EMPTY_INTEGER' if kind == 'rdf::Integer'
-                else 'rdf::Literal::Constants::EMPTY_DECIMAL' if kind == 'rdf::Decimal'
+                else 'rdf::Literal::Constants::EMPTY_INTEGER' if kind == 'xsd::Integer'
+                else 'rdf::Literal::Constants::EMPTY_DECIMAL' if kind == 'xsd::Decimal'
 #                else '0'   if kind == 'xsd::Datetime'
 #                else '0.0' if kind == 'xsd::Duration'
                 else '')

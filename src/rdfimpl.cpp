@@ -97,7 +97,7 @@ rdf::NodeImpl *rdf::NodeImpl::sord_language_node(const std::string &s, const std
   return rdf::NodeImpl::sord_node_from_serd_node(&val, NULL, &lang) ;
   }
 
-rdf::NodeImpl *rdf::NodeImpl::sord_decimal_node(rdf::Decimal d, unsigned frac_digits)
+rdf::NodeImpl *rdf::NodeImpl::sord_decimal_node(xsd::Decimal d, unsigned frac_digits)
 /*---------------------------------------------------------------------------------*/
 {
   const SerdNode val = serd_node_new_decimal(d, frac_digits) ;
@@ -105,7 +105,7 @@ rdf::NodeImpl *rdf::NodeImpl::sord_decimal_node(rdf::Decimal d, unsigned frac_di
   return rdf::NodeImpl::sord_node_from_serd_node(&val, &type, NULL) ;
   }
 
-rdf::NodeImpl *rdf::NodeImpl::sord_integer_node(rdf::Integer i)
+rdf::NodeImpl *rdf::NodeImpl::sord_integer_node(xsd::Integer i)
 /*-----------------------------------------------------------*/
 {
   const SerdNode val = serd_node_new_integer(i) ;
