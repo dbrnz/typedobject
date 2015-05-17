@@ -280,7 +280,7 @@ class Generator(object):
     self._classes = [ ]
     self._class = None
     self._base = None
-    self._properties = ({ }, { }, { })
+    self._properties = ({ }, { }, { })    # (properties, assignments, restrictions)
     self._usednames = [ ]
 
   def save(self, hdr, fn):
@@ -303,19 +303,19 @@ class Generator(object):
       mcls = cls[3][0].get('TYPE')
       if mcls and mcls[0]:
         code.append(generate_types(mcls[0], cls[1], cls[2]))
-      c = Constructor(cls[1], cls[2])
+      c = Constructor(cls[1], cls[2])     # class, base
       a = AssignFromRDF(cls[1], cls[2])
       s = SaveToRDF(cls[1], cls[2])
-      for p, v in cls[3][0].iteritems():
+      for p, v in cls[3][0].iteritems():  # properties
         if p != 'TYPE':
           c.initialise(p, *v)
           c.add_property(p, *v)
           a.add_property(p, *v)
           s.save_property(p, *v)
-      for p, v in cls[3][1].iteritems():
+      for p, v in cls[3][1].iteritems():  # assignments
         a.add_property(p, *v)
         s.save_property(p, *v)
-      for p, v in cls[3][2].iteritems():  ###
+      for p, v in cls[3][2].iteritems():  # restrictions
         c.preset(p, *v)
       code.append(str(c))
       code.append(str(a))
@@ -345,7 +345,7 @@ class Generator(object):
       self._classes.append(('::'.join(self._namespaces), self._class, self._base, self._properties))
       self._class = None
       self._base = None
-      self._properties = ({ }, { }, { })
+      self._properties = ({ }, { }, { })  # (properties, assignments, restrictions)
 
   def add_property(self, name, *params):
   #-------------------------------------
