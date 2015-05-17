@@ -22,11 +22,15 @@
 #define TYPEDOBJECT_XSD_H
 
 #include <typedobject/typedobject_export.h>
-#include <typedobject/rdf.h>
-#include <typedobject/rdfdefs.h>
 
 #include <stdexcept>
 #include <string>
+
+
+namespace rdf {
+  class Node ;                   // Declare forward
+  class Literal ;                // Declare forward
+  } ;
 
 
 namespace xsd {

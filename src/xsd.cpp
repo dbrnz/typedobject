@@ -19,6 +19,8 @@
  *****************************************************************************/
 
 #include "typedobject/xsd.h"
+#include "typedobject/rdf.h"
+#include "typedobject/rdfdefs.h"
 #include "xsdimpl.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp> // _types.hpp>
