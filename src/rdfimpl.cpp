@@ -126,10 +126,10 @@ rdf::NodeImpl *rdf::NodeImpl::sord_node_from_serd_node(
 rdf::StmntImpl::StmntImpl(const rdf::NodeImpl *s, const rdf::NodeImpl *p, const rdf::NodeImpl *o)
 /*---------------------------------------------------------------------------------------------*/
 {
-  m_quad[SORD_SUBJECT] = s->c_obj() ;
-  m_quad[SORD_PREDICATE] = p->c_obj() ;
-  m_quad[SORD_OBJECT] = o->c_obj() ;
-  m_quad[SORD_GRAPH] = nullptr ;
+  m_quad[SORD_SUBJECT]   = (s == nullptr) ? nullptr : s->c_obj() ;
+  m_quad[SORD_PREDICATE] = (p == nullptr) ? nullptr : p->c_obj() ;
+  m_quad[SORD_OBJECT]    = (o == nullptr) ? nullptr : o->c_obj() ;
+  m_quad[SORD_GRAPH]     = nullptr ;
   }
 
 rdf::StmntImpl::StmntImpl(const StmntImpl &other)
@@ -449,6 +449,3 @@ std::string rdf::GraphImpl::serialise(const rdf::Graph::Format format, const uin
     }
   return result ;
   }
-
-
-

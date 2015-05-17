@@ -30,7 +30,7 @@
 
 rdf::Node::Node()
 /*-------------*/
-: m_node(new rdf::NodeImpl())
+: m_node(nullptr)
 {
   }
 
