@@ -98,67 +98,67 @@ bool rdf::Node::operator<(const rdf::Node &other) const
 bool rdf::Node::is_valid(void) const
 /*--------------------------------*/
 {
-  return m_node->is_valid() ;
+  return (m_node != nullptr) && m_node->is_valid() ;
   }
 
 bool rdf::Node::is_literal_type(const char *type_uri) const
 /*-------------------------------------------------------*/
 {
-  return m_node->is_literal_type(type_uri) ;
+  return (m_node != nullptr) && m_node->is_literal_type(type_uri) ;
   }
 
 bool rdf::Node::is_uri(void) const
 /*--------------------------------*/
 {
-  return m_node->is_uri() ;
+  return (m_node != nullptr) && m_node->is_uri() ;
   }
 
 bool rdf::Node::is_blank(void) const
 /*--------------------------------*/
 {
-  return m_node->is_blank() ;
+  return (m_node != nullptr) && m_node->is_blank() ;
   }
 
 bool rdf::Node::is_int(void) const
 /*------------------------------*/
 {
-  return m_node->is_int() ;
+  return (m_node != nullptr) && m_node->is_int() ;
   }
 
 bool rdf::Node::is_float(void) const
 /*--------------------------------*/
 {
-  return m_node->is_float() ;
+  return (m_node != nullptr) && m_node->is_float() ;
   }
 
 bool rdf::Node::is_bool(void) const
 /*-------------------------------*/
 {
-  return m_node->is_bool() ;
+  return (m_node != nullptr) && m_node->is_bool() ;
   }
 
 std::string rdf::Node::to_string(void) const
 /*----------------------------------------*/
 {
-  return m_node->to_string() ;
+  return (m_node != nullptr) ? m_node->to_string() : "" ;
   }
 
 int rdf::Node::to_int(void) const
 /*-----------------------------*/
 {
-  return m_node->to_int() ;
+  return (m_node != nullptr) ? m_node->to_int() : 0 ;
   }
 
 float rdf::Node::to_float(void) const
 /*---------------------------------*/
 {
-  return m_node->to_float() ;
+  return (m_node != nullptr) ? m_node->to_float() : 0.0 ;
   }
 
 bool rdf::Node::to_bool(void) const 
 /*-------------------------------*/
 {
-  return m_node->to_bool() ;
+  return (m_node != nullptr) ? m_node->to_bool() : false ;
   }
 
 
