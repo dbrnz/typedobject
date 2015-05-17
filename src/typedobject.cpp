@@ -40,7 +40,6 @@ namespace TypedObject {
   /*---------------------------------------------------------------------*/
   : TypedObject(uri)
   {
-    this->add_metadata(graph) ;
     }
 
   TypedObject::~TypedObject()

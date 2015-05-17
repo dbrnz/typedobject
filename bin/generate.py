@@ -193,7 +193,7 @@ class Constructor(object):
 '''%(ctr)s(const std::string &uri, const rdf::Graph &graph)
 : %(ctr)s(uri)
 {
-  this->add_metadata(graph) ;
+  if (!this->add_metadata(graph)) *this = %(ctr)s() ;
   }
 
 %(ctr)s(const std::string &uri)\n''' % {'ctr': ctr}]
