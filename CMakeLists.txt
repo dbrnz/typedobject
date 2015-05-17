@@ -20,7 +20,8 @@ elseif(WIN32)
   add_definitions(-DRAPTOR_STATIC)
 endif()
 
-set(INCLUDES $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>)
+set(INCLUDES $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+             $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>)
 
 add_subdirectory(src)
 
@@ -28,11 +29,15 @@ enable_testing()
 add_subdirectory(tests)
 
 add_library(typedobject SHARED ${SOURCES})
-generate_export_header(typedobject
-                        EXPORT_FILE_NAME
-                        ${CMAKE_SOURCE_DIR}/include/typedobject/typedobject_export.h)
 
+generate_export_header(typedobject
+                       EXPORT_FILE_NAME
+                       ${CMAKE_BINARY_DIR}/include/typedobject/typedobject_export.h)
+
+#target_include_directories(typedobject PUBLIC
+#                            $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>)
 target_include_directories(typedobject PUBLIC ${INCLUDES})
+
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(typedobject ${LIBS})
 
@@ -55,6 +60,15 @@ install(
     ${CMAKE_SOURCE_DIR}/include/typedobject
   DESTINATION
     include
+  COMPONENT
+    Devel
+  )
+
+install(
+  FILES
+    ${CMAKE_BINARY_DIR}/include/typedobject/typedobject_export.h
+  DESTINATION
+    include/typedobject
   COMPONENT
     Devel
   )
