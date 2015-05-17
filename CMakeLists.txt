@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 project("TypedObjectLib")
-set(TypedObject_VERSION 0.0.5)
+set(TypedObject_VERSION 0.9.5)
 
 ### CMake helpers...
 include(GenerateExportHeader)
