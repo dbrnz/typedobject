@@ -25,7 +25,7 @@
 
 #include <stdexcept>
 #include <string>
-
+#include <cstdint>
 
 namespace rdf {
   class Node ;                   // Declare forward
