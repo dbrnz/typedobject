@@ -30,6 +30,7 @@
 #include <list>
 #include <cmath>
 #include <cinttypes>
+#include <iostream>
 
 //**************************************************************************//
 
@@ -41,7 +42,6 @@ namespace rdf {
   class GraphImpl ;                  // Declare forward
 
   class Graph ;                      // Declare forward for VS2013
-
 
   class TYPEDOBJECT_EXPORT Node
   /*-------------------------*/
@@ -59,6 +59,7 @@ namespace rdf {
 
     bool operator==(const Node &other) const ;
     bool operator<(const Node &other) const ;
+    friend TYPEDOBJECT_EXPORT std::ostream & operator<<(std::ostream & os, const Node & node) ;
 
     bool is_valid(void) const ;
     bool is_literal_type(const char *type_uri) const ;

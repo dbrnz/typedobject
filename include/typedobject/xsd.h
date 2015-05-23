@@ -66,6 +66,7 @@ namespace xsd {
     virtual ~Datetime() ;
     Datetime & operator=(const Datetime & other) ;
     Datetime & operator=(Datetime && other) ;
+    friend TYPEDOBJECT_EXPORT std::ostream & operator<<(std::ostream & os, const Datetime & dt) ;
 
     std::string to_string(void) const ;
     rdf::Literal to_literal(void) ;
@@ -87,6 +88,7 @@ namespace xsd {
     virtual ~Duration() ;
     Duration & operator=(const Duration & other) ;
     Duration & operator=(Duration && other) ;
+    friend TYPEDOBJECT_EXPORT std::ostream & operator<<(std::ostream & os, const Duration & d) ;
 
     std::string to_string(void) const ;
     rdf::Literal to_literal(void) ;

@@ -80,6 +80,13 @@ xsd::Datetime & xsd::Datetime::operator=(xsd::Datetime && other)
   return *this ;
   }
 
+std::ostream & xsd::operator<<(std::ostream & os, const xsd::Datetime & dt)
+/*-----------------------------------------------------------------------*/
+{
+  os << dt.to_string() ;
+  return os ;
+  }
+
 std::string xsd::Datetime::to_string(void) const
 /*----------------------------------------------*/
 {
@@ -153,6 +160,13 @@ xsd::Duration & xsd::Duration::operator=(xsd::Duration && other)
 {
   std::swap(m_duration, other.m_duration) ;
   return *this ;
+  }
+
+std::ostream & xsd::operator<<(std::ostream & os, const xsd::Duration & d)
+/*----------------------------------------------------------------------*/
+{
+  os << d.to_string() ;
+  return os ;
   }
 
 std::string xsd::Duration::to_string(void) const

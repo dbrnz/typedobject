@@ -94,6 +94,12 @@ bool rdf::Node::operator<(const rdf::Node &other) const
   else                   return m_node->operator<(*other.m_node) ;
   }
 
+std::ostream & rdf::operator<<(std::ostream & os, const rdf::Node & node)
+/*---------------------------------------------------------------------*/
+{
+  os << node.to_string() ;
+  return os ;
+  }
 
 bool rdf::Node::is_valid(void) const
 /*--------------------------------*/
