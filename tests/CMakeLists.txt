@@ -1,6 +1,25 @@
+### Find Boost unit testing package:
+set(Boost_USE_STATIC_LIBS       OFF)
+set(Boost_USE_MULTITHREADED      ON)
+set(Boost_USE_STATIC_RUNTIME    OFF)
+if(WIN32)
+  add_definitions(-DBOOST_ALL_NO_LIB)
+endif()
+find_package (Boost COMPONENTS system filesystem unit_test_framework REQUIRED)
+
+add_definitions (-DBOOST_TEST_DYN_LINK)
+include_directories(${Boost_INCLUDE_DIRS})
+###
+
 include_directories(${CMAKE_BINARY_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+set(LIBRARIES typedobject
+              ${Boost_FILESYSTEM_LIBRARY}
+              ${Boost_SYSTEM_LIBRARY}
+              ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+              )
 
 add_executable(test_rdf rdf.cpp)
 target_link_libraries(test_rdf typedobject)
@@ -20,3 +39,8 @@ typedobject_generate(GENERATED_FILES ${CMAKE_CURRENT_SOURCE_DIR}/example.h "${IN
 add_executable(test_example example.cpp ${GENERATED_FILES})
 target_link_libraries(test_example typedobject)
 add_test(EXAMPLE, test_example)
+
+
+add_executable(unittest unittest.cpp)
+target_link_libraries(unittest ${LIBRARIES})
+add_test(UNITTEST, unittest)
