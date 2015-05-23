@@ -33,6 +33,6 @@ int main(void)
 
   Datetime dt(datetime) ;
 
-  std::cout << dt.is_valid() << " '" << datetime << "' == '" << dt.to_string() << "'" << std::endl ;
+  std::cout << dt.is_valid() << " '" << datetime << "' == '" << dt << "'" << std::endl ;
 
   }

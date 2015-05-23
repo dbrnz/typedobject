@@ -38,14 +38,14 @@ int main(void)
                                                            // So how do we fail??
   // Also how do we fail if "object_uri a Object" isn't in graph ???
 
-  std::cout << "Valid:        " << from_rdf.is_valid() << std::endl
-            << "URI:          " << from_rdf.uri().to_string() << std::endl
-            << "String:       " << from_rdf.string()  << std::endl
-            << "Integer:      " << from_rdf.integer() << std::endl
-            << "Decimal:      " << from_rdf.decimal() << std::endl
-            << "Starttime:    " << from_rdf.starttime().to_string() << std::endl
-            << "Duration:     " << from_rdf.duration().to_string() << std::endl
-            << "Investigator: " << from_rdf.investigator().to_string() << std::endl
+  std::cout << "Valid:        " << from_rdf.is_valid()     << std::endl
+            << "URI:          " << from_rdf.uri()          << std::endl
+            << "String:       " << from_rdf.string()       << std::endl
+            << "Integer:      " << from_rdf.integer()      << std::endl
+            << "Decimal:      " << from_rdf.decimal()      << std::endl
+            << "Starttime:    " << from_rdf.starttime()    << std::endl
+            << "Duration:     " << from_rdf.duration()     << std::endl
+            << "Investigator: " << from_rdf.investigator() << std::endl
             << std::endl ;
 
   std::cout << from_rdf.serialise_metadata(rdf::Graph::Format::TURTLE) << std::endl ;
