@@ -151,9 +151,10 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
 #define ASSIGN_DATETIME(NAME, P)         _ASSIGN(NAME, P, xsd::Datetime)
 #define ASSIGN_DURATION(NAME, P)         _ASSIGN(NAME, P, xsd::Duration)
 
-#define RESTRICT_STING(NAME, VALUE)      _RESTRICTION(NAME, VALUE, std::string)
+#define RESTRICT_STRING(NAME, VALUE)     _RESTRICTION(NAME, VALUE, std::string)
 #define RESTRICT_INTEGER(NAME, VALUE)    _RESTRICTION(NAME, VALUE, xsd::Integer)
 #define RESTRICT_DECIMAL(NAME, VALUE)    _RESTRICTION(NAME, VALUE, xsd::Decimal)
+#define RESTRICT_NODE(NAME, VALUE)       _RESTRICTION(NAME, VALUE, rdf::Node)
 #define RESTRICT_URI(NAME, VALUE)        _RESTRICTION(NAME, VALUE, rdf::URI)
 
 
