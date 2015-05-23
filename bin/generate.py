@@ -226,7 +226,8 @@ class Constructor(object):
 
   def add_property(self, name, kind, property, *options):
   #------------------------------------------------------
-    self._props.append('  {"%s", %s},' % (name, property))
+    if property != 'NONE':
+      self._props.append('  {"%s", %s},' % (name, property))
 
   def preset(self, name, value, kind):
   #-----------------------------------
@@ -308,6 +309,7 @@ class Generator(object):
           a.add_property(p, *v)
           s.save_property(p, *v)
       for p, v in cls[3][1].iteritems():  # assignments
+        c.add_property(p, *v)
         a.add_property(p, *v)
         s.save_property(p, *v)
       for p, v in cls[3][2].iteritems():  # restrictions
