@@ -21,7 +21,8 @@ elseif(WIN32)
 endif()
 
 set(INCLUDES $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
-             $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>)
+             $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+             )
 
 add_subdirectory(src)
 
@@ -29,17 +30,12 @@ enable_testing()
 add_subdirectory(tests)
 
 add_library(typedobject SHARED ${SOURCES})
+target_include_directories(typedobject PUBLIC ${INCLUDES})
+target_link_libraries(typedobject ${LIBS})
 
 generate_export_header(typedobject
                        EXPORT_FILE_NAME
                        ${CMAKE_BINARY_DIR}/include/typedobject/typedobject_export.h)
-
-#target_include_directories(typedobject PUBLIC
-#                            $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>)
-target_include_directories(typedobject PUBLIC ${INCLUDES})
-
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-target_link_libraries(typedobject ${LIBS})
 
 set_property(TARGET typedobject PROPERTY VERSION ${TypedObject_VERSION})
 set_property(TARGET typedobject PROPERTY SOVERSION 3)
