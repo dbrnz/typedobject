@@ -41,6 +41,7 @@ namespace rdf {
    	NodeImpl(SordNode *node, bool copy=false) ;
    	NodeImpl(const NodeImpl &other) ;
 
+    static NodeImpl *new_relative_uri(const std::string &uri, const std::string &base) ;
     static NodeImpl *new_datatype_node(const std::string &s, const rdf::URI &datatype) ;
     static NodeImpl *new_language_node(const std::string &s, const std::string &language) ;
     static NodeImpl *new_decimal_node(xsd::Decimal d, unsigned frac_digits) ;

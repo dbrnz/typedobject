@@ -85,6 +85,7 @@ namespace rdf {
    public:
     URI() ;
     URI(const std::string & uri) ;
+    URI(const std::string & uri, const std::string & base) ;
     URI(const Node & uri) ;
     URI(const URI & other) ;
     URI(URI && other) ;

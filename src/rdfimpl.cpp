@@ -81,6 +81,15 @@ rdf::NodeImpl::NodeImpl(const NodeImpl &other)
 {
   }
 
+rdf::NodeImpl *rdf::NodeImpl::new_relative_uri(const std::string &uri, const std::string &base)
+/*-------------------------------------------------------------------------------------------*/
+{
+  SordNode *node = sord_new_relative_uri(sordWorld().world(),
+                                        (const uint8_t*)uri.c_str(),
+                                        (const uint8_t*)base.c_str()) ;
+  return (node != nullptr) ? new rdf::NodeImpl(node) : new rdf::NodeImpl ;
+  }
+
 rdf::NodeImpl *rdf::NodeImpl::new_datatype_node(const std::string &s, const rdf::URI &datatype)
 /*-------------------------------------------------------------------------------------------*/
 {

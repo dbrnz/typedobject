@@ -179,6 +179,10 @@ rdf::URI::URI()
 rdf::URI::URI(const std::string &uri)
 /*---------------------------------*/
 : rdf::Node(new rdf::NodeImpl(Sord::Node::URI, uri))
+
+rdf::URI::URI(const std::string &uri, const std::string &base)
+/*----------------------------------------------------------*/
+: rdf::Node(rdf::NodeImpl::new_relative_uri(uri, base))
 {
   }
 
