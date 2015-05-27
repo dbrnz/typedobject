@@ -423,7 +423,8 @@ std::string rdf::GraphImpl::serialise(const rdf::Graph::Format format, const uin
   std::string result = "" ;
   if (format == rdf::Graph::Format::TURTLE || format == rdf::Graph::Format::NTRIPLES) {     // Use sord
     SerdURI base_uri = SERD_URI_NULL ;
-    if (base_str) serd_uri_parse(base_str, &base_uri) ;
+    SerdNode base_uri_node = SERD_NODE_NULL ;
+    if (base_str) base_uri_node = serd_node_new_uri_from_string(base_str, NULL, &base_uri) ;
 
     SerdWriter *writer = serd_writer_new((format == rdf::Graph::Format::TURTLE) ? SERD_TURTLE
                                                                                 : SERD_NTRIPLES,
@@ -431,6 +432,7 @@ std::string rdf::GraphImpl::serialise(const rdf::Graph::Format format, const uin
                                          sordWorld().prefixes().c_obj(),
                                          &base_uri,
                                          Sord::string_sink, &result) ;
+    serd_writer_set_base_uri(writer, &base_uri_node) ;
     serd_env_foreach(sordWorld().prefixes().c_obj(), (SerdPrefixSink)serd_writer_set_prefix, writer) ;
     for (auto const &prefix : prefixes) {
       serd_writer_set_prefix(writer, prefix.name().node()->to_serd_node(),
