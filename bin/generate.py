@@ -199,9 +199,9 @@ class Constructor(object):
     self._ctr.append(': %s(uri)' % '::'.join(b))
     self._comma = ',\n  '
     self._base = '::'.join(b)
-    self._dtr = ['', '  }', '', '%(cls)s::~%(cls)s()' % {'cls': cls}, '{']
+    self._dtr = ['  }', '', '%(cls)s::~%(cls)s()' % {'cls': cls}, '{']
     self._props = [ ]
-    self._preset = ['', '{']
+    self._preset = ['{']
     self._restrict = [ ]
     self._init_code = init_code
 
@@ -228,7 +228,7 @@ class Constructor(object):
   def add_property(self, name, kind, property, *options):
   #------------------------------------------------------
     if property != 'NONE':
-      self._props.append('  {"%s", %s},' % (name, property))
+      self._props.append('    {"%s", %s},' % (name, property))
 
   def preset(self, name, value, kind):
   #-----------------------------------
@@ -249,7 +249,7 @@ class Constructor(object):
            ]
     code.append('std::map<std::string, rdf::Node> %s::m_properties {' % self._class)
     code.extend(self._props)
-    code.extend('  } ;\n')
+    code.append('  } ;')
     code.append('''
 rdf::Node %(cls)s::get_property(const std::string & name)
 {
