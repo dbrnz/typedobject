@@ -80,8 +80,8 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
   void save_as_rdf(const rdf::Graph &graph) ;                               \
  public:                                  \
   CLASS() { }                             \
-  CLASS(const std::string &uri) ;         \
-  CLASS(const std::string &uri, const rdf::Graph &graph) ; \
+  CLASS(const rdf::URI &uri) ;            \
+  CLASS(const rdf::URI &uri, const rdf::Graph &graph) ;    \
   ~CLASS() ;                                               \
   const rdf::URI &type(void) const ;                       \
   static std::set<rdf::URI> &subtypes(void) ;              \
@@ -216,9 +216,8 @@ namespace TypedObject
 
    public:
     TypedObject() ;
-    TypedObject(const std::string &uri) ;
-    TypedObject(const std::string &uri, const rdf::Graph &graph) ;
-
+    TypedObject(const rdf::URI &uri) ;
+    TypedObject(const rdf::URI &uri, const rdf::Graph &graph) ;
     virtual ~TypedObject() ;
 
     static TypedObject *create(const rdf::URI &T, const std::string &uri) ;

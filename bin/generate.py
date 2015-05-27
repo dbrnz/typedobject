@@ -187,13 +187,13 @@ class Constructor(object):
     self._class = cls
     ctr = cls + '::' + cls
     self._ctr = [
-'''%(ctr)s(const std::string &uri, const rdf::Graph &graph)
+'''%(ctr)s(const rdf::URI &uri, const rdf::Graph &graph)
 : %(ctr)s(uri)
 {
   if (!this->add_metadata(graph)) *this = %(ctr)s() ;
   }
 
-%(ctr)s(const std::string &uri)\n''' % {'ctr': ctr}]
+%(ctr)s(const rdf::URI &uri)\n''' % {'ctr': ctr}]
     b = base.split('::')
     if len(b) > 1 and b[-2] == b[-1]: del b[-1]
     self._ctr.append(': %s(uri)' % '::'.join(b))
