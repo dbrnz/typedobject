@@ -25,6 +25,10 @@ add_executable(test_rdf rdf.cpp)
 target_link_libraries(test_rdf typedobject)
 add_test(RDF, test_rdf)
 
+add_executable(test_graph graph.cpp)
+target_link_libraries(test_graph typedobject)
+add_test(GRAPH, test_graph)
+
 add_executable(test_utils utils.cpp)
 target_link_libraries(test_utils typedobject)
 add_test(UTILS, test_utils)
