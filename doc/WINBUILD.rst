@@ -8,8 +8,8 @@ of libraries that are suitable for linking with a release version of
 libraries, a debug build of ``typedobject`` requires debug versions of
 libraries.
 
-These notes install libraries into a Unix-like directory structure under
-``C:\usr\local``; we first make these directories:
+Static libraries are built and installed into a Unix-like directory structure under
+``C:\usr\local``.
 
 * Create the directories ``C:\usr``, ``C:\\usr\local`` and ``C:\usr\local\bin``.
 
@@ -330,8 +330,10 @@ sord
   ``python waf configure``.
 
 
-Boost date-time
----------------
+Boost
+-----
+
+* The Boost date time and unit testing libraries are used.
 
 * Download and extract the latest version of Boost from
   http://www.boost.org/users/history into drive ``C:\``.
@@ -339,11 +341,16 @@ Boost date-time
 * Change to the installed directory and run ``bootstrap.bat``
   to build Boost's build tools.
 
-* Now build the date-time libraries with: ::
+* Now build the libraries with: ::
 
     b2 --with-date_time variant=release link=static threading=multi toolset=msvc address-model=64
 
-* For a debug version of the library use ``variant=debug`` when running ``b2``.
+    b2 --with-system --with-test --with-filesystem  \
+       variant=release link=shared threading=multi toolset=msvc address-model=64
+
+* Need to copy testing DLLs.
+
+* For a debug version of the libraries use ``variant=debug`` when running ``b2``.
 
 * Set the ``BOOST_ROOT`` environment variable to the directory where Boost was
   installed. e.g: ::
