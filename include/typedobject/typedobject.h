@@ -210,11 +210,6 @@ namespace TypedObject
     static rdf::Node get_property(const std::string &name) ;
 
    public:
-    virtual const rdf::URI &type(void) const = 0 ;
-    inline const rdf::URI &uri() const { return m_uri ; }
-    static inline int add_subtype(const rdf::URI &T) { return 0 ; }
-
-   public:
     TypedObject() ;
     TypedObject(const rdf::URI &uri) ;
     TypedObject(const rdf::URI &uri, const rdf::Graph &graph) ;
@@ -243,10 +238,13 @@ namespace TypedObject
     bool operator==(const TypedObject &other) const ;
     bool operator<(const TypedObject &other) const ;
 
+    inline const rdf::URI &uri() const { return m_uri ; }
     bool is_valid(void) const ;
     std::string to_string(void) const ;
 
+    virtual const rdf::URI &type(void) const = 0 ;
     static void register_type(const rdf::URI &T, TypedObjectFactory *factory) ;
+    static inline int add_subtype(const rdf::URI &T) { (void)T ; return 0 ; } // Unused parameter
 
     /**
     Set attributes from RDF triples in a graph.
