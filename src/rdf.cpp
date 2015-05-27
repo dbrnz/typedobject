@@ -521,14 +521,14 @@ const rdf::URI &rdf::Graph::get_uri(void) const
   }
 
 
-const bool rdf::Graph::insert(const Statement &statement) const
-/*-----------------------------------------------------------*/
+bool rdf::Graph::insert(const Statement &statement) const
+/*-----------------------------------------------------*/
 {
   return sord_add(m_graph->model(), *statement.m_stmnt->quad()) ;
   }
 
-const bool rdf::Graph::insert(const rdf::Node &s, const rdf::Node &p, const rdf::Node &o) const
-/*-------------------------------------------------------------------------------------------*/
+bool rdf::Graph::insert(const rdf::Node &s, const rdf::Node &p, const rdf::Node &o) const
+/*-------------------------------------------------------------------------------------*/
 {
   SordQuad quad = { s.node()->c_obj(), p.node()->c_obj(), o.node()->c_obj(), NULL } ;
   return sord_add(m_graph->model(), quad) ;
@@ -547,14 +547,14 @@ void rdf::Graph::add_statements(const StatementIter &statements) const
     }
   }
 
-const bool rdf::Graph::contains(const Statement &statement) const
-/*-------------------------------------------------------------*/
+bool rdf::Graph::contains(const Statement &statement) const
+/*-------------------------------------------------------*/
 {
   return sord_contains(m_graph->model(), *statement.m_stmnt->quad()) ;
   }
 
-const bool rdf::Graph::contains(const rdf::Node &s, const rdf::Node &p, const rdf::Node &o) const
-/*---------------------------------------------------------------------------------------------*/
+bool rdf::Graph::contains(const rdf::Node &s, const rdf::Node &p, const rdf::Node &o) const
+/*---------------------------------------------------------------------------------------*/
 {
   return contains(rdf::Statement(s, p, o)) ;
   }
