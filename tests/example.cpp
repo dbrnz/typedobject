@@ -16,8 +16,7 @@ const URI TEST::object = TEST::NS.make_URI("object") ;
 int main(void)
 /*----------*/
 {
-  std::string object_uri1 = "http://example.org/object/1" ;
-  std::string object_uri2 = "http://example.org/object/2" ;
+  rdf::URI object_uri1("http://example.org/object/1") ;
 
   example::Object object(object_uri1) ;
 

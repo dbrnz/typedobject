@@ -32,7 +32,7 @@ const URI TEST::object = TEST::NS.make_URI("object") ;
 int main(void)
 /*----------*/
 {
-  test::Object object("http://example.org/object") ;
+  test::Object object(rdf::URI("http://example.org/object")) ;
 
   object.set_string("Some string") ;
   object.set_integer(3) ;
