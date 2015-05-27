@@ -64,6 +64,9 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
 #define _RESTRICTION(NAME, VALUE, ...)   \
   static int _RESTRICT_##NAME##  = _PARAMETERS_2(#VALUE, #__VA_ARGS__) ;
 
+#define _INITIALISE(CODE, ...)       \
+  static int _INITIALISE_        = _PARAMETERS_2(#CODE, #__VA_ARGS__) ;
+
 #else
 
 #define TYPED_OBJECT(CLASS, TYPE)         \
@@ -126,6 +129,8 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
 #define _ASSIGN(NAME, P, T, ...)
 #define _RESTRICTION(NAME, VALUE, T, ...)
 
+#define _INITIALISE(CODE, ...)
+
 #endif
 
 #define PROPERTY_STRING(NAME, P)         _PROPERTY(NAME, P, std::string)
@@ -156,6 +161,8 @@ int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
 #define RESTRICT_DECIMAL(NAME, VALUE)    _RESTRICTION(NAME, VALUE, xsd::Decimal)
 #define RESTRICT_NODE(NAME, VALUE)       _RESTRICTION(NAME, VALUE, rdf::Node)
 #define RESTRICT_URI(NAME, VALUE)        _RESTRICTION(NAME, VALUE, rdf::URI)
+
+#define INITIALISE(CODE, ...)            _INITIALISE(CODE, #__VA_ARGS__)
 
 
 namespace TypedObject

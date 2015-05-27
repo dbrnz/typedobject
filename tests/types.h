@@ -49,6 +49,14 @@ namespace test {
     PROPERTY_DATETIME(starttime, DCT::created)
     PROPERTY_DURATION(duration, DCT::extent)
     PROPERTY_NODE(investigator, DCT::creator)
+
+   private:
+    std::string m_local ;
+    int m_int ;
+    INITIALISE(             \
+      m_local = m_string ;  \
+      m_int = m_integer ;   \
+      )
     } ;
 
 

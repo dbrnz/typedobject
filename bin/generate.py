@@ -181,8 +181,8 @@ class SaveToRDF(object):
 class Constructor(object):
 #-------------------------
 
-  def __init__(self, cls, base):
-  #-----------------------------
+  def __init__(self, cls, base, init_code):
+  #----------------------------------------
 #    print "B:", base, " C:", constructor(base)
     self._class = cls
     ctr = cls + '::' + cls
@@ -203,6 +203,7 @@ class Constructor(object):
     self._props = [ ]
     self._preset = ['', '{']
     self._restrict = [ ]
+    self._init_code = init_code
 
   def initialise(self, name, kind, prop, *options):
   #-----------------------------------------------
@@ -243,7 +244,8 @@ class Constructor(object):
   #-----------------
     code = [''.join(self._ctr),
             '\n'.join(self._preset),
-            '\n'.join(self._dtr) + '\n  }\n\n',
+            '\n'.join(self._init_code),
+            '\n'.join(self._dtr) + '\n  }\n',
            ]
     code.append('std::map<std::string, rdf::Node> %s::m_properties {' % self._class)
     code.extend(self._props)
@@ -276,7 +278,7 @@ class Generator(object):
     self._classes = [ ]
     self._class = None
     self._base = None
-    self._properties = ({ }, { }, { })    # (properties, assignments, restrictions)
+    self._properties = ({ }, { }, { }, [ ]) # (properties, assignments, restrictions, init)
     self._usednames = [ ]
 
   def save(self, hdr, fn):
@@ -299,7 +301,7 @@ class Generator(object):
       mcls = cls[3][0].get('TYPE')
       if mcls and mcls[0]:
         code.append(generate_types(mcls[0], cls[1], cls[2]))
-      c = Constructor(cls[1], cls[2])     # class, base
+      c = Constructor(cls[1], cls[2], cls[3][3])  # class, base, initialisation
       a = AssignFromRDF(cls[1], cls[2])
       s = SaveToRDF(cls[1], cls[2])
       for p, v in cls[3][0].iteritems():  # properties
@@ -342,7 +344,7 @@ class Generator(object):
       self._classes.append(('::'.join(self._namespaces), self._class, self._base, self._properties))
       self._class = None
       self._base = None
-      self._properties = ({ }, { }, { })  # (properties, assignments, restrictions)
+      self._properties = ({ }, { }, { }, [ ])  # (properties, assignments, restrictions, init)
 
   def add_property(self, name, *params):
   #-------------------------------------
@@ -358,6 +360,13 @@ class Generator(object):
   #----------------------------------------
     if self._class is not None:
       self._properties[2][name] = params
+
+  def add_initialisation(self, *params):
+  #-------------------------------------
+    if self._class is not None:
+      for c in params:
+        if c and c != '\\"\\"':
+          self._properties[3].append(c.replace('\\"', '"'))
 
   def use_namespace(self, name):
   #-----------------------------
@@ -426,6 +435,12 @@ class Parser(object):
       if c.kind == CursorKind.CALL_EXPR and c.displayname.startswith('_PARAMETERS_'):
         self._generator.add_restriction(name, *self.parse_parameters(c, c.displayname[12:]))
 
+  def parse_initialisation(self, cursor):
+  #--------------------------------------
+    for c in cursor.get_children():
+      if c.kind == CursorKind.CALL_EXPR and c.displayname.startswith('_PARAMETERS_'):
+        self._generator.add_initialisation(*self.parse_parameters(c, c.displayname[12:]))
+
   def parse_using(self, cursor):
   #-----------------------------
     ns = None
@@ -474,6 +489,9 @@ class Parser(object):
 
     elif kind == CursorKind.VAR_DECL and name.startswith('_RESTRICT_'):
       self.parse_restriction(name[10:], cursor)
+
+    elif kind == CursorKind.VAR_DECL and name == '_INITIALISE_':
+      self.parse_initialisation(cursor)
 
     elif kind == CursorKind.USING_DIRECTIVE:
       self.parse_using(cursor)
