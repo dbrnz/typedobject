@@ -36,11 +36,11 @@ namespace rdf {
   {
    public:
    	NodeImpl() ;
-   	NodeImpl(Sord::Node::Type t, const std::string &s) ;
    	NodeImpl(const SordNode *node) ;
    	NodeImpl(SordNode *node, bool copy=false) ;
    	NodeImpl(const NodeImpl &other) ;
 
+   	static NodeImpl *new_node(Sord::Node::Type type, const std::string &s) ;
     static NodeImpl *new_relative_uri(const std::string &uri, const std::string &base) ;
     static NodeImpl *new_datatype_node(const std::string &s, const rdf::URI &datatype) ;
     static NodeImpl *new_language_node(const std::string &s, const std::string &language) ;

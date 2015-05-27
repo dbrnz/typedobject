@@ -57,12 +57,6 @@ rdf::NodeImpl::NodeImpl()
 {
   }
 
-rdf::NodeImpl::NodeImpl(Sord::Node::Type t, const std::string &s)
-/*-------------------------------------------------------------*/
-: Sord::Node(sordWorld(), t, s)
-{
-  }
-
 rdf::NodeImpl::NodeImpl(const SordNode *node)
 /*-----------------------------------------*/
 : Sord::Node(sordWorld(), node)
@@ -80,6 +74,30 @@ rdf::NodeImpl::NodeImpl(const NodeImpl &other)
 : Sord::Node(other)
 {
   }
+
+rdf::NodeImpl *rdf::NodeImpl::new_node(Sord::Node::Type type, const std::string &s)
+/*-------------------------------------------------------------------------------*/
+{
+  SordWorld *world = sordWorld().world() ;
+  SordNode *node ;
+
+  switch (type) {
+   case Sord::Node::URI:
+    node = sord_new_uri(world, (const unsigned char *)s.c_str()) ;
+    break ;
+   case Sord::Node::LITERAL:
+    node = sord_new_literal(world, NULL, (const unsigned char *)s.c_str(), NULL) ;
+    break;
+   case Sord::Node::BLANK:
+    node = sord_new_blank(world, (const unsigned char *)s.c_str()) ;
+    break;
+   default:
+    node = NULL ;
+    }
+  return (node != nullptr) ? new rdf::NodeImpl(node) : new rdf::NodeImpl ;
+  }
+
+
 
 rdf::NodeImpl *rdf::NodeImpl::new_relative_uri(const std::string &uri, const std::string &base)
 /*-------------------------------------------------------------------------------------------*/
@@ -247,7 +265,7 @@ static SordNode *sord_node_from_raptor_term(const raptor_term *term)
    default:
     break ;
     }
-  return node ;
+  return node ;  // Check node isn't NULL
   }
 
 static void process_raptor_message(void *user_data, raptor_log_message *message)

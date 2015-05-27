@@ -178,7 +178,9 @@ rdf::URI::URI()
 
 rdf::URI::URI(const std::string &uri)
 /*---------------------------------*/
-: rdf::Node(new rdf::NodeImpl(Sord::Node::URI, uri))
+: rdf::Node(rdf::NodeImpl::new_node(Sord::Node::URI, uri))
+{
+  }
 
 rdf::URI::URI(const std::string &uri, const std::string &base)
 /*----------------------------------------------------------*/
@@ -188,10 +190,9 @@ rdf::URI::URI(const std::string &uri, const std::string &base)
 
 rdf::URI::URI(const Node &uri)
 /*--------------------------*/
-: rdf::Node(new rdf::NodeImpl(Sord::Node::URI, uri.to_string()))
+: rdf::Node(rdf::NodeImpl::new_node(Sord::Node::URI, uri.to_string()))
 {
   }
-
 
 rdf::URI::URI(const rdf::URI & other)
 /*---------------------------------*/
@@ -221,13 +222,13 @@ rdf::URI & rdf::URI::operator=(rdf::URI && other)
 
 rdf::BNode::BNode()
 /*---------------*/
-: rdf::Node(new rdf::NodeImpl(Sord::Node::BLANK, ""))
+: rdf::Node(rdf::NodeImpl::new_node(Sord::Node::BLANK, ""))
 {
   }
 
 rdf::BNode::BNode(const std::string &s)
 /*-----------------------------------*/
-: rdf::Node(new rdf::NodeImpl(Sord::Node::BLANK, s))
+: rdf::Node(rdf::NodeImpl::new_node(Sord::Node::BLANK, s))
 {
   }
 
@@ -267,7 +268,7 @@ rdf::Literal::Literal()
 
 rdf::Literal::Literal(const std::string &s)
 /*---------------------------------------*/
-: rdf::Node(new rdf::NodeImpl(Sord::Node::LITERAL, s))
+: rdf::Node(rdf::NodeImpl::new_node(Sord::Node::LITERAL, s))
 {
   }
 

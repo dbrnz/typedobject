@@ -76,6 +76,7 @@ namespace rdf {
 
    private:
     NodeImpl *m_node ;
+    friend class NodeImpl ;
     } ;
 
 
