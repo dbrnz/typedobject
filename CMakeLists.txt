@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 project("TypedObjectLib")
-set(TypedObject_VERSION 0.9.5)
+set(TypedObject_VERSION 1.0.1)
 
 ### CMake helpers...
 include(GenerateExportHeader)
@@ -38,8 +38,8 @@ generate_export_header(typedobject
                        ${CMAKE_BINARY_DIR}/include/typedobject/typedobject_export.h)
 
 set_property(TARGET typedobject PROPERTY VERSION ${TypedObject_VERSION})
-set_property(TARGET typedobject PROPERTY SOVERSION 3)
-set_property(TARGET typedobject PROPERTY INTERFACE_typedobject_MAJOR_VERSION 0)
+set_property(TARGET typedobject PROPERTY SOVERSION 1)
+set_property(TARGET typedobject PROPERTY INTERFACE_typedobject_MAJOR_VERSION 1)
 set_property(TARGET typedobject APPEND PROPERTY
   COMPATIBLE_INTERFACE_STRING typedobject_MAJOR_VERSION
   )
