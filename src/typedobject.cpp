@@ -30,14 +30,14 @@ namespace TypedObject {
   {
     }
 
-  TypedObject::TypedObject(const std::string &uri)
-  /*--------------------------------------------*/
+  TypedObject::TypedObject(const rdf::URI &uri)
+  /*-----------------------------------------*/
   : m_uri(uri)
   {
     }
 
-  TypedObject::TypedObject(const std::string &uri, const rdf::Graph &graph)
-  /*---------------------------------------------------------------------*/
+  TypedObject::TypedObject(const rdf::URI &uri, const rdf::Graph &graph)
+  /*------------------------------------------------------------------*/
   : TypedObject(uri)
   {
     }
