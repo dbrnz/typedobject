@@ -270,25 +270,25 @@ rdf::Literal::Literal(const std::string &s)
 
 rdf::Literal::Literal(const std::string &s, const rdf::URI &datatype)
 /*-----------------------------------------------------------------*/
-: rdf::Node(rdf::NodeImpl::sord_datatype_node(s, datatype))
+: rdf::Node(rdf::NodeImpl::new_datatype_node(s, datatype))
 {
   }
 
 rdf::Literal::Literal(const std::string &s, const std::string &language)
 /*--------------------------------------------------------------------*/
-: rdf::Node(rdf::NodeImpl::sord_language_node(s, language))
+: rdf::Node(rdf::NodeImpl::new_language_node(s, language))
 {
   }
 
 rdf::Literal::Literal(xsd::Decimal d, unsigned frac_digits)
 /*-------------------------------------------------------*/
-: rdf::Node(rdf::NodeImpl::sord_decimal_node(d, frac_digits))
+: rdf::Node(rdf::NodeImpl::new_decimal_node(d, frac_digits))
 {
   }
 
 rdf::Literal::Literal(xsd::Integer i)
 /*---------------------------------*/
-: rdf::Node(rdf::NodeImpl::sord_integer_node(i))
+: rdf::Node(rdf::NodeImpl::new_integer_node(i))
 {
   }
 

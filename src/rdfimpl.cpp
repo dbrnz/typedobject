@@ -81,40 +81,40 @@ rdf::NodeImpl::NodeImpl(const NodeImpl &other)
 {
   }
 
-rdf::NodeImpl *rdf::NodeImpl::sord_datatype_node(const std::string &s, const rdf::URI &datatype)
-/*--------------------------------------------------------------------------------------------*/
+rdf::NodeImpl *rdf::NodeImpl::new_datatype_node(const std::string &s, const rdf::URI &datatype)
+/*-------------------------------------------------------------------------------------------*/
 {
   const SerdNode val = serd_node_from_string(SERD_LITERAL, (const uint8_t*)s.c_str()) ;
   const SerdNode *type = sord_node_to_serd_node(datatype.node()->c_obj()) ;
-  return rdf::NodeImpl::sord_node_from_serd_node(&val, type, NULL) ;
+  return rdf::NodeImpl::new_node_from_serd_node(&val, type, NULL) ;
   }
 
-rdf::NodeImpl *rdf::NodeImpl::sord_language_node(const std::string &s, const std::string &language)
-/*-----------------------------------------------------------------------------------------------*/
+rdf::NodeImpl *rdf::NodeImpl::new_language_node(const std::string &s, const std::string &language)
+/*----------------------------------------------------------------------------------------------*/
 {
   const SerdNode val = serd_node_from_string(SERD_LITERAL, (const uint8_t*)s.c_str()) ;
   const SerdNode lang = serd_node_from_string(SERD_LITERAL, (const uint8_t*)language.c_str()) ;
-  return rdf::NodeImpl::sord_node_from_serd_node(&val, NULL, &lang) ;
+  return rdf::NodeImpl::new_node_from_serd_node(&val, NULL, &lang) ;
   }
 
-rdf::NodeImpl *rdf::NodeImpl::sord_decimal_node(xsd::Decimal d, unsigned frac_digits)
-/*---------------------------------------------------------------------------------*/
+rdf::NodeImpl *rdf::NodeImpl::new_decimal_node(xsd::Decimal d, unsigned frac_digits)
+/*--------------------------------------------------------------------------------*/
 {
   const SerdNode val = serd_node_new_decimal(d, frac_digits) ;
   const SerdNode type = serd_node_from_string(SERD_URI, (const uint8_t*)SORD_NS_XSD "decimal") ;
-  return rdf::NodeImpl::sord_node_from_serd_node(&val, &type, NULL) ;
+  return rdf::NodeImpl::new_node_from_serd_node(&val, &type, NULL) ;
   }
 
-rdf::NodeImpl *rdf::NodeImpl::sord_integer_node(xsd::Integer i)
-/*-----------------------------------------------------------*/
+rdf::NodeImpl *rdf::NodeImpl::new_integer_node(xsd::Integer i)
+/*----------------------------------------------------------*/
 {
   const SerdNode val = serd_node_new_integer(i) ;
   const SerdNode type = serd_node_from_string(SERD_URI, (const uint8_t*)SORD_NS_XSD "integer") ;
-  return rdf::NodeImpl::sord_node_from_serd_node(&val, &type, NULL) ;
+  return rdf::NodeImpl::new_node_from_serd_node(&val, &type, NULL) ;
   }
 
-rdf::NodeImpl *rdf::NodeImpl::sord_node_from_serd_node(
-/*---------------------------------------------------*/
+rdf::NodeImpl *rdf::NodeImpl::new_node_from_serd_node(
+/*--------------------------------------------------*/
   const SerdNode *node, const SerdNode *type, const SerdNode *lang)
 {
   return
