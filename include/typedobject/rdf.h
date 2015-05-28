@@ -141,6 +141,8 @@ namespace rdf {
   {
    public:
     Namespace(const std::string & name, const std::string & uri) ;
+    Namespace(const Namespace & other) ;
+    Namespace & operator=(const Namespace & other) ;
 
     const URI make_URI(const std::string &suffix) const ;
 

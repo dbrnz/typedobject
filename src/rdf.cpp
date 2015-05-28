@@ -344,6 +344,20 @@ rdf::Namespace::Namespace(const std::string &name, const std::string &uri)
 {
   }
 
+rdf::Namespace::Namespace(const rdf::Namespace & other)
+/*---------------------------------------------------*/
+: m_name(other.m_name), m_uri(other.m_uri)
+{
+  }
+
+rdf::Namespace & rdf::Namespace::operator=(const rdf::Namespace & other)
+/*--------------------------------------------------------------------*/
+{
+  rdf::Namespace ns(other) ;
+  *this = std::move(ns) ;
+  return *this ;
+  }
+
 const rdf::URI rdf::Namespace::make_URI(const std::string &suffix) const
 /*---------------------------------------------------------------------*/
 {
@@ -358,7 +372,7 @@ rdf::Literal rdf::Namespace::name(void) const
   }
 
 rdf::URI rdf::Namespace::uri(void) const
-/*-------------------------------------*/
+/*------------------------------------*/
 {
   return m_uri ;
   }
