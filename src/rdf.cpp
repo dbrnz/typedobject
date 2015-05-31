@@ -358,6 +358,20 @@ rdf::Namespace & rdf::Namespace::operator=(const rdf::Namespace & other)
   return *this ;
   }
 
+
+bool rdf::Namespace::operator==(const rdf::Namespace &other) const
+/*--------------------------------------------------------------*/
+{
+  return m_uri == other.m_uri ;
+  }
+
+bool rdf::Namespace::operator<(const rdf::Namespace &other) const
+/*-------------------------------------------------------------*/
+{
+  return m_uri < other.m_uri ;
+  }
+
+
 const rdf::URI rdf::Namespace::make_URI(const std::string &suffix) const
 /*---------------------------------------------------------------------*/
 {

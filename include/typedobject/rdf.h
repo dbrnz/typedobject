@@ -144,6 +144,9 @@ namespace rdf {
     Namespace(const Namespace & other) ;
     Namespace & operator=(const Namespace & other) ;
 
+    bool operator==(const Namespace &other) const ;
+    bool operator<(const Namespace &other) const ;
+
     const URI make_URI(const std::string &suffix) const ;
 
     Literal name(void) const ;
