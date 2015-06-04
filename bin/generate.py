@@ -365,8 +365,7 @@ class Generator(object):
   #-------------------------------------
     if self._class is not None:
       for c in params:
-        if c and c != '\\"\\"':
-          self._properties[3].append(c.replace('\\"', '"'))
+        self._properties[3].append(c.replace('\\"', '"'))
 
   def use_namespace(self, name):
   #-----------------------------
@@ -404,8 +403,9 @@ class Parser(object):
       if c.kind == CursorKind.TYPE_REF and c.displayname.startswith('class '):
         return c.displayname[6:]
 
-  def parse_parameters(self, cursor, count):
-  #-----------------------------------------
+  def parse_parameters(self, cursor):
+  #----------------------------------
+    count = 0
     params = [ ]
     for c in cursor.get_children():
       if c.kind == CursorKind.UNEXPOSED_EXPR and c.type.kind == TypeKind.POINTER:
@@ -413,33 +413,37 @@ class Parser(object):
         if p.kind == TypeKind.CHAR_S and p.is_const_qualified():
           s = list(c.get_children())[0]
           if s.kind == CursorKind.STRING_LITERAL and s.type.kind == TypeKind.CONSTANTARRAY:
-            params.append(s.displayname[1:-1])
+            if count == 0: count = s.displayname[1:-1]
+            else:
+              p = s.displayname[1:-1]  # strip ""
+              if p.startswith('\\"'): p = p[2:-2]
+              params.append(p)
     assert(len(params) >= int(count))
     return params
 
   def parse_property(self, name, cursor):
   #--------------------------------------
     for c in cursor.get_children():
-      if c.kind == CursorKind.CALL_EXPR and c.displayname.startswith('_PARAMETERS_'):
-        self._generator.add_property(name, *self.parse_parameters(c, c.displayname[12:]))
+      if c.kind == CursorKind.CALL_EXPR and c.displayname == '_PARAMETERS_':
+        self._generator.add_property(name, *self.parse_parameters(c))
 
   def parse_assignment(self, name, cursor):
   #----------------------------------------
     for c in cursor.get_children():
-      if c.kind == CursorKind.CALL_EXPR and c.displayname.startswith('_PARAMETERS_'):
-        self._generator.add_assignment(name, *self.parse_parameters(c, c.displayname[12:]))
+      if c.kind == CursorKind.CALL_EXPR and c.displayname == '_PARAMETERS_':
+        self._generator.add_assignment(name, *self.parse_parameters(c))
 
   def parse_restriction(self, name, cursor):
   #-----------------------------------------
     for c in cursor.get_children():
-      if c.kind == CursorKind.CALL_EXPR and c.displayname.startswith('_PARAMETERS_'):
-        self._generator.add_restriction(name, *self.parse_parameters(c, c.displayname[12:]))
+      if c.kind == CursorKind.CALL_EXPR and c.displayname == '_PARAMETERS_':
+        self._generator.add_restriction(name, *self.parse_parameters(c))
 
   def parse_initialisation(self, cursor):
   #--------------------------------------
     for c in cursor.get_children():
-      if c.kind == CursorKind.CALL_EXPR and c.displayname.startswith('_PARAMETERS_'):
-        self._generator.add_initialisation(*self.parse_parameters(c, c.displayname[12:]))
+      if c.kind == CursorKind.CALL_EXPR and c.displayname == '_PARAMETERS_':
+        self._generator.add_initialisation(*self.parse_parameters(c))
 
   def parse_using(self, cursor):
   #-----------------------------

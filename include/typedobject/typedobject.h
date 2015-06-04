@@ -33,39 +33,37 @@
 
 #ifdef TYPED_OBJECT_COMPILE
 
-int _PARAMETERS_1(const char *property) { return 0 ; }
-int _PARAMETERS_2(const char *name, const char *property, ...) { return 0 ; }
-int _PARAMETERS_3(const char *name, const char *property, ...) { return 0 ; }
+int _PARAMETERS_(const char *params, ...) { return 0 ; }
 #define TYPED_OBJECT(CLASS, TYPE)         \
   static int _OBJECT_DEFINITION = 0 ;     \
-  static int _PROPERTY_TYPE = _PARAMETERS_1(#TYPE) ;
+  static int _PROPERTY_TYPE = _PARAMETERS_("1", #TYPE) ;
 
 #define _PROPERTY(NAME, P, T, ...)        \
-  static int _PROPERTY_##NAME##  = _PARAMETERS_3(#T, #P, #__VA_ARGS__) ;
+  static int _PROPERTY_##NAME##  = _PARAMETERS_("2", #T, #P, #__VA_ARGS__) ;
 
 #define _PROPERTY_OBJ(NAME, P, T, ...)    \
-  static int _PROPERTY_##NAME##  = _PARAMETERS_3(#T, #P, "OBJ",  #__VA_ARGS__) ;
+  static int _PROPERTY_##NAME##  = _PARAMETERS_("3", #T, #P, "OBJ",  #__VA_ARGS__) ;
 
 #define _PROPERTY_SET(NAME, P, T, ...)    \
-  static int _PROPERTY_##NAME##  = _PARAMETERS_3(#T, #P, "SET",  #__VA_ARGS__) ;
+  static int _PROPERTY_##NAME##  = _PARAMETERS_("3", #T, #P, "SET",  #__VA_ARGS__) ;
 
 #define _PROPERTY_OBJ_SET(NAME, P, T, ...)\
-  static int _PROPERTY_##NAME##  = _PARAMETERS_3(#T, #P, "SET",  "OBJ", #__VA_ARGS__) ;
+  static int _PROPERTY_##NAME##  = _PARAMETERS_("4", #T, #P, "SET",  "OBJ", #__VA_ARGS__) ;
 
 #define _PROPERTY_RSET(NAME, P, T, ...)   \
-  static int _PROPERTY_##NAME##  = _PARAMETERS_3(#T, #P, "RSET", #__VA_ARGS__) ;
+  static int _PROPERTY_##NAME##  = _PARAMETERS_("3", #T, #P, "RSET", #__VA_ARGS__) ;
 
 #define _PROPERTY_OBJ_RSET(NAME, P, T, ...) \
-  static int _PROPERTY_##NAME##  = _PARAMETERS_3(#T, #P, "RSET", "OBJ", #__VA_ARGS__) ;
+  static int _PROPERTY_##NAME##  = _PARAMETERS_("4", #T, #P, "RSET", "OBJ", #__VA_ARGS__) ;
 
 #define _ASSIGN(NAME, P, T, ...)          \
-  static int _ASSIGN_##NAME##    = _PARAMETERS_3(#T, #P, #__VA_ARGS__) ;
+  static int _ASSIGN_##NAME##    = _PARAMETERS_("2", #T, #P, #__VA_ARGS__) ;
 
-#define _RESTRICTION(NAME, VALUE, ...)   \
-  static int _RESTRICT_##NAME##  = _PARAMETERS_2(#VALUE, #__VA_ARGS__) ;
+#define _RESTRICTION(NAME, VALUE, ...)    \
+  static int _RESTRICT_##NAME##  = _PARAMETERS_("1", #VALUE, #__VA_ARGS__) ;
 
-#define _INITIALISE(CODE, ...)       \
-  static int _INITIALISE_        = _PARAMETERS_2(#CODE, #__VA_ARGS__) ;
+#define _INITIALISE(CODE, ...)            \
+  static int _INITIALISE_        = _PARAMETERS_("1", #CODE, #__VA_ARGS__) ;
 
 #else
 
