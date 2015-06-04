@@ -65,12 +65,17 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 #define _INITIALISE(CODE, ...)            \
   static int _INITIALISE_        = _PARAMETERS_("1", #CODE, #__VA_ARGS__) ;
 
+#define _PREFIXES(LIST, ...)              \
+  static int _PREFIXES_          = _PARAMETERS_("1", #LIST, #__VA_ARGS__) ;
+
 #else
 
 #define TYPED_OBJECT(CLASS, TYPE)         \
- private:                                 \
- protected:                               \
+ private:                                                                   \
   static std::map<std::string, rdf::Node> s_properties ;                    \
+  static const std::set<rdf::Namespace> s_prefixes ;                        \
+  std::set<rdf::Namespace> m_prefixes ;                                     \
+ protected:                                                                 \
   bool satisfies_restrictions(const rdf::Graph &graph) ;                    \
   static rdf::Node get_property(const std::string &name) ;                  \
   void assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property,  \
@@ -83,7 +88,8 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
   ~CLASS() ;                                               \
   const rdf::URI &type(void) const ;                       \
   static std::set<rdf::URI> &subtypes(void) ;              \
-  static int add_subtype(const rdf::URI &T) ;
+  static int add_subtype(const rdf::URI &T) ;                               \
+  void add_prefix(const rdf::Namespace &prefix) ;
 
 #define _PROPERTY(NAME, P, T, ...)        \
  public:                                  \
@@ -128,6 +134,7 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 #define _RESTRICTION(NAME, VALUE, T, ...)
 
 #define _INITIALISE(CODE, ...)
+#define _PREFIXES(CODE, ...)
 
 #endif
 
@@ -161,6 +168,7 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 #define RESTRICT_URI(NAME, VALUE)        _RESTRICTION(NAME, VALUE, rdf::URI)
 
 #define INITIALISE(CODE, ...)            _INITIALISE(CODE, #__VA_ARGS__)
+#define PREFIXES(LIST, ...)              _PREFIXES(LIST, #__VA_ARGS__)
 
 
 namespace TypedObject
@@ -203,7 +211,7 @@ namespace TypedObject
    protected:
     virtual void assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property,
                                  const rdf::Node &value,  const bool reverse) = 0 ;
-    virtual void save_as_rdf(const rdf::Graph &graph) = 0 ;
+    virtual void save_as_rdf(rdf::Graph &graph) = 0 ;
     virtual bool satisfies_restrictions(const rdf::Graph &graph) ;
     static rdf::Node get_property(const std::string &name) ;
 
@@ -258,7 +266,7 @@ namespace TypedObject
     :param graph: A graph of RDF statements.
     :type graph: :class:`~biosignalml.rdf.Graph`
     **/
-    void save_metadata(const rdf::Graph &p_graph) ;
+    void save_metadata(rdf::Graph &p_graph) ;
 
     std::string serialise_metadata(const rdf::Graph::Format format=rdf::Graph::Format::RDFXML,
                                    const std::string &base="",

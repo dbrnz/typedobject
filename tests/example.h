@@ -30,6 +30,7 @@ namespace example {
     PROPERTY_DURATION(duration, DCT::extent)
     PROPERTY_NODE(investigator, DCT::creator)
 
+    PREFIXES(TEST::NS, DCT::NS)
 
 /**
 #define PROPERTY_URI(NAME, P)            _PROPERTY(NAME, P, rdf::URI)

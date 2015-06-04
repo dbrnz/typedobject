@@ -131,8 +131,8 @@ namespace TypedObject {
     return false ;
     }
 
-  void TypedObject::save_metadata(const rdf::Graph &graph)
-  /*----------------------------------------------------*/
+  void TypedObject::save_metadata(rdf::Graph &graph)
+  /*----------------------------------------------*/
   {
     if (m_uri.is_valid()) {
       graph.insert(m_uri, rdf::RDF::type, type()) ;

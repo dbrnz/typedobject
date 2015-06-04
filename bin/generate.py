@@ -132,8 +132,11 @@ class SaveToRDF(object):
   def __init__(self, cls, base):
   #-----------------------------
     self._header = [
-      'void %s::save_as_rdf(const rdf::Graph &graph)' % cls,
-      '{']
+      'void %s::save_as_rdf(rdf::Graph & graph)' % cls,
+      '{'
+      '  graph.add_prefixes(m_prefixes) ;'
+      '  graph.add_prefixes(s_prefixes) ;'
+      ]
     self._footer = ['  }', '']
     if base and base != 'TypedObject::TypedObject':
       self._footer.insert(0, '  %s::save_as_rdf(graph) ;' % base)
@@ -181,8 +184,8 @@ class SaveToRDF(object):
 class Constructor(object):
 #-------------------------
 
-  def __init__(self, cls, base, init_code):
-  #----------------------------------------
+  def __init__(self, cls, base, init_code, prefixes):
+  #--------------------------------------------------
 #    print "B:", base, " C:", constructor(base)
     self._class = cls
     ctr = cls + '::' + cls
@@ -204,6 +207,7 @@ class Constructor(object):
     self._preset = ['{']
     self._restrict = [ ]
     self._init_code = init_code
+    self._prefixes = prefixes
 
   def initialise(self, name, kind, prop, *options):
   #-----------------------------------------------
@@ -242,15 +246,23 @@ class Constructor(object):
 
   def __str__(self):
   #-----------------
-    code = [''.join(self._ctr),
+    code = ['\n'.join(self._ctr),
+            '  m_prefixes(std::set<rdf::Namespace>())',
             '\n'.join(self._preset),
             '\n'.join(self._init_code),
             '\n'.join(self._dtr) + '\n  }\n',
            ]
+    code.append('const std::set<rdf::Namespace> %s::s_prefixes {%s} ;\n'
+                                         % (self._class, ', '.join(self._prefixes)))
     code.append('std::map<std::string, rdf::Node> %s::s_properties {' % self._class)
     code.extend(self._props)
     code.append('  } ;')
     code.append('''
+void %(cls)s::add_prefix(const rdf::Namespace &prefix)
+{
+  m_prefixes.insert(prefix) ;
+  }
+
 rdf::Node %(cls)s::get_property(const std::string & name)
 {
   auto entry = s_properties.find(name) ;
@@ -278,7 +290,8 @@ class Generator(object):
     self._classes = [ ]
     self._class = None
     self._base = None
-    self._properties = ({ }, { }, { }, [ ]) # (properties, assignments, restrictions, init)
+    #  (properties, assignments, restrictions, init, prefixes)
+    self._properties = ({ }, { }, { }, [ ], [ ])
     self._usednames = [ ]
 
   def save(self, hdr, fn):
@@ -301,7 +314,7 @@ class Generator(object):
       mcls = cls[3][0].get('TYPE')
       if mcls and mcls[0]:
         code.append(generate_types(mcls[0], cls[1], cls[2]))
-      c = Constructor(cls[1], cls[2], cls[3][3])  # class, base, initialisation
+      c = Constructor(cls[1], cls[2], cls[3][3], cls[3][4])  # class, base, init, prefixes
       a = AssignFromRDF(cls[1], cls[2])
       s = SaveToRDF(cls[1], cls[2])
       for p, v in cls[3][0].iteritems():  # properties
@@ -344,7 +357,8 @@ class Generator(object):
       self._classes.append(('::'.join(self._namespaces), self._class, self._base, self._properties))
       self._class = None
       self._base = None
-      self._properties = ({ }, { }, { }, [ ])  # (properties, assignments, restrictions, init)
+      #  (properties, assignments, restrictions, init, prefixes)
+      self._properties = ({ }, { }, { }, [ ], [ ])
 
   def add_property(self, name, *params):
   #-------------------------------------
@@ -366,6 +380,12 @@ class Generator(object):
     if self._class is not None:
       for c in params:
         self._properties[3].append(c.replace('\\"', '"'))
+
+  def add_prefixes(self, *params):
+  #-------------------------------
+    if self._class is not None:
+      for c in params:
+        self._properties[4].append(c)
 
   def use_namespace(self, name):
   #-----------------------------
@@ -445,6 +465,12 @@ class Parser(object):
       if c.kind == CursorKind.CALL_EXPR and c.displayname == '_PARAMETERS_':
         self._generator.add_initialisation(*self.parse_parameters(c))
 
+  def parse_prefixes(self, cursor):
+  #--------------------------------
+    for c in cursor.get_children():
+      if c.kind == CursorKind.CALL_EXPR and c.displayname == '_PARAMETERS_':
+        self._generator.add_prefixes(*self.parse_parameters(c))
+
   def parse_using(self, cursor):
   #-----------------------------
     ns = None
@@ -496,6 +522,9 @@ class Parser(object):
 
     elif kind == CursorKind.VAR_DECL and name == '_INITIALISE_':
       self.parse_initialisation(cursor)
+
+    elif kind == CursorKind.VAR_DECL and name == '_PREFIXES_':
+      self.parse_prefixes(cursor)
 
     elif kind == CursorKind.USING_DIRECTIVE:
       self.parse_using(cursor)
