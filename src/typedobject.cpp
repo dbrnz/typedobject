@@ -142,7 +142,7 @@ namespace TypedObject {
 
   std::string TypedObject::serialise_metadata(
   /*-----------------------------------------*/
-    const rdf::Graph::Format format, const std::string &base, const std::list<rdf::Namespace> &prefixes)
+    const rdf::Graph::Format format, const std::string &base, const std::set<rdf::Namespace> &prefixes)
   {
     rdf::Graph g ;
     save_metadata(g) ;

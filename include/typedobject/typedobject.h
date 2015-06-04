@@ -264,7 +264,7 @@ namespace TypedObject
 
     std::string serialise_metadata(const rdf::Graph::Format format=rdf::Graph::Format::RDFXML,
                                    const std::string &base="",
-                                   const std::list<rdf::Namespace> &prefixes=std::list<rdf::Namespace>()) ;
+                                   const std::set<rdf::Namespace> &prefixes=std::set<rdf::Namespace>()) ;
 
    private:
     rdf::URI m_uri ;

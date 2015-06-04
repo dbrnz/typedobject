@@ -418,7 +418,7 @@ static raptor_term *raptor_term_from_sord_node(const SordNode *node)
 
 std::string rdf::GraphImpl::serialise(const rdf::Graph::Format format, const uint8_t *base_str,
 /*-------------------------------------------------------------------------------------------*/
-                                      const std::list<rdf::Namespace> &prefixes)
+                                      const std::set<rdf::Namespace> &prefixes)
 {
   std::string result = "" ;
   if (format == rdf::Graph::Format::TURTLE || format == rdf::Graph::Format::NTRIPLES) {     // Use sord

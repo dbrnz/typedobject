@@ -26,7 +26,7 @@
 #include <serd/serd.h>
 
 #include <string>
-#include <list>
+#include <set>
 
 
 namespace rdf {
@@ -95,7 +95,7 @@ namespace rdf {
 
     std::string serialise(const rdf::Graph::Format format=rdf::Graph::Format::RDFXML,
                           const uint8_t *base_str=nullptr,
-                          const std::list<Namespace> &prefixes=std::list<Namespace>()) ;
+                          const std::set<Namespace> &prefixes=std::set<Namespace>()) ;
 
    private:
     SordModel *m_model ;

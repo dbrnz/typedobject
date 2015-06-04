@@ -27,7 +27,7 @@
 //**************************************************************************//
 
 #include <string>
-#include <list>
+#include <set>
 #include <cmath>
 #include <cinttypes>
 #include <iostream>
@@ -222,7 +222,7 @@ namespace rdf {
 
     std::string serialise(const Format format=Format::RDFXML,
                           const std::string &base="",
-                          const std::list<Namespace> &prefixes=std::list<Namespace>()) ;
+                          const std::set<Namespace> &prefixes=std::set<Namespace>()) ;
 
     const URI &get_uri(void) const ;
 

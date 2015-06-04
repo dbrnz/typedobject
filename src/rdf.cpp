@@ -24,7 +24,7 @@
 //**************************************************************************//
 
 #include <string>
-#include <list>
+#include <set>
 
 //**************************************************************************//
 
@@ -538,7 +538,7 @@ void rdf::Graph::parse_string(
 
 std::string rdf::Graph::serialise(
 /*-------------------------------*/
-  const rdf::Graph::Format format, const std::string &base, const std::list<rdf::Namespace> &prefixes)
+  const rdf::Graph::Format format, const std::string &base, const std::set<rdf::Namespace> &prefixes)
 {
   const uint8_t *base_str = (base != "") ? (const uint8_t*)base.c_str()
                           : m_uri.is_valid() ? m_uri.node()->to_u_string()
