@@ -247,14 +247,14 @@ class Constructor(object):
             '\n'.join(self._init_code),
             '\n'.join(self._dtr) + '\n  }\n',
            ]
-    code.append('std::map<std::string, rdf::Node> %s::m_properties {' % self._class)
+    code.append('std::map<std::string, rdf::Node> %s::s_properties {' % self._class)
     code.extend(self._props)
     code.append('  } ;')
     code.append('''
 rdf::Node %(cls)s::get_property(const std::string & name)
 {
-  auto entry = m_properties.find(name) ;
-  if (entry != m_properties.end()) return entry->second ;
+  auto entry = s_properties.find(name) ;
+  if (entry != s_properties.end()) return entry->second ;
   else                             return %(base)s::get_property(name) ;
   }
 

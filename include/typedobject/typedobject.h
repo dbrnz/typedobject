@@ -69,8 +69,8 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 
 #define TYPED_OBJECT(CLASS, TYPE)         \
  private:                                 \
-  static std::map<std::string, rdf::Node> m_properties ;                    \
  protected:                               \
+  static std::map<std::string, rdf::Node> s_properties ;                    \
   bool satisfies_restrictions(const rdf::Graph &graph) ;                    \
   static rdf::Node get_property(const std::string &name) ;                  \
   void assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property,  \
