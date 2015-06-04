@@ -210,7 +210,8 @@ const SordNode *rdf::IterImpl::get_object(void) const
 
 rdf::GraphImpl::GraphImpl()
 /*-----------------------*/
-: m_model(sord_new(sordWorld().c_obj(), SORD_SPO | SORD_OPS, false))
+: m_model(sord_new(sordWorld().c_obj(), SORD_SPO | SORD_OPS, false)),
+  m_prefixes(std::set<rdf::Namespace>())
 {
   }
 
@@ -434,6 +435,10 @@ std::string rdf::GraphImpl::serialise(const rdf::Graph::Format format, const uin
                                          Sord::string_sink, &result) ;
     serd_writer_set_base_uri(writer, &base_uri_node) ;
     serd_env_foreach(sordWorld().prefixes().c_obj(), (SerdPrefixSink)serd_writer_set_prefix, writer) ;
+    for (auto const &prefix : m_prefixes) {
+      serd_writer_set_prefix(writer, prefix.name().node()->to_serd_node(),
+                                     prefix.uri().node()->to_serd_node()) ;
+      }
     for (auto const &prefix : prefixes) {
       serd_writer_set_prefix(writer, prefix.name().node()->to_serd_node(),
                                      prefix.uri().node()->to_serd_node()) ;
@@ -448,6 +453,10 @@ std::string rdf::GraphImpl::serialise(const rdf::Graph::Format format, const uin
     raptor_serializer *serialiser = raptor_new_serializer(raptorWorld(), get_raptor_format(format)) ;
 //    if (serialiser == NULL) throw Exception("Unable to create graph serialiser") ;
     serd_env_foreach(sordWorld().prefixes().c_obj(), (SerdPrefixSink)set_raptor_prefix, serialiser) ;
+    for (auto const &prefix : m_prefixes) {
+      set_raptor_prefix((SerdWriter *)serialiser, prefix.name().node()->to_serd_node(),
+                                                  prefix.uri().node()->to_serd_node()) ;
+      }
     for (auto const &prefix : prefixes) {
       set_raptor_prefix((SerdWriter *)serialiser, prefix.name().node()->to_serd_node(),
                                                   prefix.uri().node()->to_serd_node()) ;
@@ -477,4 +486,10 @@ std::string rdf::GraphImpl::serialise(const rdf::Graph::Format format, const uin
     raptor_free_serializer(serialiser) ;
     }
   return result ;
+  }
+
+void rdf::GraphImpl::add_prefixes(const std::set<rdf::Namespace> &prefixes)
+/*-----------------------------------------------------------------------*/
+{
+  m_prefixes.insert(prefixes.begin(), prefixes.end()) ;
   }

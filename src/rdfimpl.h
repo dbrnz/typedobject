@@ -97,8 +97,11 @@ namespace rdf {
                           const uint8_t *base_str=nullptr,
                           const std::set<Namespace> &prefixes=std::set<Namespace>()) ;
 
+    void add_prefixes(const std::set<rdf::Namespace> &prefixes) ;
+
    private:
     SordModel *m_model ;
+    std::set<rdf::Namespace> m_prefixes ;
     } ;
 
   } ;

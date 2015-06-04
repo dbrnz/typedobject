@@ -224,6 +224,8 @@ namespace rdf {
                           const std::string &base="",
                           const std::set<Namespace> &prefixes=std::set<Namespace>()) ;
 
+    void add_prefixes(const std::set<Namespace> &prefixes) ;
+
     const URI &get_uri(void) const ;
 
     bool insert(const Statement &statement) const ;
