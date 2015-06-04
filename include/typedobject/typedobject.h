@@ -70,7 +70,7 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 
 #else
 
-#define TYPED_OBJECT(CLASS, TYPE)         \
+#define TYPED_OBJECT(CLASS, TYPE)                                           \
  private:                                                                   \
   static std::map<std::string, rdf::Node> s_properties ;                    \
   static const std::set<rdf::Namespace> s_prefixes ;                        \
@@ -80,14 +80,14 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
   static rdf::Node get_property(const std::string &name) ;                  \
   void assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property,  \
                        const rdf::Node &value,  const bool reverse) ;       \
-  void save_as_rdf(const rdf::Graph &graph) ;                               \
- public:                                  \
-  CLASS() { }                             \
-  CLASS(const rdf::URI &uri) ;            \
-  CLASS(const rdf::URI &uri, const rdf::Graph &graph) ;    \
-  ~CLASS() ;                                               \
-  const rdf::URI &type(void) const ;                       \
-  static std::set<rdf::URI> &subtypes(void) ;              \
+  void save_as_rdf(rdf::Graph & graph) ;                                    \
+ public:                                                                    \
+  CLASS() { }                                                               \
+  CLASS(const rdf::URI &uri) ;                                              \
+  CLASS(const rdf::URI &uri, const rdf::Graph &graph) ;                     \
+  ~CLASS() ;                                                                \
+  const rdf::URI &type(void) const ;                                        \
+  static std::set<rdf::URI> &subtypes(void) ;                               \
   static int add_subtype(const rdf::URI &T) ;                               \
   void add_prefix(const rdf::Namespace &prefix) ;
 
@@ -97,14 +97,14 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
     { return m_##NAME ; }                 \
   inline void set_##NAME(const T & value) \
     { m_##NAME = value ; }                \
- protected:                                 \
+ protected:                               \
   T m_##NAME ;
 
 #define _PROPERTY_OBJ(NAME, P, T, ...)    \
  public:                                  \
   inline const T * NAME(void) const       \
     { return m_##NAME ; }                 \
-  inline void set_##NAME(T * value) \
+  inline void set_##NAME(T * value)       \
     { m_##NAME = value ; }                \
  private:                                 \
   T * m_##NAME ;
@@ -122,7 +122,7 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
  public:                                  \
   inline const std::set<T *> & NAME(void) const \
     { return m_##NAME ; }                 \
-  inline void add_##NAME(T * value) \
+  inline void add_##NAME(T * value)       \
     { m_##NAME.insert(value) ; }          \
  private:                                 \
   std::set<T *> m_##NAME ;

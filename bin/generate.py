@@ -199,8 +199,7 @@ class Constructor(object):
 %(ctr)s(const rdf::URI &uri)\n''' % {'ctr': ctr}]
     b = base.split('::')
     if len(b) > 1 and b[-2] == b[-1]: del b[-1]
-    self._ctr.append(': %s(uri)' % '::'.join(b))
-    self._comma = ',\n  '
+    self._ctr.append(': %s(uri),' % '::'.join(b))
     self._base = '::'.join(b)
     self._dtr = ['  }', '', '%(cls)s::~%(cls)s()' % {'cls': cls}, '{']
     self._props = [ ]
@@ -213,14 +212,13 @@ class Constructor(object):
   #-----------------------------------------------
 ##    print name, kind, options
     member = 'm_%s' % name
-    self._ctr.append('%s%s(' % (self._comma, member)
+    self._ctr.append('  %s(' % member
                   + ('nullptr' if ('OBJ' in options and options[0] not in ['SET', 'RSET'])
                 else 'rdf::Literal::Constants::EMPTY_STRING'  if kind == 'std::string'
                 else 'rdf::Literal::Constants::EMPTY_INTEGER' if kind == 'xsd::Integer'
                 else 'rdf::Literal::Constants::EMPTY_DECIMAL' if kind == 'xsd::Decimal'
                 else '')
-                   + ')')
-    self._comma = ',\n  '
+                   + '),')
     if 'OBJ' in options:
       if options[0] not in ['SET', 'RSET']:
         self._dtr.append('  if (%s != nullptr) delete %s ;' % (member, member))
