@@ -431,12 +431,13 @@ class Parser(object):
         if p.kind == TypeKind.CHAR_S and p.is_const_qualified():
           s = list(c.get_children())[0]
           if s.kind == CursorKind.STRING_LITERAL and s.type.kind == TypeKind.CONSTANTARRAY:
-            if count == 0: count = s.displayname[1:-1]
+            if count == 0: count = int(s.displayname[1:-1])
             else:
               p = s.displayname[1:-1]  # strip ""
               if p.startswith('\\"'): p = p[2:-2]
               params.append(p)
     assert(len(params) >= int(count))
+    assert(len(params) >= count)
     return params
 
   def parse_property(self, name, cursor):
