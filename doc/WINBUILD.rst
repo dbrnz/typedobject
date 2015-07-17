@@ -365,10 +365,15 @@ The typedobject code generation utility uses ``libclang`` to parse C++ header
 files.
 
 * Install LLVM and libclang by running
-  http://llvm.org/releases/3.6.0/LLVM-3.6.0-win32.exe
+  http://llvm.org/releases/3.6.2/LLVM-3.6.2-win32.exe
 
 * Add ``C:\Program Files (x86)\LLVM\bin`` to the PATH.
 
+* If the QtCreator application is also installed then its binary directory
+  (e.g. ``C:\Qt\Tools\QtCreator\bin``) **MUST** be after the LLVM directory in
+  the PATH. This is because QtCreator includes an earlier version of
+  ``libclang.dll`` which doesn't provide all the functionality required for
+  the code generation utility.
+
 * Run ``pip install clang`` to install the Python bindings to libclang (``pip``
   is included with Python 2.7.9 and later releases).
-
