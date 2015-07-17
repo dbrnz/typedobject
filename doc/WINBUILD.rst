@@ -348,7 +348,9 @@ Boost
     b2 --with-system --with-test --with-filesystem  \
        variant=release link=shared threading=multi toolset=msvc address-model=64
 
-* Need to copy testing DLLs.
+* Need to copy testing DLLs. ::
+
+    copy stage\lib\*.dll c:\usr\local\bin
 
 * For a debug version of the libraries use ``variant=debug`` when running ``b2``.
 
