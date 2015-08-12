@@ -39,6 +39,7 @@ add_executable(test_types types.cpp ${GENERATED_FILES})
 target_link_libraries(test_types typedobject)
 add_test(TYPES, test_types)
 
+set(GENERATED_FILES "")
 typedobject_generate(GENERATED_FILES ${CMAKE_CURRENT_SOURCE_DIR}/example.h "${INCLUDES}")
 add_executable(test_example example.cpp ${GENERATED_FILES})
 target_link_libraries(test_example typedobject)
