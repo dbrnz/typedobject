@@ -51,7 +51,6 @@ set(SOURCES ${SOURCES}
             ${CMAKE_CURRENT_SOURCE_DIR}/typedobject.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/rdf.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/rdfimpl.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/rdfdefs.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/xsd.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/xsdimpl.cpp
     PARENT_SCOPE
