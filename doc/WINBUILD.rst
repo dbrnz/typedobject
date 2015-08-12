@@ -11,7 +11,7 @@ libraries.
 Static libraries are built and installed into a Unix-like directory structure under
 ``C:\usr\local``.
 
-* Create the directories ``C:\usr``, ``C:\\usr\local`` and ``C:\usr\local\bin``.
+* Create the directories ``C:\usr``, ``C:\usr\local`` and ``C:\usr\local\bin``.
 
 * Add ``C:\usr\local\bin`` to the PATH.
 
@@ -23,13 +23,17 @@ Visual Studio 2013 is required to build ``typedobject``. After installing
 VS2013, the appropriate Visual C environment needs to be first setup by running
 ``vcvarsall.bat``. For 64-bit compiles the command is: ::
 
-  "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" amd64 
+  "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x86_amd64 
+
+and for 32-bit compiles: ::
+
+  "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x86
 
 
 CMake
 -----
 
-* Install CMake from http://www.cmake.org/files/v3.2/cmake-3.2.2-win32-x86.exe
+* Install CMake from http://www.cmake.org/files/v3.3/cmake-3.3.0-win32-x86.exe
 
 
 pkg-config
@@ -304,6 +308,21 @@ serd
     # define HAVE_FMAX
     #endif
 
+* The pkg-config file for serd specifies a dependency on ``libm`` that
+  needs to be removed. Edit ``serd.pc.in`` and delete line 10 so that
+  the file now reads: ::
+
+    prefix=@PREFIX@
+    exec_prefix=@EXEC_PREFIX@
+    libdir=@LIBDIR@
+    includedir=@INCLUDEDIR@
+
+    Name: Serd
+    Version: @SERD_VERSION@
+    Description: Lightweight RDF syntax library
+    Libs: -L${libdir} -l@LIB_SERD@
+    Cflags: -I${includedir}/serd-@SERD_MAJOR_VERSION@
+
 * In the top-level serd directory run: ::
 
     python waf configure --static --no-shared --prefix=c:\usr\local
@@ -337,6 +356,9 @@ Boost
 
 * Download and extract the latest version of Boost from
   http://www.boost.org/users/history into drive ``C:\``.
+
+* *** Or binaries from http://sourceforge.net/projects/boost/files/boost-binaries/1.58.0/
+
 
 * Change to the installed directory and run ``bootstrap.bat``
   to build Boost's build tools.
