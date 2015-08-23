@@ -504,13 +504,13 @@ const rdf::Node rdf::StatementIter::get_object(void) const
 
 rdf::Graph::Graph()
 /*---------------*/
-: m_graph(new rdf::GraphImpl()), m_uri()
+: m_uri(), m_graph(new rdf::GraphImpl())
 {
   }
 
 rdf::Graph::Graph(const std::string &uri)
 /*-------------------------------------*/
-: m_graph(new rdf::GraphImpl()), m_uri(uri)
+: m_uri(uri), m_graph(new rdf::GraphImpl())
 {
   }
 

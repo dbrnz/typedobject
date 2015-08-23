@@ -10,11 +10,12 @@ include(CMakePackageConfigHelpers)
 ### Use pkg-config to find libraries:
 find_package(PkgConfig)
 
-
 set(typedobject_DIR ${CMAKE_SOURCE_DIR})
 
 if (UNIX)
   add_definitions(-std=c++11)  # Use C++11
+  add_definitions(-Wall -Wextra -Wstrict-aliasing -Wstrict-overflow)
+  add_definitions(-Wno-unused-parameter)
 elseif(WIN32)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
   add_definitions(-DRAPTOR_STATIC)

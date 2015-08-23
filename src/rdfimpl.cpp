@@ -334,7 +334,7 @@ void rdf::GraphImpl::parse_resource(
     raptor_uri *uri = raptor_new_uri(raptorWorld(), (uint8_t *)resource.c_str()) ;
     if (file_path != NULL) {
       FILE *stream = fopen((const char *)file_path, "rb") ;
-      int i = raptor_parser_parse_file_stream(parser, stream, (const char *)file_path, base_uri) ;
+      raptor_parser_parse_file_stream(parser, stream, (const char *)file_path, base_uri) ;
       fclose(stream) ;
       }
     else raptor_parser_parse_uri(parser, uri, base_uri) ;

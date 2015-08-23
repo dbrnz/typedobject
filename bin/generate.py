@@ -20,6 +20,7 @@
 
 import os, sys
 import datetime
+from collections import OrderedDict
 
 import clang.cindex
 from clang.cindex import TypeKind, CursorKind
@@ -189,17 +190,18 @@ class Constructor(object):
 #    print "B:", base, " C:", constructor(base)
     self._class = cls
     ctr = cls + '::' + cls
-    self._ctr = [
-'''%(ctr)s(const rdf::URI &uri, const rdf::Graph &graph)
+    self._hdr = '''%(ctr)s(const rdf::URI &uri, const rdf::Graph &graph)
 : %(ctr)s(uri)
 {
   if (!this->add_metadata(graph)) *this = %(ctr)s() ;
   }
 
-%(ctr)s(const rdf::URI &uri)\n''' % {'ctr': ctr}]
+%(ctr)s(const rdf::URI &uri)\n''' % {'ctr': ctr}
     b = base.split('::')
     if len(b) > 1 and b[-2] == b[-1]: del b[-1]
-    self._ctr.append(': %s(uri),' % '::'.join(b))
+    self._ctr = [': %s(uri)' % '::'.join(b),
+                 '  m_prefixes(std::set<rdf::Namespace>())',
+                ]
     self._base = '::'.join(b)
     self._dtr = ['  }', '', '%(cls)s::~%(cls)s()' % {'cls': cls}, '{']
     self._props = [ ]
@@ -218,7 +220,7 @@ class Constructor(object):
                 else 'rdf::Literal::Constants::EMPTY_INTEGER' if kind == 'xsd::Integer'
                 else 'rdf::Literal::Constants::EMPTY_DECIMAL' if kind == 'xsd::Decimal'
                 else '')
-                   + '),')
+                   + ')')
     if 'OBJ' in options:
       if options[0] not in ['SET', 'RSET']:
         self._dtr.append('  if (%s != nullptr) delete %s ;' % (member, member))
@@ -244,8 +246,8 @@ class Constructor(object):
 
   def __str__(self):
   #-----------------
-    code = ['\n'.join(self._ctr),
-            '  m_prefixes(std::set<rdf::Namespace>())',
+    code = [self._hdr,
+            ',\n'.join(self._ctr),
             '\n'.join(self._preset),
             '\n'.join(self._init_code),
             '\n'.join(self._dtr) + '\n  }\n',
@@ -289,7 +291,7 @@ class Generator(object):
     self._class = None
     self._base = None
     #  (properties, assignments, restrictions, init, prefixes)
-    self._properties = ({ }, { }, { }, [ ], [ ])
+    self._properties = (OrderedDict(), OrderedDict(), OrderedDict(), [ ], [ ])
     self._usednames = [ ]
 
   def save(self, hdr, fn):
@@ -356,7 +358,7 @@ class Generator(object):
       self._class = None
       self._base = None
       #  (properties, assignments, restrictions, init, prefixes)
-      self._properties = ({ }, { }, { }, [ ], [ ])
+      self._properties = (OrderedDict(), OrderedDict(), OrderedDict(), [ ], [ ])
 
   def add_property(self, name, *params):
   #-------------------------------------
