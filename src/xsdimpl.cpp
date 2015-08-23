@@ -112,6 +112,24 @@ xsd::DurationImpl::DurationImpl(const std::string &dt, const bool strict)
   m_duration = negative ? td.invert_sign() : td ;
   }
 
+xsd::DurationImpl::DurationImpl(const double seconds)
+/*-------------------------------------------------*/
+{
+  long secs ;
+  double fraction ;
+  bool negative = (seconds < 0.0) ;
+  if (negative) {
+    secs = -(long)ceil(seconds) ;
+    fraction = (ceil(secs) - seconds)*boost::posix_time::time_duration::ticks_per_second() ;
+    }
+  else {
+    secs = (long)floor(seconds) ;
+    fraction = (seconds - floor(secs))*boost::posix_time::time_duration::ticks_per_second() ;
+    }
+  boost::posix_time::time_duration td = boost::posix_time::time_duration(0, 0, secs, fraction) ;
+  m_duration = negative ? td.invert_sign() : td ;
+  }
+
 std::string xsd::DurationImpl::to_string(void) const
 /*------------------------------------------------*/
 {

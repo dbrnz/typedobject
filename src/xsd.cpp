@@ -141,6 +141,12 @@ xsd::Duration::Duration(xsd::Duration && other)
   other.m_duration = nullptr;
   }
 
+xsd::Duration::Duration(const double seconds)
+/*-----------------------------------------*/
+: m_duration(new DurationImpl(seconds))
+{
+  }
+
 xsd::Duration::~Duration()
 /*------------------------*/
 {
