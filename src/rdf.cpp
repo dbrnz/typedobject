@@ -354,7 +354,8 @@ rdf::Namespace & rdf::Namespace::operator=(const rdf::Namespace & other)
 /*--------------------------------------------------------------------*/
 {
   rdf::Namespace ns(other) ;
-  *this = std::move(ns) ;
+  (rdf::Literal)m_name = other.m_name ;
+  (rdf::URI)m_uri = other.m_uri ;
   return *this ;
   }
 
