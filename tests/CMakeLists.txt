@@ -11,7 +11,7 @@ add_definitions (-DBOOST_TEST_DYN_LINK)
 include_directories(${Boost_INCLUDE_DIRS})
 ###
 
-include_directories(${CMAKE_BINARY_DIR})
+include_directories(${CMAKE_SOURCE_DIR}/include)
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -44,7 +44,6 @@ typedobject_generate(GENERATED_FILES ${CMAKE_CURRENT_SOURCE_DIR}/example.h "${IN
 add_executable(test_example example.cpp ${GENERATED_FILES})
 target_link_libraries(test_example typedobject)
 add_test(EXAMPLE, test_example)
-
 
 add_executable(unittest unittest.cpp)
 target_link_libraries(unittest ${LIBRARIES})
