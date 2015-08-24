@@ -21,6 +21,7 @@
 #include "typedobject/xsd.h"
 #include "typedobject/rdf.h"
 #include "typedobject/rdfdefs.h"
+#include "typedobject/units.h"
 #include "xsdimpl.h"
 
 #include <boost/date_time/posix_time/posix_time.hpp> // _types.hpp>
@@ -141,10 +142,19 @@ xsd::Duration::Duration(xsd::Duration && other)
   other.m_duration = nullptr;
   }
 
-xsd::Duration::Duration(const double seconds)
-/*-----------------------------------------*/
-: m_duration(new DurationImpl(seconds))
+
+#include <stdexcept>
+
+xsd::Duration::Duration(const double time, const std::string & units)
+/*-----------------------------------------------------------------*/
 {
+  try {
+    Unit::Converter seconds(units, "second");
+    m_duration = new DurationImpl(seconds.convert(time));
+    }
+  catch (const std::exception &error) {
+    m_duration = new DurationImpl(time);
+    }
   }
 
 xsd::Duration::~Duration()
