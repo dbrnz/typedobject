@@ -49,3 +49,7 @@ add_test(EXAMPLE, test_example)
 add_executable(unittest unittest.cpp)
 target_link_libraries(unittest ${LIBRARIES})
 add_test(UNITTEST, unittest)
+
+add_executable(test_units units.cpp)
+target_link_libraries(test_units typedobject)
+add_test(UNITS, test_units)

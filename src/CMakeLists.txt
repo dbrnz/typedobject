@@ -53,5 +53,6 @@ set(SOURCES ${SOURCES}
             ${CMAKE_CURRENT_SOURCE_DIR}/rdfimpl.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/xsd.cpp
             ${CMAKE_CURRENT_SOURCE_DIR}/xsdimpl.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/units.cpp
     PARENT_SCOPE
     )
