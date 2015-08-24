@@ -1,2 +1,4 @@
 build/
-win7/
+xcode/
+win32/
+win64/
