@@ -104,7 +104,9 @@ std::ostream & rdf::operator<<(std::ostream & os, const rdf::Node & node)
 bool rdf::Node::is_valid(void) const
 /*--------------------------------*/
 {
-  return (m_node != nullptr) && m_node->is_valid() ;
+  return (m_node != nullptr)
+       && m_node->is_valid()
+       && (m_node->to_string() != "") ;
   }
 
 bool rdf::Node::is_literal_type(const char *type_uri) const
