@@ -279,6 +279,9 @@ namespace Unit {
 
 //============================================================================
 
+// NEEDS to work with full URIs as well as names...
+// Converter::Converter(const rdf::URI & pFromUnits, const rdf::URI & pToUnits)
+
   Converter::Converter(const std::string & pFromUnits, const std::string & pToUnits)
   /*------------------------------------------------------------------------------*/
   : mScale(1.0), mOffset(0.0)
