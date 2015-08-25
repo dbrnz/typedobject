@@ -11,7 +11,7 @@ if(Boost_FOUND)
   set(INCLUDES ${INCLUDES} ${Boost_INCLUDE_DIRS})
   set(LIBS ${LIBS} ${Boost_LIBRARIES})
 else()
-  message(ERROR "Can't find Boost date time library")
+  message("ERROR: Can't find Boost libraries")
 endif()
 ###
 

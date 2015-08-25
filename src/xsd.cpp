@@ -26,6 +26,8 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp> // _types.hpp>
 
+#include <stdexcept>
+
 
 xsd::Datetime::Datetime()
 /*---------------------*/
@@ -142,8 +144,6 @@ xsd::Duration::Duration(xsd::Duration && other)
   other.m_duration = nullptr;
   }
 
-
-#include <stdexcept>
 
 xsd::Duration::Duration(const double time, const std::string & units)
 /*-----------------------------------------------------------------*/
