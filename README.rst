@@ -61,7 +61,7 @@ Requirements
 * Raptor (http://librdf.org/raptor/) for RDF/XML parsing and serialisation.
 * CMake is used for builds.
 
-Platform specific notes are available for `Windows<./WINBUILD>`_ and
+Platform specific notes are available for `Windows <./WINBUILD.rst>`_ and
 `OS/X <https://github.com/dbrnz/typedobject/blob/master/OSXBUILD.rst#building-under-os
 x>`_.
 
