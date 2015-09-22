@@ -193,10 +193,10 @@ class Constructor(object):
     self._hdr = '''%(ctr)s(const rdf::URI &uri, const rdf::Graph &graph)
 : %(ctr)s(uri)
 {
-  if (!this->add_metadata(graph)) *this = %(ctr)s() ;
+  if (!this->add_metadata(graph)) *this = %(cls)s() ;
   }
 
-%(ctr)s(const rdf::URI &uri)\n''' % {'ctr': ctr}
+%(ctr)s(const rdf::URI &uri)\n''' % {'ctr': ctr, 'cls': cls}
     b = base.split('::')
     if len(b) > 1 and b[-2] == b[-1]: del b[-1]
     self._ctr = [': %s(uri)' % '::'.join(b),

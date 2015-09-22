@@ -79,6 +79,8 @@ namespace rdf {
     friend class NodeImpl ;
     } ;
 
+  TYPEDOBJECT_EXPORT std::ostream & operator<<(std::ostream & os, const Node & node) ;
+
 
   class TYPEDOBJECT_EXPORT URI : public Node
   /*--------------------------------------*/
