@@ -2,9 +2,7 @@
 set(Boost_USE_STATIC_LIBS        ON)
 set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
-if(WIN32)
-  add_definitions(-DBOOST_ALL_NO_LIB)
-endif()
+set(Boost_NO_BOOST_CMAKE         ON)
 find_package(Boost COMPONENTS date_time)
 
 if(Boost_FOUND)
