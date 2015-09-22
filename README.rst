@@ -7,10 +7,10 @@ separate project, with the intent that others may find it useful. The code build
 and runs under Windows, Linux and OS/X.
 
 As well as a providing a multi-platform RDF library, ``typedobject`` enables the
-relationships between RDF statements about a resource and the C++ class that
-represents resource to be specified in a succinct way. This is done by embedding
-a DSL into class declarations (via macros) and using pre-processing to generate
-C++ code.
+relationships between RDF statements about a class of resources and the C++ class
+that represents the resource to be specified in a succinct way. This is done by
+embeddingn a DSL into C++ class declarations (via macros) and using pre-processing
+to generate C++ implementation code.
 
 
 A simple example
@@ -61,8 +61,9 @@ Requirements
 * Raptor (http://librdf.org/raptor/) for RDF/XML parsing and serialisation.
 * CMake is used for builds.
 
-Platform specific notes are available for :doc:`Windows<./WINBUILD>` and
-:doc:`OS/X<./OSXBUILD>`.
+Platform specific notes are available for `Windows<./WINBUILD>`_ and
+`OS/X <https://github.com/dbrnz/typedobject/blob/master/OSXBUILD.rst#building-under-os
+x>`_.
 
 
 Code generator:
