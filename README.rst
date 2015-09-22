@@ -62,8 +62,7 @@ Requirements
 * CMake is used for builds.
 
 Platform specific notes are available for `Windows <./WINBUILD.rst>`_ and
-`OS/X <https://github.com/dbrnz/typedobject/blob/master/OSXBUILD.rst#building-under-os
-x>`_.
+`OS/X <./OSXBUILD.rst>`_.
 
 
 Code generator:
