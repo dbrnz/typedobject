@@ -1,5 +1,5 @@
-Pre-requisites to Building
-==========================
+Building under MS Windows
+=========================
 
 The following notes describe how to set up a development environment
 for building ``typedobject``. Commands are shown to build release versions
