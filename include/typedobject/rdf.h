@@ -212,8 +212,12 @@ namespace rdf {
       UNKNOWN = 0,
       RDFXML,
       TURTLE,
-      NTRIPLES
+      NTRIPLES,
+      JSON
       } ;
+
+    static const std::string format_to_mimetype(Format format) ;
+    static Format mimetype_to_format(const std::string &mimetype) ;
 
     void parse_resource(const std::string &resource,
                         const Format format=Format::RDFXML,

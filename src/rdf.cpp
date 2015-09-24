@@ -524,6 +524,39 @@ rdf::Graph::~Graph()
   }
 
 
+const std::string rdf::Graph::format_to_mimetype(rdf::Graph::Format format)
+/*-----------------------------------------------------------------------*/
+{
+  switch (format) {
+   case rdf::Graph::Format::RDFXML:
+    return "application/rdf+xml" ;
+   case rdf::Graph::Format::TURTLE:
+    return "text/turtle" ;
+   case rdf::Graph::Format::NTRIPLES:
+    return "application/n-triples" ;
+   case rdf::Graph::Format::JSON:
+    return "application/json" ;
+   default:
+    return "application/rdf+xml" ;
+    }
+  }
+
+rdf::Graph::Format rdf::Graph::mimetype_to_format(const std::string &mimetype)
+/*--------------------------------------------------------------------------*/
+{
+  if      (mimetype == "application/rdf+xml")
+    return rdf::Graph::Format::RDFXML ;
+  else if (mimetype == "text/turtle")
+    return rdf::Graph::Format::TURTLE ;
+  else if (mimetype == "application/n-triples")
+    return rdf::Graph::Format::NTRIPLES ;
+  else if (mimetype == "application/json")
+    return rdf::Graph::Format::JSON ;
+  else
+    return rdf::Graph::Format::RDFXML ;
+  }
+
+
 void rdf::Graph::parse_resource(
 /*----------------------------*/
   const std::string &resource, const rdf::Graph::Format format, const std::string &base)
