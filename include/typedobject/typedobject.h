@@ -245,6 +245,7 @@ namespace TypedObject
     bool operator<(const TypedObject &other) const ;
 
     inline const rdf::URI &uri() const { return m_uri ; }
+    inline void set_uri(const rdf::URI &uri) { m_uri = uri ; }
     bool is_valid(void) const ;
     std::string to_string(void) const ;
 
