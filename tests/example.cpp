@@ -1,16 +1,6 @@
 #include "example.h"
 
-#include <typedobject/rdf.h>
-#include <typedobject/xsd.h>
-
 #include <iostream>
-
-
-const Namespace TEST::NS("test", "http://example.org/properties#") ;
-const URI TEST::string = TEST::NS.make_URI("string") ;
-const URI TEST::decimal = TEST::NS.make_URI("decimal") ;
-const URI TEST::integer = TEST::NS.make_URI("integer") ;
-const URI TEST::object = TEST::NS.make_URI("object") ;
 
 
 int main(void)
@@ -48,4 +38,5 @@ int main(void)
             << std::endl ;
 
   std::cout << from_rdf.serialise_metadata(rdf::Graph::Format::TURTLE) << std::endl ;
+
   }

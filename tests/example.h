@@ -5,16 +5,24 @@
 
 #include <string>
 
+
+namespace TEST {
+  NAMESPACE("rdf", "http://www.example.org/test#")
+  TERM(string)
+  TERM(decimal)
+  TERM(integer)
+  TERM(object)
+  } ;
+
+namespace BSML {
+  NAMESPACE("bsml", "http://www.biosignalml.org/ontologies/2011/04/biosignalml#")
+  TERM(Interval)
+  TERM(Instant)
+  } ;
+
+
 using namespace rdf ;
 
-class TEST {
- public:
-  static const Namespace NS ;
-  static const URI string ;
-  static const URI decimal ;
-  static const URI integer ;
-  static const URI object ;
-  } ;
 
 namespace example {
 
@@ -61,8 +69,41 @@ namespace example {
     TYPED_OBJECT(RestrictedObject, OWL::Object)
 
     RESTRICT_INTEGER(integer, 3)
-
     } ;
+
+
+  class RelativeTimeLine : public Object
+  /*----------------------------------*/
+  {
+    TYPED_OBJECT(RelativeTimeLine, TL::RelativeTimeLine)
+    } ;
+
+
+  class TemporalEntity : public Object
+  /*--------------------------------*/
+  {
+    TYPED_OBJECT(TemporalEntity, TIME::TemporalEntity)
+    PROPERTY_OBJECT(timeline, TL::timeline, RelativeTimeLine)
+    PROPERTY_DURATION(start, NONE)
+    PROPERTY_DURATION(duration, NONE)
+    } ;
+
+
+  class Interval : public TemporalEntity
+  /*----------------------------------*/
+  {
+    TYPED_OBJECT(Interval, BSML::Interval)
+    ASSIGN_DURATION(start, TL::start)
+    ASSIGN_DURATION(duration, TL::duration)
+    } ;
+
+  class Instant : public TemporalEntity
+  /*---------------------------------*/
+  {
+    TYPED_OBJECT(Instant, BSML::Instant)
+    ASSIGN_DURATION(start, TL::at)
+    } ;
+
 
   } ;
 
