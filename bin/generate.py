@@ -68,27 +68,16 @@ class AssignFromRDF(object):
     self._setreverse = []
 
   @staticmethod
-  def _assignvalue(code, property, cleanup, assignment):
-  #-----------------------------------------------------
-    if cleanup == '':
-      code.append('    %sif (property == %s) %s'
-                % ('else ' if len(code) else '', property, assignment))
-    else:
-      code.append('    %sif (property == %s) {'
-                % ('else ' if len(code) else '', property))
-      code.append('      %s' % cleanup)        
-      code.append('      %s' % assignment)
-      code.append('      }')
+  def _assignvalue(code, property, assignment):
+  #--------------------------------------------
+    code.append('    %sif (property == %s) %s'
+              % ('else ' if len(code) else '', property, assignment))
 
   def add_property(self, name, kind, property, *options):
   #------------------------------------------------------
 ##    print (name, kind, property, options)  ######################
     if property == 'NONE': return
     name = 'm_%s' % name
-    if 'OBJ' not in options or options[0] in ['SET', 'RSET']:
-      cleanup = ''
-    else:
-      cleanup = 'if (%s != nullptr) delete %s ;' % (name, name)
     value = (('TypedObject::create<%s>(%s::subtypes(), value, graph)' % (kind, kind)) if 'OBJ' in options
          else 'value.to_string()'    if kind == 'std::string'
          else 'value.to_int()'       if kind == 'xsd::Integer'
@@ -100,7 +89,7 @@ class AssignFromRDF(object):
     if options[0] in ['SET', 'RSET']:
       if 'OBJ' in options:
         assign = '\n'.join(['{',
-                         '      %s *obj = %s ;' % (kind, value),
+                         '      std::shared_ptr<%s> obj = %s ;' % (kind, value),
                          '      if (obj != nullptr) %s.insert(obj) ;' % name,
                          '      }'])
       else:
@@ -108,9 +97,9 @@ class AssignFromRDF(object):
     else:
       assign = '%s = %s ;' % (name, value)
     if options[0] in ['REVERSE', 'RSET']:
-      self._assignvalue(self._setreverse, property, cleanup, assign)
+      self._assignvalue(self._setreverse, property, assign)
     else:
-      self._assignvalue(self._setvalues, property, cleanup, assign)
+      self._assignvalue(self._setvalues, property, assign)
 
   def __str__(self):
   #-----------------
@@ -203,7 +192,6 @@ class Constructor(object):
                  '  m_prefixes(std::set<rdf::Namespace>())',
                 ]
     self._base = '::'.join(b)
-    self._dtr = ['  }', '', '%(cls)s::~%(cls)s()' % {'cls': cls}, '{']
     self._props = [ ]
     self._preset = ['{']
     self._restrict = [ ]
@@ -221,13 +209,6 @@ class Constructor(object):
                 else 'rdf::Literal::Constants::EMPTY_DECIMAL' if kind == 'xsd::Decimal'
                 else '')
                    + ')')
-    if 'OBJ' in options:
-      if options[0] not in ['SET', 'RSET']:
-        self._dtr.append('  if (%s != nullptr) delete %s ;' % (member, member))
-      else:
-        self._dtr.append('  for (auto const &e: %s) {' % member)
-        self._dtr.append('    if (e != nullptr) delete e ;')
-        self._dtr.append('    }')
 
   def add_property(self, name, kind, property, *options):
   #------------------------------------------------------
@@ -249,8 +230,7 @@ class Constructor(object):
     code = [self._hdr,
             ',\n'.join(self._ctr),
             '\n'.join(self._preset),
-            '\n'.join(self._init_code),
-            '\n'.join(self._dtr) + '\n  }\n',
+            '\n'.join(self._init_code) + '  }\n' + '\n',
            ]
     code.append('const std::set<rdf::Namespace> %s::s_prefixes {%s} ;\n'
                                          % (self._class, ', '.join(self._prefixes)))

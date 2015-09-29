@@ -27,6 +27,7 @@
 #include <typedobject/xsd.h>
 
 #include <string>
+#include <memory>
 #include <map>
 #include <set>
 
@@ -82,10 +83,9 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
                        const rdf::Node &value,  const bool reverse) ;       \
   void save_as_rdf(rdf::Graph & graph) ;                                    \
  public:                                                                    \
-  CLASS() { }                                                               \
+  CLASS() = default ;                                                       \
   CLASS(const rdf::URI &uri) ;                                              \
   CLASS(const rdf::URI &uri, const rdf::Graph &graph) ;                     \
-  ~CLASS() ;                                                                \
   const rdf::URI &type(void) const ;                                        \
   static std::set<rdf::URI> &subtypes(void) ;                               \
   static int add_subtype(const rdf::URI &T) ;                               \
@@ -102,12 +102,12 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 
 #define _PROPERTY_OBJ(NAME, P, T, ...)    \
  public:                                  \
-  inline const T * NAME(void) const       \
+  inline const std::shared_ptr<T> NAME(void) const       \
     { return m_##NAME ; }                 \
-  inline void set_##NAME(T * value)       \
+  inline void set_##NAME(std::shared_ptr<T> value)       \
     { m_##NAME = value ; }                \
  private:                                 \
-  T * m_##NAME ;
+  std::shared_ptr<T> m_##NAME ;
 
 #define _PROPERTY_SET(NAME, P, T, ...)    \
  public:                                  \
@@ -120,12 +120,12 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 
 #define _PROPERTY_OBJ_SET(NAME, P, T, ...)\
  public:                                  \
-  inline const std::set<T *> & NAME(void) const \
+  inline const std::set<std::shared_ptr<T>> & NAME(void) const \
     { return m_##NAME ; }                 \
-  inline void add_##NAME(T * value)       \
+  inline void add_##NAME(std::shared_ptr<T> value)       \
     { m_##NAME.insert(value) ; }          \
  private:                                 \
-  std::set<T *> m_##NAME ;
+  std::set<std::shared_ptr<T>> m_##NAME ;
 
 #define _PROPERTY_RSET(NAME, P, T, ...)      _PROPERTY_SET(NAME, P, T)
 #define _PROPERTY_OBJ_RSET(NAME, P, T, ...)  _PROPERTY_OBJ_SET(NAME, P, T)
@@ -189,19 +189,20 @@ namespace TypedObject
   /*---------------------------------------*/
   {
    public:
-    virtual TypedObject *create(const std::string &uri) = 0 ;
+    virtual std::unique_ptr<TypedObject> create(const std::string &uri) = 0 ;
     } ;
 
-#define REGISTER_TYPE(T, CLS)                                 \
-  class CLS##Factory : public TypedObject::TypedObjectFactory {       \
-   public:                                                    \
-    inline CLS##Factory() { TypedObject::TypedObject::register_type(T, this) ; } \
-    virtual TypedObject::TypedObject *create(const std::string &uri) { return new CLS(uri) ; } \
-    } ;                                                       \
-  static CLS##Factory _global_##CLS##Factory ;                \
+#define REGISTER_TYPE(T, CLS)                                   \
+  class CLS##Factory : public TypedObject::TypedObjectFactory { \
+   public:                                                      \
+    inline CLS##Factory() { TypedObject::TypedObject::register_type(T, this) ; }     \
+    virtual std::unique_ptr<TypedObject::TypedObject> create(const std::string &uri) \
+     { return std::unique_ptr<CLS>(new CLS(uri)) ; }            \
+    } ;                                                         \
+  static CLS##Factory _global_##CLS##Factory ;                  \
   static int _global_##CLS##_type = CLS::add_subtype(T) ;
 
-#define REGISTER_SUBTYPE(T, CLS, BASE)                        \
+#define REGISTER_SUBTYPE(T, CLS, BASE)                          \
   static int _global_##CLS##supertype = BASE::add_subtype(T) ;
 
 
@@ -219,22 +220,22 @@ namespace TypedObject
     TypedObject() ;
     TypedObject(const rdf::URI &uri) ;
     TypedObject(const rdf::URI &uri, const rdf::Graph &graph) ;
-    virtual ~TypedObject() ;
+    virtual ~TypedObject() = default ;
 
-    static TypedObject *create(const rdf::URI &T, const std::string &uri) ;
+    static std::shared_ptr<TypedObject> create(const rdf::URI &T, const std::string &uri) ;
 
     template <class T>
-    static T *create(std::set<rdf::URI> &subtypes, const rdf::Node &uri, const rdf::Graph &graph)
-    /*-----------------------------------------------------------------------------------------*/
+    static std::shared_ptr<T> create(std::set<rdf::URI> &subtypes, const rdf::Node &uri, const rdf::Graph &graph)
+    /*---------------------------------------------------------------------------------------------------------*/
     {
       rdf::StatementIter types = graph.get_statements(uri, rdf::RDF::type, rdf::Node()) ;
       if (!types.end()) {
         do {
           rdf::URI type = rdf::URI(types.get_object()) ;
           if (subtypes.find(type) != subtypes.end()) {
-            TypedObject *obj = create(type, uri.to_string()) ;
-            if (obj->add_metadata(graph)) return dynamic_cast<T *>(obj) ;
-            else delete obj ;
+            auto obj = create(type, uri.to_string()) ;
+            if (obj->add_metadata(graph))
+              return std::dynamic_pointer_cast<T>(obj) ;
             }
           } while (!types.next()) ;
         }

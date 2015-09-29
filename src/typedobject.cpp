@@ -42,11 +42,6 @@ namespace TypedObject {
   {
     }
 
-  TypedObject::~TypedObject()
-  /*-----------------------*/
-  {
-    }
-
 
   std::map<rdf::URI, TypedObjectFactory *> &TypedObject::m_factories(void)
   /*--------------------------------------------------------------------*/
@@ -63,8 +58,8 @@ namespace TypedObject {
     }
 
 
-  TypedObject *TypedObject::create(const rdf::URI &T, const std::string &uri)
-  /*-----------------------------------------------------------------------*/
+  std::shared_ptr<TypedObject> TypedObject::create(const rdf::URI &T, const std::string &uri)
+  /*---------------------------------------------------------------------------------------*/
   {
     return TypedObject::m_factories()[T]->create(uri) ;
     }
