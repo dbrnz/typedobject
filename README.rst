@@ -2,15 +2,14 @@ typedobject
 ===========
 
 ``typedobject`` is a C++ library and specification framework for RDF processing.
-It was developed as a separate project, with the intent that others may find it
-useful, as part of implementating BioSignalML in C++
-(https://github.com/dbrnz/libbsml). The code builds and runs under Windows,
-Linux and OS/X.
+It was developed as part of implementating a C++ library for BioSignalML
+(https://github.com/dbrnz/libbsml), but as a separate project with the intent that
+others may find it useful. The code builds and runs under Windows, Linux and OS/X.
 
 As well as a providing a multi-platform RDF library, ``typedobject`` enables the
 relationships between RDF statements about a class of resources and the C++ class
 that represents the resource to be specified in a succinct way. This is done by
-embeddingn a DSL into C++ class declarations (via macros) and using pre-processing
+embedding a DSL into C++ class declarations (via macros) and using pre-processing
 to generate C++ implementation code.
 
 
