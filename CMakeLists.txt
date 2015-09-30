@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 
 project("TypedObjectLib")
-set(TypedObject_VERSION 1.0.3)
+set(TypedObject_VERSION 1.0.4a)
 
 ### Build a package...
 if(WIN32)
