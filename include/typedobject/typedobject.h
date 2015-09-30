@@ -239,7 +239,7 @@ namespace TypedObject
             }
           } while (!types.next()) ;
         }
-      return nullptr ;
+      return std::shared_ptr<T>() ;
       }
 
     bool operator==(const TypedObject &other) const ;

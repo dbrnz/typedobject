@@ -92,7 +92,7 @@ class AssignFromRDF(object):
       if 'OBJ' in options:
         assign = '\n'.join(['{',
                          '      std::shared_ptr<%s> obj = %s ;' % (kind, value),
-                         '      if (obj != nullptr) %s.insert(obj) ;' % name,
+                         '      if (obj) %s.insert(obj) ;' % name,
                          '      }'])
       else:
         assign = '%s.insert(%s) ;' % (name, value)
