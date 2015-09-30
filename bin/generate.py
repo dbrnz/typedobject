@@ -68,16 +68,18 @@ class AssignFromRDF(object):
     self._setreverse = []
 
   @staticmethod
-  def _assignvalue(code, property, assignment):
-  #--------------------------------------------
+  def _assignvalue(code, property, assignment, elseif):
+  #----------------------------------------------------
     code.append('    %sif (property == %s) %s'
-              % ('else ' if len(code) else '', property, assignment))
+              % ('else ' if elseif and len(code) else '', property, assignment))
 
   def add_property(self, name, kind, property, *options):
   #------------------------------------------------------
 ##    print (name, kind, property, options)  ######################
     if property == 'NONE': return
     name = 'm_%s' % name
+    ## Could optimise reverse case by looking up type(s) of found object once only
+    ## Currently done for each value in `std::shared_ptr<T> TypedObject::create()`
     value = (('TypedObject::create<%s>(%s::subtypes(), value, graph)' % (kind, kind)) if 'OBJ' in options
          else 'value.to_string()'    if kind == 'std::string'
          else 'value.to_int()'       if kind == 'xsd::Integer'
@@ -97,9 +99,9 @@ class AssignFromRDF(object):
     else:
       assign = '%s = %s ;' % (name, value)
     if options[0] in ['REVERSE', 'RSET']:
-      self._assignvalue(self._setreverse, property, assign)
+      self._assignvalue(self._setreverse, property, assign, False)
     else:
-      self._assignvalue(self._setvalues, property, assign)
+      self._assignvalue(self._setvalues, property, assign, True)
 
   def __str__(self):
   #-----------------
