@@ -39,4 +39,15 @@ int main(void)
 
   std::cout << from_rdf.serialise_metadata(rdf::Graph::Format::TURTLE) << std::endl ;
 
+  rdf::URI time_uri1("http://example.org/time/1") ;
+  rdf::URI time_uri2("http://example.org/time/2") ;
+
+  auto tline = std::make_shared<example::RelativeTimeLine>(time_uri2) ;
+
+  example::Interval interval(time_uri1) ;
+
+  interval.set_timeline(tline) ;
+  interval.set_start(0.0) ;
+  interval.set_duration(10.0) ;
+  std::cout << interval.serialise_metadata(rdf::Graph::Format::TURTLE) << std::endl ;
   }
