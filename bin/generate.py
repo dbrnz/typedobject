@@ -155,7 +155,7 @@ class SaveToRDF(object):
       if options[0] == 'SET':
         save = ('  for (auto const &value : %(name)s)'
                 + ' if (%s)' % (valid % {'name': 'value'})
-                + ' graph.insert(uri(), DCT::source, %s) ;' % (value % {'name': 'value'})
+                + ' graph.insert(uri(), %(prop)s, ' + (value % {'name': 'value'}) + ') ;'
                 )
       else:
         save = ('  if (%s)' % valid
