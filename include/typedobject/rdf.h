@@ -59,6 +59,7 @@ namespace rdf {
 
     bool operator==(const Node &other) const ;
     bool operator<(const Node &other) const ;
+    explicit operator std::string() const ;
     friend TYPEDOBJECT_EXPORT std::ostream & operator<<(std::ostream & os, const Node & node) ;
 
     bool is_valid(void) const ;

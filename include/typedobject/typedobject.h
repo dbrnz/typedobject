@@ -234,7 +234,7 @@ namespace TypedObject
         do {
           rdf::URI type = rdf::URI(types.get_object()) ;
           if (subtypes.find(type) != subtypes.end()) {
-            auto obj = create(type, uri.to_string()) ;
+            auto obj = create(type, (std::string)uri) ;
             if (obj->add_metadata(graph))
               return std::dynamic_pointer_cast<T>(obj) ;
             }
