@@ -162,10 +162,10 @@ class SaveToRDF(object):
                 + ' graph.insert(uri(), %(prop)s, ' + value + ') ;'
                 )
     elif 'OBJ' in options:
-      save = """  if (%(name)s != nullptr) {
-    graph.insert(uri(), %(prop)s, %(name)s->uri()) ;
-    %(name)s->save_metadata(graph) ;
-    }"""
+      save = ('  if (%(name)s != nullptr) {\n'
+            + '    graph.insert(uri(), %(prop)s, %(name)s->uri()) ;\n'
+            + ('    %(name)s->save_metadata(graph) ;\n' if ('URI' in options) else '')
+            + '    }')
     self._getvalues.append(save % { 'prop': property, 'name': 'm_' + name})
 
   def __str__(self):
