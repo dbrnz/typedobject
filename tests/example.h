@@ -7,11 +7,14 @@
 
 
 namespace TEST {
-  NAMESPACE("rdf", "http://www.example.org/test#")
+  NAMESPACE("test", "http://www.example.org/test#")
+  TERM(SubObject)
+
   TERM(string)
   TERM(decimal)
   TERM(integer)
-  TERM(object)
+  TERM(subobject)
+  TERM(reference)
   } ;
 
 namespace BSML {
@@ -26,6 +29,13 @@ using namespace rdf ;
 
 namespace example {
 
+
+  class SubObject : public TypedObject::TypedObject
+  /*---------------------------------------------*/
+  {
+    TYPED_OBJECT(SubObject, TEST::SubObject)
+    } ;
+
   class Object : public TypedObject::TypedObject
   /*------------------------------------------*/
   {
@@ -37,6 +47,9 @@ namespace example {
     PROPERTY_DATETIME(starttime, DCT::created)
     PROPERTY_DURATION(duration, DCT::extent)
     PROPERTY_NODE(investigator, DCT::creator)
+
+    PROPERTY_OBJECT(subobject, TEST::subobject, SubObject)
+    PROPERTY_POINTER(reference, TEST::reference, SubObject)
 
     PREFIXES(TEST::NS, DCT::NS)
 
@@ -68,7 +81,8 @@ namespace example {
   {
     TYPED_OBJECT(RestrictedObject, OWL::Object)
 
-    RESTRICT_INTEGER(integer, 3)
+    RESTRICT_INTEGER(integer, 3)   // This now applies to all OWL::Object classes
+    // since this is last class seen so RDF owl:object ==> RestrictedObject
     } ;
 
 
