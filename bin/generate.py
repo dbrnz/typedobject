@@ -98,7 +98,7 @@ class AssignFromRDF(object):
         assign = '%s.insert(%s) ;' % (name, value)
     else:
       assign = '%s = %s ;' % (name, value)
-    if options[0] in ['REVERSE', 'RSET']:
+    if options[0] == 'RSET':
       self._assignvalue(self._setreverse, property, assign, False)
     else:
       self._assignvalue(self._setvalues, property, assign, True)
@@ -138,7 +138,7 @@ class SaveToRDF(object):
   #-------------------------------------------------------
     if property == 'NONE': return
 
-    if options[0] in ['REVERSE', 'RSET']:
+    if options[0] == 'RSET':
       save = '  for (auto const &value : %(name)s) value->save_metadata(graph) ;'
     elif 'OBJ' not in options or options[0] == 'SET':
       # Only save non-empty values...
