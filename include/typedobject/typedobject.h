@@ -89,7 +89,11 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
   const rdf::URI &type(void) const ;                                        \
   static std::set<rdf::URI> &subtypes(void) ;                               \
   static int add_subtype(const rdf::URI &T) ;                               \
-  void add_prefix(const rdf::Namespace &prefix) ;
+  void add_prefix(const rdf::Namespace &prefix) ;                           \
+  typedef std::shared_ptr<CLASS> Pointer ;                                  \
+  template<typename... Args>                                                \
+  inline static Pointer new_pointer(Args... args)                           \
+  { return std::make_shared<CLASS>(args...) ; }
 
 #define _PROPERTY(NAME, P, T, ...)        \
  public:                                  \
@@ -241,6 +245,14 @@ namespace TypedObject
           } while (!types.next()) ;
         }
       return std::shared_ptr<T>() ;
+      }
+
+    template<class T>
+    static typename T::Pointer get_object(const std::string &uri, const std::set<typename T::Pointer> &container)
+    /*---------------------------------------------------------------------------------------------------------*/
+    {
+      for (auto &e : container) if ((std::string)e->uri() == uri) return e ;
+      return typename T::Pointer() ;
       }
 
     bool operator==(const TypedObject &other) const ;
