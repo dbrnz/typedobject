@@ -11,7 +11,7 @@ int main(void)
   rdf::URI object_uri3("http://example.org/object/3") ;
 
   example::Object object(object_uri1) ;
-  auto sobj = example::SubObject::new_pointer(object_uri2) ;
+  auto sobj = example::SubObject::new_reference(object_uri2) ;
 
   object.set_string("Some string") ;
   object.set_integer(3) ;

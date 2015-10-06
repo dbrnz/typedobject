@@ -90,9 +90,9 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
   static std::set<rdf::URI> &subtypes(void) ;                               \
   static int add_subtype(const rdf::URI &T) ;                               \
   void add_prefix(const rdf::Namespace &prefix) ;                           \
-  typedef std::shared_ptr<CLASS> Pointer ;                                  \
+  typedef std::shared_ptr<CLASS> Reference ;                                  \
   template<typename... Args>                                                \
-  inline static Pointer new_pointer(Args... args)                           \
+  inline static Reference new_reference(Args... args)                           \
   { return std::make_shared<CLASS>(args...) ; }
 
 #define _PROPERTY(NAME, P, T, ...)        \
@@ -150,7 +150,7 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 #define PROPERTY_DATETIME(NAME, P)       _PROPERTY(NAME, P, xsd::Datetime)
 #define PROPERTY_DURATION(NAME, P)       _PROPERTY(NAME, P, xsd::Duration)
 #define PROPERTY_OBJECT(NAME, P, T)      _PROPERTY_OBJ(NAME, P, T)
-#define PROPERTY_POINTER(NAME, P, T)     _PROPERTY_OBJ(NAME, P, T, URI)
+#define PROPERTY_REFERENCE(NAME, P, T)     _PROPERTY_OBJ(NAME, P, T, URI)
 
 // What is the difference between URI, NODE, and OBJECT properties??
 // Could URI and NODE be combined? And renamed to RESOURCE??
@@ -248,11 +248,11 @@ namespace TypedObject
       }
 
     template<class T>
-    static typename T::Pointer get_object(const std::string &uri, const std::set<typename T::Pointer> &container)
+    static typename T::Reference get_object(const std::string &uri, const std::set<typename T::Reference> &container)
     /*---------------------------------------------------------------------------------------------------------*/
     {
       for (auto &e : container) if ((std::string)e->uri() == uri) return e ;
-      return typename T::Pointer() ;
+      return typename T::Reference() ;
       }
 
     bool operator==(const TypedObject &other) const ;
