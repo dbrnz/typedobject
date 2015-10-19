@@ -21,7 +21,7 @@
 #include "typedobject/typedobject.h"
 
 
-namespace TypedObject {
+namespace tobj {
 
 
   TypedObject::TypedObject()

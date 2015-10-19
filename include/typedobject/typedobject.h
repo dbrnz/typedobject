@@ -176,8 +176,8 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 #define PREFIXES(LIST, ...)              _PREFIXES(LIST, #__VA_ARGS__)
 
 
-namespace TypedObject
-/*=================*/
+namespace tobj
+/*==========*/
 {
 
   const std::string VERSION = "0.9.5" ;
@@ -198,11 +198,11 @@ namespace TypedObject
     } ;
 
 #define REGISTER_TYPE(T, CLS)                                   \
-  class CLS##Factory : public TypedObject::TypedObjectFactory { \
+  class CLS##Factory : public tobj::TypedObjectFactory { \
    public:                                                      \
-    inline CLS##Factory() { TypedObject::TypedObject::register_type(T, this) ; }     \
-    virtual std::unique_ptr<TypedObject::TypedObject> create(const std::string &uri) \
      { return std::unique_ptr<CLS>(new CLS(uri)) ; }            \
+    inline CLS##Factory() { tobj::TypedObject::register_type(T, this) ; }     \
+    virtual std::unique_ptr<tobj::TypedObject> create(const std::string &uri) \
     } ;                                                         \
   static CLS##Factory _global_##CLS##Factory ;                  \
   static int _global_##CLS##_type = CLS::add_subtype(T) ;

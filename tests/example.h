@@ -30,14 +30,14 @@ using namespace rdf ;
 namespace example {
 
 
-  class SubObject : public TypedObject::TypedObject
-  /*---------------------------------------------*/
+  class SubObject : public tobj::TypedObject
+  /*--------------------------------------*/
   {
     TYPED_OBJECT(SubObject, TEST::SubObject)
     } ;
 
-  class Object : public TypedObject::TypedObject
-  /*------------------------------------------*/
+  class Object : public tobj::TypedObject
+  /*-----------------------------------*/
   {
     TYPED_OBJECT(Object, OWL::Object)
 

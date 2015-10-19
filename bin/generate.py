@@ -62,7 +62,7 @@ class AssignFromRDF(object):
       'void %s::assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property,' % cls,
       '                         const rdf::Node &value,  const bool reverse)',
       '{']
-    if base and base != 'TypedObject::TypedObject':
+    if base and base != 'tobj::TypedObject':
       self._header.append('  %s::assign_from_rdf(graph, property, value, reverse) ;' % base)
     self._setvalues = []
     self._setreverse = []
@@ -80,7 +80,7 @@ class AssignFromRDF(object):
     name = 'm_%s' % name
     ## Could optimise reverse case by looking up type(s) of found object once only
     ## Currently done for each value in `std::shared_ptr<T> TypedObject::create()`
-    value = (('TypedObject::create<%s>(%s::subtypes(), value, graph)' % (kind, kind)) if 'OBJ' in options
+    value = (('tobj::TypedObject::create<%s>(%s::subtypes(), value, graph)' % (kind, kind)) if 'OBJ' in options
          else 'value.to_string()'    if kind == 'std::string'
          else 'value.to_int()'       if kind == 'xsd::Integer'
          else 'value.to_float()'     if kind == 'xsd::Decimal'
@@ -130,7 +130,7 @@ class SaveToRDF(object):
       '  graph.add_prefixes(s_prefixes) ;'
       ]
     self._footer = ['  }', '']
-    if base and base != 'TypedObject::TypedObject':
+    if base and base != 'tobj::TypedObject':
       self._footer.insert(0, '  %s::save_as_rdf(graph) ;' % base)
     self._getvalues = []
 

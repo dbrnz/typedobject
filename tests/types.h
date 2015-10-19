@@ -38,8 +38,8 @@ class TEST {
 
 namespace test {
 
-  class Object : public TypedObject::TypedObject
-  /*------------------------------------------*/
+  class Object : public tobj::TypedObject
+  /*-----------------------------------*/
   {
     TYPED_OBJECT(Object, OWL::Object)
 
