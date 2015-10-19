@@ -79,7 +79,7 @@ class AssignFromRDF(object):
     if property == 'NONE': return
     name = 'm_%s' % name
     ## Could optimise reverse case by looking up type(s) of found object once only
-    ## Currently done for each value in `std::shared_ptr<T> TypedObject::create()`
+    ## Currently done for each value in `T::Reference TypedObject::create()`
     value = (('tobj::TypedObject::create<%s>(%s::subtypes(), value, graph)' % (kind, kind)) if 'OBJ' in options
          else 'value.to_string()'    if kind == 'std::string'
          else 'value.to_int()'       if kind == 'xsd::Integer'
@@ -91,7 +91,7 @@ class AssignFromRDF(object):
     if options[0] in ['SET', 'RSET']:
       if 'OBJ' in options:
         assign = '\n'.join(['{',
-                         '      std::shared_ptr<%s> obj = %s ;' % (kind, value),
+                         '      %s::Reference obj = %s ;' % (kind, value),
                          '      if (obj) %s.insert(obj) ;' % name,
                          '      }'])
       else:

@@ -106,12 +106,12 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 
 #define _PROPERTY_OBJ(NAME, P, T, ...)    \
  public:                                  \
-  inline const std::shared_ptr<T> NAME(void) const       \
+  inline const T::Reference NAME(void) const       \
     { return m_##NAME ; }                 \
-  inline void set_##NAME(std::shared_ptr<T> value)       \
+  inline void set_##NAME(T::Reference value)       \
     { m_##NAME = value ; }                \
  private:                                 \
-  std::shared_ptr<T> m_##NAME ;
+  T::Reference m_##NAME ;
 
 #define _PROPERTY_SET(NAME, P, T, ...)    \
  public:                                  \
@@ -124,12 +124,12 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 
 #define _PROPERTY_OBJ_SET(NAME, P, T, ...)\
  public:                                  \
-  inline const std::set<std::shared_ptr<T>> & NAME(void) const \
+  inline const std::set<T::Reference> & NAME(void) const \
     { return m_##NAME ; }                 \
-  inline void add_##NAME(std::shared_ptr<T> value)       \
+  inline void add_##NAME(T::Reference value)             \
     { m_##NAME.insert(value) ; }          \
  private:                                 \
-  std::set<std::shared_ptr<T>> m_##NAME ;
+  std::set<T::Reference> m_##NAME ;
 
 #define _PROPERTY_RSET(NAME, P, T, ...)      _PROPERTY_SET(NAME, P, T)
 #define _PROPERTY_OBJ_RSET(NAME, P, T, ...)  _PROPERTY_OBJ_SET(NAME, P, T)
@@ -227,7 +227,8 @@ namespace tobj
     TypedObject(const rdf::URI &uri, const rdf::Graph &graph) ;
     virtual ~TypedObject() = default ;
 
-    static std::shared_ptr<TypedObject> create(const rdf::URI &T, const std::string &uri) ;
+    typedef std::shared_ptr<TypedObject> Reference ;
+    static Reference create(const rdf::URI &T, const std::string &uri) ;
 
     template <class T>
     static std::shared_ptr<T> create(std::set<rdf::URI> &subtypes, const rdf::Node &uri, const rdf::Graph &graph)

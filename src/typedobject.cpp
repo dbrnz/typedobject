@@ -58,8 +58,8 @@ namespace tobj {
     }
 
 
-  std::shared_ptr<TypedObject> TypedObject::create(const rdf::URI &T, const std::string &uri)
-  /*---------------------------------------------------------------------------------------*/
+  TypedObject::Reference TypedObject::create(const rdf::URI &T, const std::string &uri)
+  /*---------------------------------------------------------------------------------*/
   {
     return TypedObject::m_factories()[T]->create(uri) ;
     }
