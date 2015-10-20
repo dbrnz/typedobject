@@ -194,15 +194,15 @@ namespace tobj
   /*---------------------------------------*/
   {
    public:
-    virtual std::unique_ptr<TypedObject> create(const std::string &uri) = 0 ;
+    virtual std::shared_ptr<TypedObject> create(const std::string &uri) = 0 ;
     } ;
 
 #define REGISTER_TYPE(T, CLS)                                   \
   class CLS##Factory : public tobj::TypedObjectFactory { \
    public:                                                      \
-     { return std::unique_ptr<CLS>(new CLS(uri)) ; }            \
     inline CLS##Factory() { tobj::TypedObject::register_type(T, this) ; }     \
-    virtual std::unique_ptr<tobj::TypedObject> create(const std::string &uri) \
+    virtual std::shared_ptr<tobj::TypedObject> create(const std::string &uri) \
+     { return std::make_shared<CLS>(uri) ; }                    \
     } ;                                                         \
   static CLS##Factory _global_##CLS##Factory ;                  \
   static int _global_##CLS##_type = CLS::add_subtype(T) ;
