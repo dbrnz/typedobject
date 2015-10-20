@@ -34,6 +34,8 @@
 
 #ifdef TYPED_OBJECT_COMPILE
 
+#define REFERENCE(CLASS)
+
 int _PARAMETERS_(const char *params, ...) { return 0 ; }
 #define TYPED_OBJECT(CLASS, TYPE)         \
   static int _OBJECT_DEFINITION = 0 ;     \
@@ -70,6 +72,12 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
   static int _PREFIXES_          = _PARAMETERS_("1", #LIST, #__VA_ARGS__) ;
 
 #else
+
+#define REFERENCE(CLASS)                                                    \
+  typedef std::shared_ptr<CLASS> Reference ;                                \
+  template<typename... Args>                                                \
+  inline static Reference new_reference(Args... args)                       \
+  { return std::make_shared<CLASS>(args...) ; }
 
 #define TYPED_OBJECT(CLASS, TYPE)                                           \
  private:                                                                   \
