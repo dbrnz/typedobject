@@ -54,7 +54,7 @@ namespace tobj {
   void TypedObject::register_type(const rdf::URI &T, TypedObjectFactory *factory)
   /*---------------------------------------------------------------------------*/
   {
-    TypedObject::m_factories()[T] = factory ;
+    TypedObject::m_factories().emplace(T, factory) ;  // Only add for first T declared
     }
 
 
