@@ -59,7 +59,7 @@ class AssignFromRDF(object):
   def __init__(self, cls, base):
   #-----------------------------
     self._header = [
-      'void %s::assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property,' % cls,
+      'void %s::assign_from_rdf(rdf::Graph &graph, const rdf::Node &property,' % cls,
       '                         const rdf::Node &value,  const bool reverse)',
       '{']
     if base and base != 'tobj::TypedObject':
@@ -181,7 +181,7 @@ class Constructor(object):
 #    print "B:", base, " C:", constructor(base)
     self._class = cls
     ctr = cls + '::' + cls
-    self._hdr = '''%(ctr)s(const rdf::URI &uri, const rdf::Graph &graph)
+    self._hdr = '''%(ctr)s(const rdf::URI &uri, rdf::Graph &graph)
 : %(ctr)s(uri)
 {
   if (!this->add_metadata(graph)) *this = %(cls)s() ;

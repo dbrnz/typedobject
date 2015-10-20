@@ -65,6 +65,27 @@ namespace tobj {
     }
 
 
+  TypedObject::Reference TypedObject::get_reference(const rdf::URI &uri,
+  /*------------------------------------------------------------------*/
+                                                    TypedObject::Registry &registry)
+  {
+    auto refptr = registry.find(uri) ;
+    return (refptr == registry.end()) ? nullptr : refptr->second ;
+    }
+
+  void TypedObject::add_reference(const rdf::URI &uri, TypedObject::Reference reference,
+  /*----------------------------------------------------------------------------------*/
+                                  TypedObject::Registry &registry)
+  {
+    registry.emplace(uri, reference) ;
+    }
+
+  void TypedObject::delete_reference(const rdf::URI &uri, TypedObject::Registry &registry)
+  /*------------------------------------------------------------------------------------*/
+  {
+    registry.erase(uri) ;
+    }
+
   bool TypedObject::operator==(const TypedObject &other) const
   /*--------------------------------------------------------*/
   {
@@ -102,8 +123,8 @@ namespace tobj {
     return rdf::Node() ;
     }
 
-  bool TypedObject::add_metadata(const rdf::Graph &graph)
-  /*---------------------------------------------------*/
+  bool TypedObject::add_metadata(rdf::Graph &graph)
+  /*---------------------------------------------*/
   {
     if (m_uri.is_valid()) {
       if (graph.contains(m_uri, rdf::RDF::type, type())               // Needs to be sub-classes

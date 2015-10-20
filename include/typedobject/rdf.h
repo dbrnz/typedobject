@@ -32,6 +32,14 @@
 #include <cinttypes>
 #include <iostream>
 #include <functional>
+#include <memory>
+#include <unordered_map>
+
+//**************************************************************************//
+
+namespace tobj {
+  class TypedObject ;                // Declare forward
+  } ;
 
 //**************************************************************************//
 
@@ -269,11 +277,15 @@ namespace rdf {
     StatementIter get_statements(const Statement &pattern) const ;
     StatementIter get_statements(const Node &s, const Node &p, const Node &o) const ;
 
+    std::shared_ptr<tobj::TypedObject> get_reference(const URI &uri) ;
+    void add_reference(const URI &uri, std::shared_ptr<tobj::TypedObject> reference) ;
+    void delete_reference(const URI &uri) ;
+
    private:
     const URI m_uri ;
     GraphImpl *m_graph ;
+    std::unordered_map<URI, std::shared_ptr<tobj::TypedObject>> m_objectregistry ;
     } ;
-
 
   } ;
 

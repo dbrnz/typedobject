@@ -79,13 +79,13 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
  protected:                                                                 \
   bool satisfies_restrictions(const rdf::Graph &graph) ;                    \
   static rdf::Node get_property(const std::string &name) ;                  \
-  void assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property,  \
+  void assign_from_rdf(rdf::Graph &graph, const rdf::Node &property,        \
                        const rdf::Node &value,  const bool reverse) ;       \
   void save_as_rdf(rdf::Graph & graph) ;                                    \
  public:                                                                    \
   CLASS() = default ;                                                       \
   CLASS(const rdf::URI &uri) ;                                              \
-  CLASS(const rdf::URI &uri, const rdf::Graph &graph) ;                     \
+  CLASS(const rdf::URI &uri, rdf::Graph &graph) ;                           \
   const rdf::URI &type(void) const ;                                        \
   static std::set<rdf::URI> &subtypes(void) ;                               \
   static int add_subtype(const rdf::URI &T) ;                               \
@@ -228,25 +228,12 @@ namespace tobj
     virtual ~TypedObject() = default ;
 
     typedef std::shared_ptr<TypedObject> Reference ;
+    typedef std::unordered_map<rdf::URI, Reference> Registry ;
+
     static Reference create(const rdf::URI &T, const std::string &uri) ;
 
     template <class T>
-    static std::shared_ptr<T> create(std::set<rdf::URI> &subtypes, const rdf::Node &uri, const rdf::Graph &graph)
-    /*---------------------------------------------------------------------------------------------------------*/
-    {
-      rdf::StatementIter types = graph.get_statements(uri, rdf::RDF::type, rdf::Node()) ;
-      if (!types.end()) {
-        do {
-          rdf::URI type = rdf::URI(types.get_object()) ;
-          if (subtypes.find(type) != subtypes.end()) {
-            auto obj = create(type, (std::string)uri) ;
-            if (obj->add_metadata(graph))
-              return std::dynamic_pointer_cast<T>(obj) ;
-            }
-          } while (!types.next()) ;
-        }
-      return std::shared_ptr<T>() ;
-      }
+    static typename T::Reference create(std::set<rdf::URI> &subtypes, const rdf::URI &uri, rdf::Graph &graph) ;
 
     template<class T>
     static typename T::Reference get_object(const std::string &uri, const std::set<typename T::Reference> &container)
@@ -274,7 +261,7 @@ namespace tobj
     :param graph: A graph of RDF statements.
     :type graph: :class:`~biosignalml.rdf.Graph`
     **/
-    bool add_metadata(const rdf::Graph &p_graph) ;
+    bool add_metadata(rdf::Graph &p_graph) ;
 
     /**
     Save attributes as RDF triples in a graph.
@@ -288,10 +275,40 @@ namespace tobj
                                    const std::string &base="",
                                    const std::set<rdf::Namespace> &prefixes=std::set<rdf::Namespace>()) ;
 
+    static Reference get_reference(const rdf::URI &uri, Registry &registry) ;
+    static void add_reference(const rdf::URI &uri, Reference reference, Registry &registry) ;
+    static void delete_reference(const rdf::URI &uri, Registry &registry) ;
+
    private:
     rdf::URI m_uri ;
     static std::unordered_map<rdf::URI, TypedObjectFactory *> &m_factories(void) ;
     } ;
+
+
+  template <class T>
+  typename T::Reference TypedObject::create(std::set<rdf::URI> &subtypes, const rdf::URI &uri, rdf::Graph &graph)
+  /*-------------------------------------------------------------------------------*/
+  {
+    rdf::StatementIter types = graph.get_statements(uri, rdf::RDF::type, rdf::Node()) ;
+    if (!types.end()) {
+      do {
+        rdf::URI type = rdf::URI(types.get_object()) ;
+        if (subtypes.find(type) != subtypes.end()) {
+          Reference reference = graph.get_reference(uri) ;
+          if (reference)
+            return std::dynamic_pointer_cast<T>(reference) ;
+          TypedObject::Reference object = create(type, (std::string)uri) ;
+          graph.add_reference(uri, object) ;
+          if (object->add_metadata(graph)) {
+            return std::dynamic_pointer_cast<T>(object) ;
+            }
+          graph.delete_reference(uri) ;
+          reference.reset() ;
+          }
+        } while (!types.next()) ;
+      }
+    return typename T::Reference() ;
+    }
 
 #endif
 

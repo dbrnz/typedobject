@@ -20,6 +20,7 @@
 
 #include "typedobject/rdf.h"
 #include "rdfimpl.h"
+#include "typedobject/typedobject.h"
 
 //**************************************************************************//
 
@@ -513,13 +514,15 @@ const rdf::Node rdf::StatementIter::get_object(void) const
 
 rdf::Graph::Graph()
 /*---------------*/
-: m_uri(), m_graph(new rdf::GraphImpl())
+: m_uri(), m_graph(new rdf::GraphImpl()),
+  m_objectregistry(std::unordered_map<URI, std::shared_ptr<tobj::TypedObject>>())
 {
   }
 
 rdf::Graph::Graph(const std::string &uri)
 /*-------------------------------------*/
-: m_uri(uri), m_graph(new rdf::GraphImpl())
+: m_uri(uri), m_graph(new rdf::GraphImpl()),
+  m_objectregistry(std::unordered_map<URI, std::shared_ptr<tobj::TypedObject>>())
 {
   }
 
@@ -651,5 +654,25 @@ rdf::StatementIter rdf::Graph::get_statements(const rdf::Node &s, const rdf::Nod
 {
   return get_statements(rdf::Statement(s, p, o)) ;
   }
+
+
+tobj::TypedObject::Reference rdf::Graph::get_reference(const rdf::URI &uri)
+/*-----------------------------------------------------------------------*/
+{
+  return tobj::TypedObject::get_reference(uri, m_objectregistry) ;
+  }
+
+void rdf::Graph::add_reference(const rdf::URI &uri, tobj::TypedObject::Reference reference)
+/*---------------------------------------------------------------------------------------*/
+{
+  tobj::TypedObject::add_reference(uri, reference, m_objectregistry) ;
+  }
+
+void rdf::Graph::delete_reference(const rdf::URI &uri)
+/*--------------------------------------------------*/
+{
+  tobj::TypedObject::delete_reference(uri, m_objectregistry) ;
+  }
+
 
 //**************************************************************************//
