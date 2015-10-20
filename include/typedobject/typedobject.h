@@ -28,7 +28,7 @@
 
 #include <string>
 #include <memory>
-#include <map>
+#include <unordered_map>
 #include <set>
 
 
@@ -73,7 +73,7 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 
 #define TYPED_OBJECT(CLASS, TYPE)                                           \
  private:                                                                   \
-  static std::map<std::string, rdf::Node> s_properties ;                    \
+  static std::unordered_map<std::string, rdf::Node> s_properties ;          \
   static const std::set<rdf::Namespace> s_prefixes ;                        \
   std::set<rdf::Namespace> m_prefixes ;                                     \
  protected:                                                                 \
@@ -290,7 +290,7 @@ namespace tobj
 
    private:
     rdf::URI m_uri ;
-    static std::map<rdf::URI, TypedObjectFactory *> &m_factories(void) ;
+    static std::unordered_map<rdf::URI, TypedObjectFactory *> &m_factories(void) ;
     } ;
 
 #endif

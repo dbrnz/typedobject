@@ -43,10 +43,10 @@ namespace tobj {
     }
 
 
-  std::map<rdf::URI, TypedObjectFactory *> &TypedObject::m_factories(void)
-  /*--------------------------------------------------------------------*/
+  std::unordered_map<rdf::URI, TypedObjectFactory *> &TypedObject::m_factories(void)
+  /*------------------------------------------------------------------------------*/
   {
-    static std::map<rdf::URI, TypedObjectFactory *> s_factories ;
+    static std::unordered_map<rdf::URI, TypedObjectFactory *> s_factories ;
     return s_factories ;
     }
 

@@ -236,7 +236,7 @@ class Constructor(object):
            ]
     code.append('const std::set<rdf::Namespace> %s::s_prefixes {%s} ;\n'
                                          % (self._class, ', '.join(self._prefixes)))
-    code.append('std::map<std::string, rdf::Node> %s::s_properties {' % self._class)
+    code.append('std::unordered_map<std::string, rdf::Node> %s::s_properties {' % self._class)
     code.extend(self._props)
     code.append('  } ;')
     code.append('''

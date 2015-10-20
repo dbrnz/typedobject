@@ -31,6 +31,7 @@
 #include <cmath>
 #include <cinttypes>
 #include <iostream>
+#include <functional>
 
 //**************************************************************************//
 
@@ -200,6 +201,28 @@ namespace rdf {
     friend class Graph ;
     } ;
 
+  } ;
+
+//**************************************************************************//
+
+namespace std {
+
+  template <> struct hash<rdf::URI>     // Specify now since referenced below
+  /*------------------------------*/
+  {
+    size_t operator()(const rdf::URI & uri) const
+    /*-----------------------------------------*/
+    {
+      return hash<std::string>()(uri.to_string()) ;
+      }
+
+    } ;
+
+  } ;
+
+//**************************************************************************//
+
+namespace rdf {
 
   class TYPEDOBJECT_EXPORT Graph
   /*--------------------------*/
