@@ -426,7 +426,6 @@ std::string rdf::GraphImpl::serialise(const rdf::Graph::Format format, const uin
     SerdURI base_uri = SERD_URI_NULL ;
     SerdNode base_uri_node = SERD_NODE_NULL ;
     if (base_str) base_uri_node = serd_node_new_uri_from_string(base_str, NULL, &base_uri) ;
-
     SerdWriter *writer = serd_writer_new((format == rdf::Graph::Format::TURTLE) ? SERD_TURTLE
                                                                                 : SERD_NTRIPLES,
                                          (SerdStyle)(SERD_STYLE_ABBREVIATED | SERD_STYLE_RESOLVED | SERD_STYLE_CURIED),
