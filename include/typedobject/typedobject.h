@@ -222,13 +222,6 @@ namespace tobj
   class TYPEDOBJECT_EXPORT TypedObject
   /*--------------------------------*/
   {
-   protected:
-    virtual void assign_from_rdf(const rdf::Graph &graph, const rdf::Node &property,
-                                 const rdf::Node &value,  const bool reverse) = 0 ;
-    virtual void save_as_rdf(rdf::Graph &graph) = 0 ;
-    virtual bool satisfies_restrictions(const rdf::Graph &graph) ;
-    static rdf::Node get_property(const std::string &name) ;
-
    public:
     TypedObject() ;
     TypedObject(const rdf::URI &uri) ;
@@ -286,6 +279,13 @@ namespace tobj
     static Reference get_reference(const rdf::URI &uri, Registry &registry) ;
     static void add_reference(const rdf::URI &uri, Reference reference, Registry &registry) ;
     static void delete_reference(const rdf::URI &uri, Registry &registry) ;
+
+   protected:
+    virtual void assign_from_rdf(rdf::Graph &graph, const rdf::Node &property,
+                                 const rdf::Node &value,  const bool reverse) = 0 ;
+    virtual void save_as_rdf(rdf::Graph &graph) = 0 ;
+    virtual bool satisfies_restrictions(const rdf::Graph &graph) ;
+    static rdf::Node get_property(const std::string &name) ;
 
    private:
     rdf::URI m_uri ;
