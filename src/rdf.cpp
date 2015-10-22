@@ -21,6 +21,7 @@
 #include "typedobject/rdf.h"
 #include "rdfimpl.h"
 #include "typedobject/typedobject.h"
+#include "typedobject/uuid.h"
 
 //**************************************************************************//
 
@@ -227,6 +228,28 @@ rdf::URI & rdf::URI::operator=(rdf::URI && other)
 {
   return static_cast<URI &>(rdf::Node::operator=(std::move(other))) ;
   }
+
+rdf::URI rdf::URI::make_URI(bool sibling, const std::string &prefix) const
+/*----------------------------------------------------------------------*/
+{
+  std::string suffix = (prefix != "") ? prefix + uuid::uuid() : uuid::uuid() ;
+  std::string uri = this->to_string() ;
+  std::string newuri ;
+  if (uri.back() == '/' || uri.back() == '#') newuri = uri + suffix ;
+  else if (sibling) {
+    size_t slash = uri.rfind("/") ;  // Python returns -1 if not found
+    size_t hash  = uri.rfind("#") ;  // C++ returns basic_string::npos
+    if (slash == std::string::npos && hash == std::string::npos)
+      newuri = uri + "/" + suffix ;
+    else if (slash == std::string::npos || hash > slash)
+      newuri = uri.substr(0, hash-1) + "#" + suffix ;
+    else
+      newuri = uri.substr(0, slash-1) + "/" + suffix ;
+    }
+  else newuri = uri + "/" + suffix ;
+  return rdf::URI(newuri) ;
+  }
+
 
 //**************************************************************************//
 

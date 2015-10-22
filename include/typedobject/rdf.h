@@ -102,8 +102,22 @@ namespace rdf {
     URI(const Node & uri) ;
     URI(const URI & other) ;
     URI(URI && other) ;
+
     URI & operator=(const URI & other) ;
     URI & operator=(URI && other) ;
+
+    /**
+     * Generate a unique URI that starts with this URI.
+     *
+     * :param sibling: When set, replace the last component of our URI with unique text.
+     *   The default is to append unique text to our URI.
+     * :type: bool
+     * :param prefix: If set, insert between the URI and unique text.
+     * :type: str
+     * :return: A unique URI.
+     * :rtype: Uri
+     */
+    URI make_URI(bool sibling=false, const std::string &prefix="") const ;
     } ;
 
 
