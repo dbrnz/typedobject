@@ -6,12 +6,12 @@
 int main(void)
 /*----------*/
 {
-  rdf::URI object_uri1("http://example.org/object/1") ;
-  rdf::URI object_uri2("http://example.org/object/2") ;
+  rdf::URI uri1("http://example.org/object/1") ;
+  rdf::URI uri2("http://example.org/object/2") ;
   rdf::URI uri3("http://example.org/object/3") ;
 
-  example::Object object(object_uri1) ;
-  auto sobj = example::SubObject::new_reference(object_uri2) ;
+  example::Object object(uri1) ;
+  auto sobj2 = example::SubObject::new_reference(uri2) ;
 
   object.set_string("Some string") ;
   object.set_integer(3) ;
@@ -19,7 +19,7 @@ int main(void)
   object.set_starttime(xsd::Datetime("2015-05-11 14:47:30")) ;  // T
   object.set_duration(xsd::Duration("PT3H4M5.67S")) ;
   object.set_investigator(rdf::URI("http://example.org/investigator")) ;
-  object.set_subobject(sobj) ;
+  object.set_subobject(sobj2) ;
   object.set_reference(uri3) ;
 
   std::string turtle = object.serialise_metadata(rdf::Graph::Format::TURTLE) ;
@@ -28,7 +28,7 @@ int main(void)
   rdf::Graph graph ;
   graph.parse_string(turtle, rdf::Graph::Format::TURTLE) ;
 
-  example::RestrictedObject from_rdf(object_uri1, graph) ;  // Restricted to "integer == 3"
+  example::RestrictedObject from_rdf(uri1, graph) ;  // Restricted to "integer == 3"
                                                            // So how do we fail??
   // Also how do we fail if "object_uri a Object" isn't in graph ???
 
