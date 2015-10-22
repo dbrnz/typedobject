@@ -52,3 +52,7 @@ add_test(UNITTEST, unittest)
 add_executable(test_units units.cpp)
 target_link_libraries(test_units typedobject)
 add_test(UNITS, test_units)
+
+add_executable(test_xsd xsd.cpp)
+target_link_libraries(test_xsd typedobject)
+add_test(XSD, test_xsd)
