@@ -150,9 +150,12 @@ namespace tobj {
   void TypedObject::save_metadata(rdf::Graph &graph)
   /*----------------------------------------------*/
   {
-    if (m_uri.is_valid()) {
-      graph.insert(m_uri, rdf::RDF::type, type()) ;
-      save_as_rdf(graph) ;
+    if (m_uri.is_valid()) {     // Check if object isn't in graph
+      const rdf::Statement hastype(m_uri, rdf::RDF::type, type()) ;
+      if (!graph.contains(hastype)) {
+        graph.insert(hastype) ;
+        save_as_rdf(graph) ;
+        }
       }
     }
 
