@@ -26,13 +26,13 @@
 
 #include <string>
 #include <stdexcept>
-#include <map>
+#include <unordered_map>
 
 //============================================================================
 
 namespace Unit {
 
-  typedef std::map<const std::string, double> Prefixes ;
+  typedef std::unordered_map<std::string, double> Prefixes ;
 
   const Prefixes prefixes_1 = { { "y",  1.0e-24 },
                                 { "z",  1.0e-21 },
@@ -135,8 +135,8 @@ namespace Unit {
   typedef std::pair<const std::string, const Definition> RegistryPair;
   /*----------------------------------------------------------------*/
 
-  static std::map<const std::string, const Definition> Registry =
-  /*-----------------------------------------------------------*/
+  static std::unordered_map<std::string, const Definition> Registry =
+  /*---------------------------------------------------------------*/
   {
     { "s", Definitions::second }, { "sec", Definitions::second }, { "second", Definitions::second },
     { "min", Definitions::minute }, { "minute", Definitions::minute }
