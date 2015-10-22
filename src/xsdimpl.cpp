@@ -24,7 +24,7 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#include <math.h>
+#include <cmath>
 #include <sstream>
 
 
@@ -128,6 +128,16 @@ xsd::DurationImpl::DurationImpl(const double seconds)
     }
   boost::posix_time::time_duration td = boost::posix_time::time_duration(0, 0, secs, fraction) ;
   m_duration = negative ? td.invert_sign() : td ;
+  }
+
+
+double xsd::DurationImpl::to_double(void) const
+/*-------------------------------------------*/
+{
+  if (m_duration.is_special())
+    return NAN ;
+  else
+    return (double)m_duration.ticks()/(double)boost::posix_time::time_duration::ticks_per_second() ;
   }
 
 std::string xsd::DurationImpl::to_string(void) const

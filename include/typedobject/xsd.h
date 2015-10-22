@@ -91,6 +91,9 @@ namespace xsd {
     Duration & operator=(Duration && other) ;
     friend TYPEDOBJECT_EXPORT std::ostream & operator<<(std::ostream & os, const Duration & d) ;
 
+    double to_double(const std::string & units="second") const ;
+    explicit operator double() const ;
+    explicit operator float() const ;
     std::string to_string(void) const ;
     rdf::Literal to_literal(void) ;
     bool is_valid(void) const ;

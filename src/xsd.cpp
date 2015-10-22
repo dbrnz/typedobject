@@ -27,6 +27,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp> // _types.hpp>
 
 #include <stdexcept>
+#include <cmath>
 
 
 xsd::Datetime::Datetime()
@@ -126,8 +127,7 @@ xsd::Duration::Duration(const std::string & dt, const bool strict)
 xsd::Duration::Duration(const rdf::Node & node)
 /*-------------------------------------------*/
 : xsd::Duration(node.to_string(),
-                  node.is_literal_type(rdf::XSD::dayTimeDuration.to_string().c_str()))
-
+                node.is_literal_type(rdf::XSD::dayTimeDuration.to_string().c_str()))
 {
   }
 
@@ -141,26 +141,24 @@ xsd::Duration::Duration(xsd::Duration && other)
 /*-------------------------------------------*/
 : m_duration(other.m_duration)
 {
-  other.m_duration = nullptr;
+  other.m_duration = nullptr ;
   }
 
 
 xsd::Duration::Duration(const double time, const std::string & units)
 /*-----------------------------------------------------------------*/
 {
-  try {
-    Unit::Converter seconds(units, "second");
-    m_duration = new DurationImpl(seconds.convert(time));
-    }
-  catch (const std::exception &error) {
-    m_duration = new DurationImpl(time);
+  if (units == "second") m_duration = new DurationImpl(time) ;
+  else {
+    Unit::Converter seconds(units, "second") ;
+    m_duration = new DurationImpl(seconds.convert(time)) ;
     }
   }
 
 xsd::Duration::~Duration()
 /*------------------------*/
 {
-  if (m_duration != nullptr) delete m_duration ;
+  if (m_duration != nullptr) delete m_duration;
   }
 
 xsd::Duration & xsd::Duration::operator=(const xsd::Duration & other)
@@ -183,6 +181,30 @@ std::ostream & xsd::operator<<(std::ostream & os, const xsd::Duration & d)
 {
   os << d.to_string() ;
   return os ;
+  }
+
+double xsd::Duration::to_double(const std::string & units) const
+/*------------------------------------------------------------*/
+{
+  if (m_duration == nullptr) return NAN ;
+  else {
+    double time = m_duration->to_double() ;
+    if (units == "second") return time ;
+    Unit::Converter seconds("second", units) ;
+    return seconds.convert(time) ;
+    }
+  }
+
+xsd::Duration::operator double() const
+/*----------------------------------*/
+{
+  return this->to_double("second") ;
+  }
+
+xsd::Duration::operator float() const
+/*---------------------------------*/
+{
+  return (float)this->to_double("second") ;
   }
 
 std::string xsd::Duration::to_string(void) const

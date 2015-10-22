@@ -49,6 +49,8 @@ namespace xsd {
     DurationImpl() ;
     DurationImpl(const std::string &dt, const bool strict=false) ;
     DurationImpl(const double seconds) ;
+
+    double to_double(void) const ;
     std::string to_string(void) const ;
     bool is_valid(void) const ;
 
