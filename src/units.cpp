@@ -138,8 +138,13 @@ namespace Unit {
   static std::unordered_map<std::string, const Definition> Registry =
   /*---------------------------------------------------------------*/
   {
-    { "s", Definitions::second }, { "sec", Definitions::second }, { "second", Definitions::second },
-    { "min", Definitions::minute }, { "minute", Definitions::minute }
+    { "s", Definitions::second },
+      { "second",  Definitions::second },
+      { "seconds", Definitions::second },
+    { "min", Definitions::minute },
+      { "mins",    Definitions::minute },
+      { "minute",  Definitions::minute },
+      { "minutes", Definitions::minute }
     };
 
 

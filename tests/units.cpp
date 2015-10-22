@@ -33,6 +33,9 @@ int main(void)
     Unit::Converter msec("millisecond", "second");
     std::cout << "1 millisecond = " << msec.convert(1.0) << " seconds" << std::endl;
 
+    Unit::Converter mmin("milliminute", "microsecond");
+    std::cout << "1 milliminute = " << mmin.convert(1.0) << " microseconds" << std::endl;
+
     Unit::Converter mtox("minutse", "second");
     }
   catch (const std::exception &error) {
