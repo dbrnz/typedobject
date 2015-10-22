@@ -158,7 +158,6 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 #define PROPERTY_DATETIME(NAME, P)       _PROPERTY(NAME, P, xsd::Datetime)
 #define PROPERTY_DURATION(NAME, P)       _PROPERTY(NAME, P, xsd::Duration)
 #define PROPERTY_OBJECT(NAME, P, T)      _PROPERTY_OBJ(NAME, P, T)
-#define PROPERTY_REFERENCE(NAME, P, T)   _PROPERTY_OBJ(NAME, P, T, URI)
 
 // What is the difference between URI, NODE, and OBJECT properties??
 // Could URI and NODE be combined? And renamed to RESOURCE??

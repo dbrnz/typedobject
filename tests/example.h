@@ -49,7 +49,7 @@ namespace example {
     PROPERTY_NODE(investigator, DCT::creator)
 
     PROPERTY_OBJECT(subobject, TEST::subobject, SubObject)
-    PROPERTY_REFERENCE(reference, TEST::reference, SubObject)
+    PROPERTY_URI(reference, TEST::reference)
 
     PREFIXES(TEST::NS, DCT::NS)
 

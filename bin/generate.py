@@ -164,7 +164,7 @@ class SaveToRDF(object):
     elif 'OBJ' in options:
       save = ('  if (%(name)s != nullptr && %(name)s->uri().is_valid()) {\n'
             + '    graph.insert(uri(), %(prop)s, %(name)s->uri()) ;\n'
-            + ('    %(name)s->save_metadata(graph) ;\n' if ('URI' in options) else '')
+            + '    %(name)s->save_metadata(graph) ;\n'
             + '    }')
     self._getvalues.append(save % { 'prop': property, 'name': 'm_' + name})
 

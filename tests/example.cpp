@@ -8,7 +8,7 @@ int main(void)
 {
   rdf::URI object_uri1("http://example.org/object/1") ;
   rdf::URI object_uri2("http://example.org/object/2") ;
-  rdf::URI object_uri3("http://example.org/object/3") ;
+  rdf::URI uri3("http://example.org/object/3") ;
 
   example::Object object(object_uri1) ;
   auto sobj = example::SubObject::new_reference(object_uri2) ;
@@ -20,7 +20,7 @@ int main(void)
   object.set_duration(xsd::Duration("PT3H4M5.67S")) ;
   object.set_investigator(rdf::URI("http://example.org/investigator")) ;
   object.set_subobject(sobj) ;
-  object.set_reference(sobj) ;
+  object.set_reference(uri3) ;
 
   std::string turtle = object.serialise_metadata(rdf::Graph::Format::TURTLE) ;
   std::cout << turtle << std::endl ;
@@ -40,7 +40,7 @@ int main(void)
             << "Starttime:    " << from_rdf.starttime()    << std::endl
             << "Duration:     " << from_rdf.duration()     << std::endl
             << "SubObject:    " << from_rdf.subobject()    << std::endl
-            << "Reference:    " << from_rdf.reference()    << std::endl
+            << "Reference:    " << (std::string)from_rdf.reference()    << std::endl
             << std::endl ;
 
   std::cout << from_rdf.serialise_metadata(rdf::Graph::Format::TURTLE) << std::endl ;
