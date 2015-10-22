@@ -515,14 +515,14 @@ const rdf::Node rdf::StatementIter::get_object(void) const
 rdf::Graph::Graph()
 /*---------------*/
 : m_uri(), m_graph(new rdf::GraphImpl()),
-  m_objectregistry(std::unordered_map<URI, std::shared_ptr<tobj::TypedObject>>())
+  m_objectregistry(std::unordered_map<rdf::URI, std::shared_ptr<tobj::TypedObject>>())
 {
   }
 
 rdf::Graph::Graph(const std::string &uri)
 /*-------------------------------------*/
 : m_uri(uri), m_graph(new rdf::GraphImpl()),
-  m_objectregistry(std::unordered_map<URI, std::shared_ptr<tobj::TypedObject>>())
+  m_objectregistry(std::unordered_map<rdf::URI, std::shared_ptr<tobj::TypedObject>>())
 {
   }
 
