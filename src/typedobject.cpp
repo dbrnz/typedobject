@@ -70,14 +70,14 @@ namespace tobj {
                                                     TypedObject::Registry &registry)
   {
     auto refptr = registry.find(uri) ;
-    return (refptr == registry.end()) ? nullptr : refptr->second ;
+    return (refptr == registry.end()) ? nullptr : refptr->second.lock() ;
     }
 
   void TypedObject::add_reference(const rdf::URI &uri, TypedObject::Reference reference,
   /*----------------------------------------------------------------------------------*/
                                   TypedObject::Registry &registry)
   {
-    registry.emplace(uri, reference) ;
+    registry.emplace(uri, std::weak_ptr<TypedObject>(reference)) ;
     }
 
   void TypedObject::delete_reference(const rdf::URI &uri, TypedObject::Registry &registry)
@@ -169,4 +169,4 @@ namespace tobj {
     }
 
 
-  } ;
+  } ;         // End `tobj` namespace

@@ -229,7 +229,7 @@ namespace tobj
     virtual ~TypedObject() = default ;
 
     typedef std::shared_ptr<TypedObject> Reference ;
-    typedef std::unordered_map<rdf::URI, Reference> Registry ;
+    typedef std::unordered_map<rdf::URI, std::weak_ptr<TypedObject>> Registry ;
 
     static Reference create(const rdf::URI &T, const std::string &uri) ;
 
@@ -307,9 +307,8 @@ namespace tobj
             return std::dynamic_pointer_cast<T>(reference) ;
           TypedObject::Reference object = create(type, (std::string)uri) ;
           graph.add_reference(uri, object) ;
-          if (object->add_metadata(graph)) {
+          if (object->add_metadata(graph))
             return std::dynamic_pointer_cast<T>(object) ;
-            }
           graph.delete_reference(uri) ;
           reference.reset() ;
           }

@@ -298,7 +298,8 @@ namespace rdf {
    private:
     const URI m_uri ;
     GraphImpl *m_graph ;
-    std::unordered_map<URI, std::shared_ptr<tobj::TypedObject>> m_objectregistry ;
+    // Can't forward declare `tobj::TypedObject::Registry`
+    std::unordered_map<URI, std::weak_ptr<tobj::TypedObject>> m_objectregistry ;
     } ;
 
   } ;
