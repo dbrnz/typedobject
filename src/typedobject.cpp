@@ -70,7 +70,12 @@ namespace tobj {
                                                     TypedObject::Registry &registry)
   {
     auto refptr = registry.find(uri) ;
-    return (refptr == registry.end()) ? nullptr : refptr->second.lock() ;
+    if (refptr != registry.end()) {
+      TypedObject::Reference reference = refptr->second.lock() ;
+      if (reference) return reference ;
+      registry.erase(refptr) ;
+      }
+    return nullptr ;
     }
 
   void TypedObject::add_reference(const rdf::URI &uri, TypedObject::Reference reference,
