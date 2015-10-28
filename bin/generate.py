@@ -77,7 +77,7 @@ class AssignFromRDF(object):
   #------------------------------------------------------
 ##    print (name, kind, property, options)  ######################
     if property == 'NONE': return
-    name = 'm_%s' % name
+    name = 'p_%s' % name
     ## Could optimise reverse case by looking up type(s) of found object once only
     ## Currently done for each value in `T::Reference TypedObject::create()`
     value = (('tobj::TypedObject::create<%s>(%s::subtypes(), value, graph)' % (kind, kind)) if 'OBJ' in options
@@ -166,7 +166,7 @@ class SaveToRDF(object):
             + '    graph.insert(uri(), %(prop)s, %(name)s->uri()) ;\n'
             + '    %(name)s->save_metadata(graph) ;\n'
             + '    }')
-    self._getvalues.append(save % { 'prop': property, 'name': 'm_' + name})
+    self._getvalues.append(save % { 'prop': property, 'name': 'p_' + name})
 
   def __str__(self):
   #-----------------
@@ -203,8 +203,7 @@ class Constructor(object):
   def initialise(self, name, kind, prop, *options):
   #-----------------------------------------------
 ##    print name, kind, options
-    member = 'm_%s' % name
-    self._ctr.append('  %s(' % member
+    self._ctr.append('  %s(' % ('p_%s' % name)
                   + ('nullptr' if ('OBJ' in options and options[0] not in ['SET', 'RSET'])
                 else 'rdf::Literal::Constants::EMPTY_STRING'  if kind == 'std::string'
                 else 'rdf::Literal::Constants::EMPTY_INTEGER' if kind == 'xsd::Integer'

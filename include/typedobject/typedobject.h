@@ -106,38 +106,38 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 #define _PROPERTY(NAME, P, T, ...)        \
  public:                                  \
   inline const T & NAME(void) const       \
-    { return m_##NAME ; }                 \
+    { return p_##NAME ; }                 \
   inline void set_##NAME(const T & value) \
-    { m_##NAME = value ; }                \
+    { p_##NAME = value ; }                \
  protected:                               \
-  T m_##NAME ;
+  T p_##NAME ;
 
 #define _PROPERTY_OBJ(NAME, P, T, ...)    \
  public:                                  \
-  inline const T::Reference NAME(void) const       \
-    { return m_##NAME ; }                 \
-  inline void set_##NAME(T::Reference value)       \
-    { m_##NAME = value ; }                \
+  inline const std::shared_ptr<T> NAME(void) const       \
+    { return p_##NAME ; }                 \
+  inline void set_##NAME(std::shared_ptr<T> value)       \
+    { p_##NAME = value ; }                \
  private:                                 \
-  T::Reference m_##NAME ;
+  std::shared_ptr<T> p_##NAME ;
 
 #define _PROPERTY_SET(NAME, P, T, ...)    \
  public:                                  \
   inline const std::set<T> & NAME(void) const \
-    { return m_##NAME ; }                 \
+    { return p_##NAME ; }                 \
   inline void add_##NAME(const T & value) \
-    { m_##NAME.insert(value) ; }          \
+    { p_##NAME.insert(value) ; }          \
  private:                                 \
-  std::set<T> m_##NAME ;
+  std::set<T> p_##NAME ;
 
 #define _PROPERTY_OBJ_SET(NAME, P, T, ...)\
  public:                                  \
   inline const std::set<T::Reference> & NAME(void) const \
-    { return m_##NAME ; }                 \
+    { return p_##NAME ; }                 \
   inline void add_##NAME(T::Reference value)             \
-    { m_##NAME.insert(value) ; }          \
+    { p_##NAME.insert(value) ; }          \
  private:                                 \
-  std::set<T::Reference> m_##NAME ;
+  std::set<T::Reference> p_##NAME ;
 
 #define _PROPERTY_RSET(NAME, P, T, ...)      _PROPERTY_SET(NAME, P, T)
 #define _PROPERTY_OBJ_RSET(NAME, P, T, ...)  _PROPERTY_OBJ_SET(NAME, P, T)
