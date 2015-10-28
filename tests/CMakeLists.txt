@@ -1,3 +1,5 @@
+include_directories(${INCLUDES})
+
 ### Find Boost unit testing package:
 set(Boost_USE_STATIC_LIBS       OFF)
 set(Boost_USE_MULTITHREADED      ON)
@@ -10,10 +12,6 @@ find_package (Boost COMPONENTS system filesystem unit_test_framework REQUIRED)
 add_definitions (-DBOOST_TEST_DYN_LINK)
 include_directories(${Boost_INCLUDE_DIRS})
 ###
-
-include_directories(${CMAKE_SOURCE_DIR}/include)
-include_directories(${CMAKE_SOURCE_DIR}/src)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(LIBRARIES typedobject
               ${Boost_FILESYSTEM_LIBRARY}
