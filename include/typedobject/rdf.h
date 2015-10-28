@@ -277,17 +277,13 @@ namespace rdf {
                           const std::set<Namespace> &prefixes=std::set<Namespace>()) ;
 
     void add_prefixes(const std::set<Namespace> &prefixes) ;
-
     const URI &uri(void) const ;
 
     bool insert(const Statement &statement) const ;
     bool insert(const rdf::Node &s, const rdf::Node &p, const rdf::Node &o) const ;
-
     void add_statements(const StatementIter &statements) const ;
-
     bool contains(const Statement &p_statement) const ;
     bool contains(const Node &s, const Node &p, const Node &o) const ;
-
     StatementIter get_statements(const Statement &pattern) const ;
     StatementIter get_statements(const Node &s, const Node &p, const Node &o) const ;
 
