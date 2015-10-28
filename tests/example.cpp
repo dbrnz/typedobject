@@ -11,19 +11,27 @@ int main(void)
   rdf::URI uri3("http://example.org/object/3") ;
 
   example::Object object(uri1) ;
-  auto sobj2 = example::SubObject::new_reference(uri2) ;
+  auto object = example::Object::new_reference(uri1) ;
 
-  object.set_string("Some string") ;
-  object.set_integer(3) ;
-  object.set_decimal(3.1415926) ;
-  object.set_starttime(xsd::Datetime("2015-05-11 14:47:30")) ;  // T
-  object.set_duration(xsd::Duration("PT3H4M5.67S")) ;
-  object.set_investigator(rdf::URI("http://example.org/investigator")) ;
-  object.set_subobject(sobj2) ;
-  object.set_reference(uri3) ;
+  auto sobj2 = example::SubObject::new_reference(uri2) ;
+  sobj2->set_parent(object) ;
+
+  auto sobj3 = example::SubObject::new_reference(uri3) ;
+
 
   std::string turtle = object.serialise_metadata(rdf::Graph::Format::TURTLE) ;
   std::cout << turtle << std::endl ;
+  object->set_string("Some string") ;
+  object->set_integer(3) ;
+  object->set_decimal(3.1415926) ;
+  object->set_starttime(xsd::Datetime("2015-05-11 14:47:30")) ;  // T
+  object->set_duration(xsd::Duration("PT3H4M5.67S")) ;
+  object->set_investigator(rdf::URI("http://example.org/investigator")) ;
+  object->set_subobject(sobj2) ;
+
+  object->add_resource(sobj2) ;
+
+  object->set_reference(uri3) ;
 
   rdf::Graph graph ;
   graph.parse_string(turtle, rdf::Graph::Format::TURTLE) ;

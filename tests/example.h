@@ -15,6 +15,7 @@ namespace TEST {
   TERM(integer)
   TERM(subobject)
   TERM(reference)
+  TERM(object)
   } ;
 
 namespace BSML {
@@ -29,11 +30,15 @@ using namespace rdf ;
 
 namespace example {
 
+  class Object ;
+
 
   class SubObject : public tobj::TypedObject
   /*--------------------------------------*/
   {
     TYPED_OBJECT(SubObject, TEST::SubObject)
+
+    PROPERTY_OBJECT(parent, TEST::object, Object)
     } ;
 
   class Object : public tobj::TypedObject
@@ -50,6 +55,8 @@ namespace example {
 
     PROPERTY_OBJECT(subobject, TEST::subobject, SubObject)
     PROPERTY_URI(reference, TEST::reference)
+
+    RESOURCE(TEST::object, SubObject) ;
 
     PREFIXES(TEST::NS, DCT::NS)
 
