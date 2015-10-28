@@ -620,8 +620,8 @@ void rdf::Graph::add_prefixes(const std::set<rdf::Namespace> &prefixes)
   m_graph->add_prefixes(prefixes) ;
   }
 
-const rdf::URI &rdf::Graph::get_uri(void) const
-/*-------------------------------------------*/
+const rdf::URI &rdf::Graph::uri(void) const
+/*---------------------------------------*/
 {
   return m_uri ;
   }

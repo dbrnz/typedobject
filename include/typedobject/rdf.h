@@ -278,7 +278,7 @@ namespace rdf {
 
     void add_prefixes(const std::set<Namespace> &prefixes) ;
 
-    const URI &get_uri(void) const ;
+    const URI &uri(void) const ;
 
     bool insert(const Statement &statement) const ;
     bool insert(const rdf::Node &s, const rdf::Node &p, const rdf::Node &o) const ;
