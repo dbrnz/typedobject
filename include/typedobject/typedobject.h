@@ -29,7 +29,11 @@
 #include <string>
 #include <memory>
 #include <unordered_map>
+#include <map>
 #include <set>
+#include <list>
+#include <typeinfo>
+#include <typeindex>
 
 
 #ifdef TYPED_OBJECT_COMPILE
@@ -70,6 +74,9 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 
 #define _PREFIXES(LIST, ...)              \
   static int _PREFIXES_          = _PARAMETERS_("1", #LIST, #__VA_ARGS__) ;
+
+#define _RESOURCE(P, T, ...)              \
+  static int _RESOURCE_##T##     = _PARAMETERS_("1", #P, #__VA_ARGS__) ;
 
 #else
 
@@ -148,6 +155,8 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 #define _INITIALISE(CODE, ...)
 #define _PREFIXES(CODE, ...)
 
+#define _RESOURCE(P, T)
+
 #endif
 
 #define PROPERTY_STRING(NAME, P)         _PROPERTY(NAME, P, std::string)
@@ -181,6 +190,8 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 
 #define INITIALISE(CODE, ...)            _INITIALISE(CODE, #__VA_ARGS__)
 #define PREFIXES(LIST, ...)              _PREFIXES(LIST, #__VA_ARGS__)
+
+#define RESOURCE(P, T)                   _RESOURCE(P, T)
 
 
 namespace tobj
@@ -229,6 +240,8 @@ namespace tobj
 
     typedef std::shared_ptr<TypedObject> Reference ;
     typedef std::unordered_map<rdf::URI, std::weak_ptr<TypedObject>> Registry ;
+    typedef std::pair<Reference, std::type_index> ResourceInfo ;
+    typedef std::map<rdf::URI, ResourceInfo> ResourceMap ;
 
     static Reference create(const rdf::URI &T, const std::string &uri) ;
 
@@ -279,6 +292,30 @@ namespace tobj
     static void add_reference(const rdf::URI &uri, Reference reference, Registry &registry) ;
     static void delete_reference(const rdf::URI &uri, Registry &registry) ;
 
+    void add_resource(Reference resource) ;
+    void delete_resource(const rdf::URI &uri) ;
+
+    template<class T>
+    typename T::Reference get_resource(const rdf::URI &uri)
+    /*---------------------------------------------------*/
+    {
+      auto ref = m_resources.find(uri) ;
+      if (ref != m_resources.end() && std::type_index(typeid(T)) == ref->second.second)
+        return std::static_pointer_cast<T>(ref->second.first) ;
+      return nullptr ;
+      }
+
+    template<class T>
+    std::list<typename T::Reference> get_resources(void)
+    /*------------------------------------------------*/
+    {
+      std::list<typename T::Reference> result ;
+      for (const auto ref : m_resources)
+        if (std::type_index(typeid(T)) == ref.second.second)
+          result.push_back(std::static_pointer_cast<T>(ref.second.first)) ;
+      return result ;
+      }
+
    protected:
     virtual void assign_from_rdf(rdf::Graph &graph, const rdf::Node &property,
                                  const rdf::Node &value,  const bool reverse) = 0 ;
@@ -289,6 +326,7 @@ namespace tobj
    private:
     rdf::URI m_uri ;
     static std::unordered_map<rdf::URI, TypedObjectFactory *> &m_factories(void) ;
+    ResourceMap m_resources ;                           \
     } ;
 
 

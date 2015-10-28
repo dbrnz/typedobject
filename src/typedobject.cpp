@@ -26,13 +26,13 @@ namespace tobj {
 
   TypedObject::TypedObject()
   /*----------------------*/
-  : m_uri()
+  : m_uri(), m_resources(ResourceMap())
   {
     }
 
   TypedObject::TypedObject(const rdf::URI &uri)
   /*-----------------------------------------*/
-  : m_uri(uri)
+  : m_uri(uri), m_resources(ResourceMap())
   {
     }
 
@@ -90,6 +90,24 @@ namespace tobj {
   {
     registry.erase(uri) ;
     }
+
+
+  void TypedObject::add_resource(TypedObject::Reference resource)
+  /*-----------------------------------------------------------*/
+  {
+    if (resource && resource->is_valid()) {
+      auto ptr = resource.get() ;
+      m_resources.emplace(resource->uri(),
+                          ResourceInfo(resource, std::type_index(typeid(*ptr)))) ;
+      }
+    }
+
+  void TypedObject::delete_resource(const rdf::URI &uri)
+  /*--------------------------------------------------*/
+  {
+    m_resources.erase(uri) ;
+    }
+
 
   bool TypedObject::operator==(const TypedObject &other) const
   /*--------------------------------------------------------*/
@@ -160,6 +178,9 @@ namespace tobj {
       if (!graph.contains(hastype)) {
         graph.insert(hastype) ;
         save_as_rdf(graph) ;
+        for (auto const &r : m_resources) {
+          if (r.second.first) r.second.first->save_metadata(graph) ;
+          }
         }
       }
     }

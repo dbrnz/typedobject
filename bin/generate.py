@@ -103,6 +103,13 @@ class AssignFromRDF(object):
     else:
       self._assignvalue(self._setvalues, property, assign, True)
 
+  def add_resource(self, cls, property, *options):
+  #-----------------------------------------------
+    self._assignvalue(self._setreverse, property,
+      'tobj::TypedObject::add_resource(tobj::TypedObject::create<%s>(%s::subtypes(), value, graph)) ;'
+        % (cls, cls),
+      False)
+
   def __str__(self):
   #-----------------
     if self._setvalues:
@@ -272,7 +279,7 @@ class Generator(object):
     self._class = None
     self._base = None
     #  (properties, assignments, restrictions, init, prefixes)
-    self._properties = (OrderedDict(), OrderedDict(), OrderedDict(), [ ], [ ])
+    self._properties = (OrderedDict(), OrderedDict(), OrderedDict(), [ ], [ ], OrderedDict())
     self._usednames = [ ]
 
   def save(self, hdr, fn):
@@ -310,6 +317,8 @@ class Generator(object):
         s.save_property(p, *v)
       for p, v in cls[3][2].iteritems():  # restrictions
         c.preset(p, *v)
+      for r, v in cls[3][5].iteritems():  # resources
+        a.add_resource(r, *v)
       code.append(str(c))
       code.append(str(a))
       code.append(str(s))
@@ -338,8 +347,8 @@ class Generator(object):
       self._classes.append(('::'.join(self._namespaces), self._class, self._base, self._properties))
       self._class = None
       self._base = None
-      #  (properties, assignments, restrictions, init, prefixes)
-      self._properties = (OrderedDict(), OrderedDict(), OrderedDict(), [ ], [ ])
+      #  (properties, assignments, restrictions, init, prefixes, resources)
+      self._properties = (OrderedDict(), OrderedDict(), OrderedDict(), [ ], [ ], OrderedDict())
 
   def add_property(self, name, *params):
   #-------------------------------------
@@ -367,6 +376,11 @@ class Generator(object):
     if self._class is not None:
       for c in params:
         self._properties[4].append(c)
+
+  def add_resource(self, cls, *params):
+  #------------------------------------
+    if self._class is not None:
+      self._properties[5][cls] = params
 
   def use_namespace(self, name):
   #-----------------------------
@@ -453,6 +467,12 @@ class Parser(object):
       if c.kind == CursorKind.CALL_EXPR and c.displayname == '_PARAMETERS_':
         self._generator.add_prefixes(*self.parse_parameters(c))
 
+  def parse_resource(self, name, cursor):
+  #--------------------------------------
+    for c in cursor.get_children():
+      if c.kind == CursorKind.CALL_EXPR and c.displayname == '_PARAMETERS_':
+        self._generator.add_resource(name, *self.parse_parameters(c))
+
   def parse_using(self, cursor):
   #-----------------------------
     ns = None
@@ -507,6 +527,9 @@ class Parser(object):
 
     elif kind == CursorKind.VAR_DECL and name == '_PREFIXES_':
       self.parse_prefixes(cursor)
+
+    elif kind == CursorKind.VAR_DECL and name.startswith('_RESOURCE_'):
+      self.parse_resource(name[10:], cursor)
 
     elif kind == CursorKind.USING_DIRECTIVE:
       self.parse_using(cursor)
