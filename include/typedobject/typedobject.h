@@ -57,12 +57,6 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 #define _PROPERTY_OBJ_SET(NAME, P, T, ...)\
   static int _PROPERTY_##NAME##  = _PARAMETERS_("4", #T, #P, "SET",  "OBJ", #__VA_ARGS__) ;
 
-#define _PROPERTY_RSET(NAME, P, T, ...)   \
-  static int _PROPERTY_##NAME##  = _PARAMETERS_("3", #T, #P, "RSET", #__VA_ARGS__) ;
-
-#define _PROPERTY_OBJ_RSET(NAME, P, T, ...) \
-  static int _PROPERTY_##NAME##  = _PARAMETERS_("4", #T, #P, "RSET", "OBJ", #__VA_ARGS__) ;
-
 #define _ASSIGN(NAME, P, T, ...)          \
   static int _ASSIGN_##NAME##    = _PARAMETERS_("2", #T, #P, #__VA_ARGS__) ;
 
@@ -146,8 +140,6 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
  private:                                 \
   std::set<T::Reference> p_##NAME ;
 
-#define _PROPERTY_RSET(NAME, P, T, ...)      _PROPERTY_SET(NAME, P, T)
-#define _PROPERTY_OBJ_RSET(NAME, P, T, ...)  _PROPERTY_OBJ_SET(NAME, P, T)
 
 #define _ASSIGN(NAME, P, T, ...)
 #define _RESTRICTION(NAME, VALUE, T, ...)
@@ -175,9 +167,6 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 #define PROPERTY_NODE_SET(NAME, P)       _PROPERTY_SET(NAME, P, rdf::Node)
 #define PROPERTY_URI_SET(NAME, P)        _PROPERTY_SET(NAME, P, rdf::URI)
 #define PROPERTY_OBJECT_SET(NAME, P, T)  _PROPERTY_OBJ_SET(NAME, P, T, OBJ)
-
-#define PROPERTY_URI_RSET(NAME, P)       _PROPERTY_RSET(NAME, P, rdf::URI)
-#define PROPERTY_OBJECT_RSET(NAME, P, T) _PROPERTY_OBJ_RSET(NAME, P, T, OBJ)
 
 #define ASSIGN_DATETIME(NAME, P)         _ASSIGN(NAME, P, xsd::Datetime)
 #define ASSIGN_DURATION(NAME, P)         _ASSIGN(NAME, P, xsd::Duration)
@@ -247,14 +236,6 @@ namespace tobj
 
     template <class T>
     static typename T::Reference create(std::set<rdf::URI> &subtypes, const rdf::URI &uri, rdf::Graph &graph) ;
-
-    template<class T>
-    static typename T::Reference get_object(const std::string &uri, const std::set<typename T::Reference> &container)
-    /*---------------------------------------------------------------------------------------------------------*/
-    {
-      for (auto &e : container) if ((std::string)e->uri() == uri) return e ;
-      return typename T::Reference() ;
-      }
 
     bool operator==(const TypedObject &other) const ;
     bool operator<(const TypedObject &other) const ;
