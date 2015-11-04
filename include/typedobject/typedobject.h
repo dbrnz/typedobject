@@ -81,16 +81,6 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
   { return std::make_shared<CLASS>(args...) ; }
 
 #define TYPED_OBJECT(CLASS, TYPE)                                           \
- private:                                                                   \
-  static std::unordered_map<std::string, rdf::Node> s_properties ;          \
-  static const std::set<rdf::Namespace> s_prefixes ;                        \
-  std::set<rdf::Namespace> m_prefixes ;                                     \
- protected:                                                                 \
-  bool satisfies_restrictions(const rdf::Graph &graph) ;                    \
-  static rdf::Node get_property(const std::string &name) ;                  \
-  void assign_from_rdf(rdf::Graph &graph, const rdf::Node &property,        \
-                       const rdf::Node &value,  const bool reverse) ;       \
-  void save_as_rdf(rdf::Graph & graph) ;                                    \
  public:                                                                    \
   CLASS() = default ;                                                       \
   CLASS(const rdf::URI &uri) ;                                              \
@@ -102,7 +92,17 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
   typedef std::shared_ptr<CLASS> Reference ;                                \
   template<typename... Args>                                                \
   inline static Reference new_reference(Args... args)                       \
-  { return std::make_shared<CLASS>(args...) ; }
+  { return std::make_shared<CLASS>(args...) ; }                             \
+ protected:                                                                 \
+  bool satisfies_restrictions(const rdf::Graph &graph) ;                    \
+  static rdf::Node get_property(const std::string &name) ;                  \
+  void assign_from_rdf(rdf::Graph &graph, const rdf::Node &property,        \
+               const rdf::Node &value,  const bool reverse) ;               \
+  void save_as_rdf(rdf::Graph & graph) ;                                    \
+ private:                                                                   \
+  static std::unordered_map<std::string, rdf::Node> s_properties ;          \
+  static const std::set<rdf::Namespace> s_prefixes ;                        \
+  std::set<rdf::Namespace> m_prefixes ;
 
 #define _PROPERTY(NAME, P, T, ...)        \
  public:                                  \
