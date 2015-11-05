@@ -32,7 +32,7 @@
 
 namespace Unit {
 
-  typedef std::unordered_map<std::string, double> Prefixes ;
+  using Prefixes = std::unordered_map<std::string, double> ;
 
   const Prefixes prefixes_1 = { { "y",  1.0e-24 },
                                 { "z",  1.0e-21 },
@@ -128,11 +128,11 @@ namespace Unit {
   namespace Definitions
   /*-----------------*/
   {
-    static const Definition second(Dimension::Time, nullptr,  1.0, 0.0);
-    static const Definition minute(Dimension::Time, &second, 60.0, 0.0);
+    static const auto second = Definition{Dimension::Time, nullptr,  1.0, 0.0};
+    static const auto minute = Definition{Dimension::Time, &second, 60.0, 0.0};
     };
 
-  typedef std::pair<const std::string, const Definition> RegistryPair;
+  using RegistryPair = std::pair<const std::string, const Definition>;
   /*----------------------------------------------------------------*/
 
   static std::unordered_map<std::string, const Definition> Registry =
@@ -152,29 +152,29 @@ namespace Unit {
 
   Definition::Definition()
   /*--------------------*/
-  : mDimension(Dimension::None),
-    mBase(nullptr),
-    mScale(1.0),
-    mOffset(0.0)
+  : mDimension{Dimension::None},
+    mBase{nullptr},
+    mScale{1.0},
+    mOffset{0.0}
   {
     }
 
   Definition::Definition(const Dimension pDimension, const Definition *pBase,
   /*-----------------------------------------------------------------------*/
                                const double pScale, const double pOffset)
-  : mDimension(pDimension),
-    mBase(pBase),
-    mScale(pScale),
-    mOffset(pOffset)
+  : mDimension{pDimension},
+    mBase{pBase},
+    mScale{pScale},
+    mOffset{pOffset}
   {
     }
 
   Definition::Definition(const Definition & pOther)
   /*---------------------------------------------*/
-  : mDimension(pOther.mDimension),
-    mBase(pOther.mBase),
-    mScale(pOther.mScale),
-    mOffset(pOther.mOffset)
+  : mDimension{pOther.mDimension},
+    mBase{pOther.mBase},
+    mScale{pOther.mScale},
+    mOffset{pOther.mOffset}
   {
     }
 
@@ -200,7 +200,7 @@ namespace Unit {
     auto entry = Registry.find(pName);
     if (entry != Registry.end()) return entry->second;
 
-    Definition result;
+    auto result = Definition{};
     std::string suffix = result.long_prefix(pName);
     if (suffix != "") {
       entry = Registry.find(suffix);
@@ -216,7 +216,7 @@ namespace Unit {
     if (suffix != "") {
       entry = Registry.find(suffix);
       if (entry != Registry.end()) {
-        const Definition *base = &(entry->second);
+        const auto *base = &(entry->second);
         result = Definition(base->mDimension, base, result.mScale, result.mOffset);
         Registry.insert(RegistryPair(pName, result));
         return result;
@@ -289,10 +289,10 @@ namespace Unit {
 
   Converter::Converter(const std::string & pFromUnits, const std::string & pToUnits)
   /*------------------------------------------------------------------------------*/
-  : mScale(1.0), mOffset(0.0)
+  : mScale{1.0}, mOffset{0.0}
   {
-    const Definition from = Definition::get_definition(pFromUnits);
-    const Definition to = Definition::get_definition(pToUnits);
+    const auto from = Definition::get_definition(pFromUnits);
+    const auto to = Definition::get_definition(pToUnits);
     if (from.dimension() != to.dimension()) {
       throw std::domain_error("Cannot convert between units with different dimensions");
       }
