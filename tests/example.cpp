@@ -10,7 +10,6 @@ int main(void)
   rdf::URI uri2("http://example.org/object/2") ;
   rdf::URI uri3("http://example.org/object/3") ;
 
-  example::Object object(uri1) ;
   auto object = example::Object::new_reference(uri1) ;
 
   auto sobj2 = example::SubObject::new_reference(uri2) ;
@@ -29,7 +28,7 @@ int main(void)
   object->set_investigator(rdf::URI("http://example.org/investigator")) ;
   object->set_subobject(sobj2) ;
 
-  object->add_resource(sobj2) ;
+//  object->add_resource<example::SubObject>(sobj2) ;
 
   object->set_reference(uri3) ;
 
