@@ -29,16 +29,17 @@ from clang.cindex import TypeKind, CursorKind
 
 def generate_types(T, cls, base):
 #--------------------------------
-  return('''const rdf::URI& %(cls)s::type(void) const
+  return('''const rdf::URI %(cls)s::rdf_type = %(T)s ;
+  
+const rdf::URI& %(cls)s::type(void) const
 {
-  static rdf::URI m_type = %(T)s ;
-  return m_type ;
+  return rdf_type ;
   }
   
 std::set<rdf::URI> &%(cls)s::subtypes(void)
 {
-  static std::set<rdf::URI> m_subtypes ;
-  return m_subtypes ;
+  static std::set<rdf::URI> s_subtypes ;
+  return s_subtypes ;
   }
   
 
@@ -48,8 +49,7 @@ int %(cls)s::add_subtype(const rdf::URI &T)
   return 0 ;
   }
 
-REGISTER_TYPE(%(T)s, %(cls)s)
-REGISTER_SUBTYPE(%(T)s, %(cls)s, %(base)s)
+REGISTER_TYPES(%(T)s, %(cls)s, %(base)s)
 ''' % {'T': T, 'cls': cls, 'base': base})
 
 
@@ -62,8 +62,9 @@ class AssignFromRDF(object):
       'void %s::assign_from_rdf(rdf::Graph &graph, const rdf::Node &property,' % cls,
       '                         const rdf::Node &value,  const bool reverse)',
       '{']
+    self._baseassign = ''
     if base and base != 'tobj::TypedObject':
-      self._header.append('  %s::assign_from_rdf(graph, property, value, reverse) ;' % base)
+      self._baseassign = '%s::assign_from_rdf(graph, property, value, reverse) ;' % base
     self._setvalues = []
     self._setreverse = []
 
@@ -80,7 +81,8 @@ class AssignFromRDF(object):
     name = 'p_%s' % name
     ## Could optimise reverse case by looking up type(s) of found object once only
     ## Currently done for each value in `T::Reference TypedObject::create()`
-    value = (('tobj::TypedObject::create<%s>(%s::subtypes(), value, graph)' % (kind, kind)) if 'OBJ' in options
+    value = (('tobj::TypedObject::create_from_graph<%s>(value, graph)' % kind)
+                                     if 'OBJ' in options
          else 'value.to_string()'    if kind == 'std::string'
          else 'value.to_int()'       if kind == 'xsd::Integer'
          else 'value.to_float()'     if kind == 'xsd::Decimal'
@@ -106,23 +108,26 @@ class AssignFromRDF(object):
   def add_resource(self, cls, property, *options):
   #-----------------------------------------------
     self._assignvalue(self._setreverse, property,
-      'tobj::TypedObject::add_resource(tobj::TypedObject::create<%s>(%s::subtypes(), value, graph)) ;'
-        % (cls, cls),
+      """tobj::TypedObject::add_resource<%(cls)s>(
+           tobj::TypedObject::create_from_graph<%(cls)s>(value, graph)
+           ) ;""" % { 'cls': cls },
       False)
 
   def __str__(self):
   #-----------------
+    code = self._header
+    if self._setreverse:
+      code += ['  if (reverse) {'] + self._setreverse
+      if self._baseassign: code.append('    ' + self._baseassign)
+      code.append('    }')
+    code.append('  if (!reverse) {')
     if self._setvalues:
-      return '\n'.join(self._header
-                      + ['  if (!reverse) {'] + self._setvalues
-                      + ((['    }', '  else {'] + self._setreverse) if self._setreverse else [])
-                      + ['    }', '  }', ''])
-    elif self._setreverse:
-      return '\n'.join(self._header
-                      + ['  if (reverse) {'] + self._setreverse
-                      + ['    }', '  }', ''])
+      code += self._setvalues
+      if self._baseassign: code.append('    else ' + self._baseassign)
     else:
-      return '\n'.join(self._header + ['  }', ''])
+      if self._baseassign: code.append('    ' + self._baseassign)
+    code += ['    }', '  }', '']
+    return '\n'.join(code)
 
 
 class SaveToRDF(object):
@@ -188,13 +193,7 @@ class Constructor(object):
 #    print "B:", base, " C:", constructor(base)
     self._class = cls
     ctr = cls + '::' + cls
-    self._hdr = '''%(ctr)s(const rdf::URI &uri, rdf::Graph &graph)
-: %(ctr)s(uri)
-{
-  if (!this->add_metadata(graph)) *this = %(cls)s() ;
-  }
-
-%(ctr)s(const rdf::URI &uri)''' % {'ctr': ctr, 'cls': cls}
+    self._hdr = '''%s(const rdf::URI &uri)''' % ctr
     b = base.split('::')
     if len(b) > 1 and b[-2] == b[-1]: del b[-1]
     self._ctr = [': %s(uri)' % '::'.join(b),

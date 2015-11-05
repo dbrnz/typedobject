@@ -288,7 +288,7 @@ namespace rdf {
     StatementIter get_statements(const Node &s, const Node &p, const Node &o) const ;
 
     std::shared_ptr<tobj::TypedObject> get_reference(const URI &uri) ;
-    void add_reference(const URI &uri, std::shared_ptr<tobj::TypedObject> reference) ;
+    void add_reference(const URI &uri, std::weak_ptr<tobj::TypedObject> weakref) ;
     void delete_reference(const URI &uri) ;
 
    private:

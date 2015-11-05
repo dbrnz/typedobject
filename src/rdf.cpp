@@ -685,10 +685,10 @@ tobj::TypedObject::Reference rdf::Graph::get_reference(const rdf::URI &uri)
   return tobj::TypedObject::get_reference(uri, m_objectregistry) ;
   }
 
-void rdf::Graph::add_reference(const rdf::URI &uri, tobj::TypedObject::Reference reference)
-/*---------------------------------------------------------------------------------------*/
+void rdf::Graph::add_reference(const rdf::URI &uri, tobj::TypedObject::WeakRef weakref)
+/*-----------------------------------------------------------------------------------*/
 {
-  tobj::TypedObject::add_reference(uri, reference, m_objectregistry) ;
+  tobj::TypedObject::add_reference(uri, weakref, m_objectregistry) ;
   }
 
 void rdf::Graph::delete_reference(const rdf::URI &uri)

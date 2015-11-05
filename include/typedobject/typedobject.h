@@ -75,7 +75,9 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 #else
 
 #define REFERENCE(CLASS)                                                    \
-  typedef std::shared_ptr<CLASS> Reference ;                                \
+ public:                                                                    \
+  using Reference = std::shared_ptr<CLASS> ;                                \
+  using WeakRef = std::weak_ptr<CLASS> ;                                    \
   template<typename... Args>                                                \
   inline static Reference new_reference(Args... args)                       \
   { return std::make_shared<CLASS>(args...) ; }
@@ -84,12 +86,13 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
  public:                                                                    \
   CLASS() = default ;                                                       \
   CLASS(const rdf::URI &uri) ;                                              \
-  CLASS(const rdf::URI &uri, rdf::Graph &graph) ;                           \
+  static const rdf::URI rdf_type ;                                          \
   const rdf::URI &type(void) const ;                                        \
   static std::set<rdf::URI> &subtypes(void) ;                               \
   static int add_subtype(const rdf::URI &T) ;                               \
   void add_prefix(const rdf::Namespace &prefix) ;                           \
-  typedef std::shared_ptr<CLASS> Reference ;                                \
+  using Reference = std::shared_ptr<CLASS> ;                                \
+  using WeakRef = std::weak_ptr<CLASS> ;                                    \
   template<typename... Args>                                                \
   inline static Reference new_reference(Args... args)                       \
   { return std::make_shared<CLASS>(args...) ; }                             \
@@ -195,27 +198,9 @@ namespace tobj
 
 #else
 
-  class TYPEDOBJECT_EXPORT TypedObject ;
-
-  class TYPEDOBJECT_EXPORT TypedObjectFactory
-  /*---------------------------------------*/
-  {
-   public:
-    virtual std::shared_ptr<TypedObject> create(const std::string &uri) = 0 ;
-    } ;
-
-#define REGISTER_TYPE(T, CLS)                                   \
-  class CLS##Factory : public tobj::TypedObjectFactory { \
-   public:                                                      \
-    inline CLS##Factory() { tobj::TypedObject::register_type(T, this) ; }     \
-    virtual std::shared_ptr<tobj::TypedObject> create(const std::string &uri) \
-     { return std::make_shared<CLS>(uri) ; }                    \
-    } ;                                                         \
-  static CLS##Factory _global_##CLS##Factory ;                  \
-  static int _global_##CLS##_type = CLS::add_subtype(T) ;
-
-#define REGISTER_SUBTYPE(T, CLS, BASE)                          \
-  static int _global_##CLS##supertype = BASE::add_subtype(T) ;
+#define REGISTER_TYPES(T, CLS, BASE)                            \
+  static int _global_##CLS##_type = CLS::add_subtype(T) ;       \
+  static int _global_##CLS##_supertype = BASE::add_subtype(T) ;
 
 
   class TYPEDOBJECT_EXPORT TypedObject
@@ -224,18 +209,16 @@ namespace tobj
    public:
     TypedObject() ;
     TypedObject(const rdf::URI &uri) ;
-    TypedObject(const rdf::URI &uri, const rdf::Graph &graph) ;
     virtual ~TypedObject() = default ;
 
-    typedef std::shared_ptr<TypedObject> Reference ;
-    typedef std::unordered_map<rdf::URI, std::weak_ptr<TypedObject>> Registry ;
-    typedef std::pair<Reference, std::type_index> ResourceInfo ;
-    typedef std::map<rdf::URI, ResourceInfo> ResourceMap ;
-
-    static Reference create(const rdf::URI &T, const std::string &uri) ;
+    using Reference = std::shared_ptr<TypedObject> ;
+    using WeakRef = std::weak_ptr<TypedObject> ;
+    using Registry = std::unordered_map<rdf::URI, WeakRef> ;
+    using ResourceInfo = std::pair<Reference, std::type_index> ;
+    using ResourceMap = std::map<rdf::URI, ResourceInfo> ;
 
     template <class T>
-    static typename T::Reference create(std::set<rdf::URI> &subtypes, const rdf::URI &uri, rdf::Graph &graph) ;
+    static typename T::Reference create_from_graph(const rdf::URI &uri, rdf::Graph &graph) ;
 
     bool operator==(const TypedObject &other) const ;
     bool operator<(const TypedObject &other) const ;
@@ -246,7 +229,6 @@ namespace tobj
     std::string to_string(void) const ;
 
     virtual const rdf::URI &type(void) const = 0 ;
-    static void register_type(const rdf::URI &T, TypedObjectFactory *factory) ;
     static inline int add_subtype(const rdf::URI &T) { (void)T ; return 0 ; } // Unused parameter
 
     /**
@@ -255,7 +237,7 @@ namespace tobj
     :param graph: A graph of RDF statements.
     :type graph: :class:`~biosignalml.rdf.Graph`
     **/
-    bool add_metadata(rdf::Graph &p_graph) ;
+    template <typename T> bool add_metadata(rdf::Graph &graph) ;
 
     /**
     Save attributes as RDF triples in a graph.
@@ -263,76 +245,124 @@ namespace tobj
     :param graph: A graph of RDF statements.
     :type graph: :class:`~biosignalml.rdf.Graph`
     **/
-    void save_metadata(rdf::Graph &p_graph) ;
+    void save_metadata(rdf::Graph &graph) ;
 
     std::string serialise_metadata(const rdf::Graph::Format format=rdf::Graph::Format::RDFXML,
                                    const std::string &base="",
                                    const std::set<rdf::Namespace> &prefixes=std::set<rdf::Namespace>()) ;
 
-    static Reference get_reference(const rdf::URI &uri, Registry &registry) ;
-    static void add_reference(const rdf::URI &uri, Reference reference, Registry &registry) ;
-    static void delete_reference(const rdf::URI &uri, Registry &registry) ;
-
-    void add_resource(Reference resource) ;
+    template<class T> void add_resource(typename T::Reference resource) ;
+    template<class T> typename T::Reference get_resource(const rdf::URI &uri) ;
     void delete_resource(const rdf::URI &uri) ;
 
-    template<class T>
-    typename T::Reference get_resource(const rdf::URI &uri)
-    /*---------------------------------------------------*/
-    {
-      auto ref = m_resources.find(uri) ;
-      if (ref != m_resources.end() && std::type_index(typeid(T)) == ref->second.second)
-        return std::static_pointer_cast<T>(ref->second.first) ;
-      return nullptr ;
-      }
-
-    template<class T>
-    std::list<typename T::Reference> get_resources(void)
-    /*------------------------------------------------*/
-    {
-      std::list<typename T::Reference> result ;
-      for (const auto ref : m_resources)
-        if (std::type_index(typeid(T)) == ref.second.second)
-          result.push_back(std::static_pointer_cast<T>(ref.second.first)) ;
-      return result ;
-      }
+    template<class T> std::list<rdf::URI> get_resource_uris(void) ;
 
    protected:
+    friend class rdf::Graph ;
+
+    template <typename T> bool assign_metadata(rdf::Graph &graph) ;
+
     virtual void assign_from_rdf(rdf::Graph &graph, const rdf::Node &property,
-                                 const rdf::Node &value,  const bool reverse) = 0 ;
+                                 const rdf::Node &value, const bool reverse) = 0 ;
     virtual void save_as_rdf(rdf::Graph &graph) = 0 ;
     virtual bool satisfies_restrictions(const rdf::Graph &graph) ;
     static rdf::Node get_property(const std::string &name) ;
 
+    static Reference get_reference(const rdf::URI &uri, Registry &registry) ;
+    static void add_reference(const rdf::URI &uri, WeakRef weakref, Registry &registry) ;
+    static void delete_reference(const rdf::URI &uri, Registry &registry) ;
+
    private:
     rdf::URI m_uri ;
-    static std::unordered_map<rdf::URI, TypedObjectFactory *> &m_factories(void) ;
-    ResourceMap m_resources ;                           \
+    ResourceMap m_resources ;
     } ;
 
 
+  template <typename T>
+  bool TypedObject::add_metadata(rdf::Graph &graph)
+  /*---------------------------------------------*/
+  {
+    if (m_uri.is_valid()
+     && graph.contains(m_uri, rdf::RDF::type, type()))   // Needs to be sub-classes
+      return assign_metadata<T>(graph) ;
+    return false ;
+    }
+
+  template <typename T>
+  bool TypedObject::assign_metadata(rdf::Graph &graph)
+  /*------------------------------------------------*/
+  {
+    if (!satisfies_restrictions(graph)) return false ;
+    rdf::StatementIter statements = graph.get_statements(m_uri, rdf::Node(), rdf::Node()) ;
+    if (!statements.end()) {
+      do {
+        this->assign_from_rdf(graph, statements.get_predicate(), statements.get_object(), false) ;
+        } while (!statements.next()) ;
+      }
+    rdf::StatementIter rstatements = graph.get_statements(rdf::Node(), rdf::Node(), m_uri) ;
+    if (!rstatements.end()) {
+      do {
+        this->assign_from_rdf(graph, rstatements.get_predicate(), rstatements.get_subject(), true) ;
+        } while (!rstatements.next()) ;
+      }
+    return true ;
+    }
+
   template <class T>
-  typename T::Reference TypedObject::create(std::set<rdf::URI> &subtypes, const rdf::URI &uri, rdf::Graph &graph)
-  /*-------------------------------------------------------------------------------*/
+  typename T::Reference TypedObject::create_from_graph(const rdf::URI &uri, rdf::Graph &graph)
+  /*----------------------------------------------------------------------------------------*/
   {
     rdf::StatementIter types = graph.get_statements(uri, rdf::RDF::type, rdf::Node()) ;
     if (!types.end()) {
       do {
         rdf::URI type = rdf::URI(types.get_object()) ;
-        if (subtypes.find(type) != subtypes.end()) {
+        if (T::subtypes().find(type) != T::subtypes().end()) {
           Reference reference = graph.get_reference(uri) ;
           if (reference)
             return std::dynamic_pointer_cast<T>(reference) ;
-          TypedObject::Reference object = create(type, (std::string)uri) ;
-          graph.add_reference(uri, object) ;
-          if (object->add_metadata(graph))
-            return std::dynamic_pointer_cast<T>(object) ;
-          graph.delete_reference(uri) ;
-          reference.reset() ;
+          else if (type == T::rdf_type) {
+            auto object = std::make_shared<T>((std::string)uri) ;
+            graph.add_reference(uri, object) ;
+            if (object->template assign_metadata<T>(graph))
+              return object ;
+            graph.delete_reference(uri) ;
+            object.reset() ;
+            }
           }
         } while (!types.next()) ;
       }
     return typename T::Reference() ;
+    }
+
+
+  template<class T>
+  void TypedObject::add_resource(typename T::Reference resource)
+  /*----------------------------------------------------------*/
+  {
+    if (resource && resource->is_valid())
+      m_resources.emplace(resource->uri(), ResourceInfo(resource, std::type_index(typeid(T)))) ;
+    }
+
+  template<class T>
+  typename T::Reference TypedObject::get_resource(const rdf::URI &uri)
+  /*----------------------------------------------------------------*/
+  {
+    auto ref = m_resources.find(uri) ;
+    if (ref != m_resources.end()
+     && std::type_index(typeid(T)) == ref->second.second)
+      return std::static_pointer_cast<T>(ref->second.first) ;
+    return nullptr ;
+    }
+
+  template<class T>
+  std::list<rdf::URI> TypedObject::get_resource_uris(void)
+  /*----------------------------------------------------*/
+  {
+    std::list<rdf::URI> uris ;
+    for (const auto ref : m_resources)
+      if (std::type_index(typeid(T)) == ref.second.second)
+        uris.push_back(ref.first) ;
+    return uris ;
     }
 
 #endif
