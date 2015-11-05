@@ -54,8 +54,8 @@ namespace test {
     std::string m_local ;
     int m_int ;
     INITIALISE(             \
-      m_local = m_string ;  \
-      m_int = m_integer ;   \
+      m_local = p_string ;  \
+      m_int = p_integer ;   \
       )
     } ;
 
