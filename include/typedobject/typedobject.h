@@ -118,9 +118,9 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 
 #define _PROPERTY_OBJ(NAME, P, T, ...)    \
  public:                                  \
-  inline const std::shared_ptr<T> NAME(void) const       \
+  inline const std::shared_ptr<T> NAME(void) const \
     { return p_##NAME ; }                 \
-  inline void set_##NAME(std::shared_ptr<T> value)       \
+  inline void set_##NAME(std::shared_ptr<T> value) \
     { p_##NAME = value ; }                \
  private:                                 \
   std::shared_ptr<T> p_##NAME ;
