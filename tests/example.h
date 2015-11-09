@@ -14,7 +14,7 @@ namespace TEST {
   TERM(decimal)
   TERM(integer)
   TERM(subobject)
-  TERM(reference)
+  TERM(resource)
   TERM(object)
   } ;
 
@@ -54,7 +54,7 @@ namespace example {
     PROPERTY_NODE(investigator, DCT::creator)
 
     PROPERTY_OBJECT(subobject, TEST::subobject, SubObject)
-    PROPERTY_URI(reference, TEST::reference)
+    PROPERTY_URI(resource, TEST::resource)
 
     RESOURCE(TEST::object, SubObject) ;
 

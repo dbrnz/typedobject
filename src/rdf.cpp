@@ -679,22 +679,22 @@ rdf::StatementIter rdf::Graph::get_statements(const rdf::Node &s, const rdf::Nod
   }
 
 
-tobj::TypedObject::Reference rdf::Graph::get_reference(const rdf::URI &uri)
-/*-----------------------------------------------------------------------*/
+tobj::TypedObject::Ptr rdf::Graph::get_resource(const rdf::URI &uri)
+/*----------------------------------------------------------------*/
 {
-  return tobj::TypedObject::get_reference(uri, m_objectregistry) ;
+  return tobj::TypedObject::get_resource(uri, m_objectregistry) ;
   }
 
-void rdf::Graph::add_reference(const rdf::URI &uri, tobj::TypedObject::WeakRef weakref)
-/*-----------------------------------------------------------------------------------*/
+void rdf::Graph::add_resource(const rdf::URI &uri, tobj::TypedObject::WeakPtr weakptr)
+/*----------------------------------------------------------------------------------*/
 {
-  tobj::TypedObject::add_reference(uri, weakref, m_objectregistry) ;
+  tobj::TypedObject::add_resource(uri, weakptr, m_objectregistry) ;
   }
 
-void rdf::Graph::delete_reference(const rdf::URI &uri)
-/*--------------------------------------------------*/
+void rdf::Graph::delete_resource(const rdf::URI &uri)
+/*-------------------------------------------------*/
 {
-  tobj::TypedObject::delete_reference(uri, m_objectregistry) ;
+  tobj::TypedObject::delete_resource(uri, m_objectregistry) ;
   }
 
 

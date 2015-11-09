@@ -36,28 +36,27 @@ namespace tobj {
     }
 
 
-  TypedObject::Reference TypedObject::get_reference(const rdf::URI &uri,
-  /*------------------------------------------------------------------*/
-                                                    TypedObject::Registry &registry)
+  TypedObject::Ptr TypedObject::get_resource(const rdf::URI &uri, TypedObject::Registry &registry)
+  /*--------------------------------------------------------------------------------------------*/
   {
     auto refptr = registry.find(uri) ;
     if (refptr != registry.end()) {
-      TypedObject::Reference reference = refptr->second.lock() ;
-      if (reference) return reference ;
+      TypedObject::Ptr pointer = refptr->second.lock() ;
+      if (pointer) return pointer ;
       registry.erase(refptr) ;
       }
     return nullptr ;
     }
 
-  void TypedObject::add_reference(const rdf::URI &uri, TypedObject::WeakRef weakref,
-  /*------------------------------------------------------------------------------*/
-                                  TypedObject::Registry &registry)
+  void TypedObject::add_resource(const rdf::URI &uri, TypedObject::WeakPtr weakptr,
+  /*-----------------------------------------------------------------------------*/
+                                 TypedObject::Registry &registry)
   {
-    registry.emplace(uri, weakref) ;
+    registry.emplace(uri, weakptr) ;
     }
 
-  void TypedObject::delete_reference(const rdf::URI &uri, TypedObject::Registry &registry)
-  /*------------------------------------------------------------------------------------*/
+  void TypedObject::delete_resource(const rdf::URI &uri, TypedObject::Registry &registry)
+  /*-----------------------------------------------------------------------------------*/
   {
     registry.erase(uri) ;
     }

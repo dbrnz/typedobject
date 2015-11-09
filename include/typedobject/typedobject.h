@@ -76,10 +76,10 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 
 #define REFERENCE(CLASS)                                                    \
  public:                                                                    \
-  using Reference = std::shared_ptr<CLASS> ;                                \
-  using WeakRef = std::weak_ptr<CLASS> ;                                    \
+  using Ptr = std::shared_ptr<CLASS> ;                                      \
+  using WeakPtr = std::weak_ptr<CLASS> ;                                    \
   template<typename... Args>                                                \
-  inline static Reference new_reference(Args... args)                       \
+  inline static Ptr new_object(Args... args)                                \
   { return std::make_shared<CLASS>(args...) ; }
 
 #define TYPED_OBJECT(CLASS, TYPE)                                           \
@@ -91,10 +91,10 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
   static std::set<rdf::URI> &subtypes(void) ;                               \
   static int add_subtype(const rdf::URI &T) ;                               \
   void add_prefix(const rdf::Namespace &prefix) ;                           \
-  using Reference = std::shared_ptr<CLASS> ;                                \
-  using WeakRef = std::weak_ptr<CLASS> ;                                    \
+  using Ptr = std::shared_ptr<CLASS> ;                                      \
+  using WeakPtr = std::weak_ptr<CLASS> ;                                    \
   template<typename... Args>                                                \
-  inline static Reference new_reference(Args... args)                       \
+  inline static Ptr new_object(Args... args)                                \
   { return std::make_shared<CLASS>(args...) ; }                             \
  protected:                                                                 \
   bool satisfies_restrictions(const rdf::Graph &graph) ;                    \
@@ -136,12 +136,12 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 
 #define _PROPERTY_OBJ_SET(NAME, P, T, ...)\
  public:                                  \
-  inline const std::set<T::Reference> & NAME(void) const \
+  inline const std::set<T::Ptr> & NAME(void) const \
     { return p_##NAME ; }                 \
-  inline void add_##NAME(T::Reference value)             \
+  inline void add_##NAME(T::Ptr value)    \
     { p_##NAME.insert(value) ; }          \
  private:                                 \
-  std::set<T::Reference> p_##NAME ;
+  std::set<T::Ptr> p_##NAME ;
 
 
 #define _ASSIGN(NAME, P, T, ...)
@@ -211,14 +211,14 @@ namespace tobj
     TypedObject(const rdf::URI &uri) ;
     virtual ~TypedObject() = default ;
 
-    using Reference = std::shared_ptr<TypedObject> ;
-    using WeakRef = std::weak_ptr<TypedObject> ;
-    using Registry = std::unordered_map<rdf::URI, WeakRef> ;
-    using ResourceInfo = std::pair<Reference, std::type_index> ;
+    using Ptr = std::shared_ptr<TypedObject> ;
+    using WeakPtr = std::weak_ptr<TypedObject> ;
+    using Registry = std::unordered_map<rdf::URI, WeakPtr> ;
+    using ResourceInfo = std::pair<Ptr, std::type_index> ;
     using ResourceMap = std::map<rdf::URI, ResourceInfo> ;
 
     template <class T>
-    static typename T::Reference create_from_graph(const rdf::URI &uri, rdf::Graph &graph) ;
+    static typename T::Ptr create_from_graph(const rdf::URI &uri, rdf::Graph &graph) ;
 
     bool operator==(const TypedObject &other) const ;
     bool operator<(const TypedObject &other) const ;
@@ -251,8 +251,8 @@ namespace tobj
                                    const std::string &base="",
                                    const std::set<rdf::Namespace> &prefixes=std::set<rdf::Namespace>()) ;
 
-    template<class T> void add_resource(typename T::Reference resource) ;
-    template<class T> typename T::Reference get_resource(const rdf::URI &uri) ;
+    template<class T> void add_resource(typename T::Ptr resource) ;
+    template<class T> typename T::Ptr get_resource(const rdf::URI &uri) ;
     void delete_resource(const rdf::URI &uri) ;
 
     template<class T> std::list<rdf::URI> get_resource_uris(void) ;
@@ -268,9 +268,9 @@ namespace tobj
     virtual bool satisfies_restrictions(const rdf::Graph &graph) ;
     static rdf::Node get_property(const std::string &name) ;
 
-    static Reference get_reference(const rdf::URI &uri, Registry &registry) ;
-    static void add_reference(const rdf::URI &uri, WeakRef weakref, Registry &registry) ;
-    static void delete_reference(const rdf::URI &uri, Registry &registry) ;
+    static Ptr get_resource(const rdf::URI &uri, Registry &registry) ;
+    static void add_resource(const rdf::URI &uri, WeakPtr weakptr, Registry &registry) ;
+    static void delete_resource(const rdf::URI &uri, Registry &registry) ;
 
    private:
     rdf::URI m_uri ;
@@ -309,43 +309,43 @@ namespace tobj
     }
 
   template <class T>
-  typename T::Reference TypedObject::create_from_graph(const rdf::URI &uri, rdf::Graph &graph)
-  /*----------------------------------------------------------------------------------------*/
+  typename T::Ptr TypedObject::create_from_graph(const rdf::URI &uri, rdf::Graph &graph)
+  /*----------------------------------------------------------------------------------*/
   {
     rdf::StatementIter types = graph.get_statements(uri, rdf::RDF::type, rdf::Node()) ;
     if (!types.end()) {
       do {
         rdf::URI type = rdf::URI(types.get_object()) ;
         if (T::subtypes().find(type) != T::subtypes().end()) {
-          Reference reference = graph.get_reference(uri) ;
-          if (reference)
-            return std::dynamic_pointer_cast<T>(reference) ;
+          auto object = graph.get_resource(uri) ;
+          if (object)
+            return std::dynamic_pointer_cast<T>(object) ;
           else if (type == T::rdf_type) {
             auto object = std::make_shared<T>((std::string)uri) ;
-            graph.add_reference(uri, object) ;
+            graph.add_resource(uri, object) ;
             if (object->template assign_metadata<T>(graph))
               return object ;
-            graph.delete_reference(uri) ;
+            graph.delete_resource(uri) ;
             object.reset() ;
             }
           }
         } while (!types.next()) ;
       }
-    return typename T::Reference() ;
+    return typename T::Ptr() ;
     }
 
 
   template<class T>
-  void TypedObject::add_resource(typename T::Reference resource)
-  /*----------------------------------------------------------*/
+  void TypedObject::add_resource(typename T::Ptr resource)
+  /*----------------------------------------------------*/
   {
     if (resource && resource->is_valid())
       m_resources.emplace(resource->uri(), ResourceInfo(resource, std::type_index(typeid(T)))) ;
     }
 
   template<class T>
-  typename T::Reference TypedObject::get_resource(const rdf::URI &uri)
-  /*----------------------------------------------------------------*/
+  typename T::Ptr TypedObject::get_resource(const rdf::URI &uri)
+  /*----------------------------------------------------------*/
   {
     auto ref = m_resources.find(uri) ;
     if (ref != m_resources.end()

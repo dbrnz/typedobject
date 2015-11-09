@@ -80,7 +80,7 @@ class AssignFromRDF(object):
     if property == 'NONE': return
     name = 'p_%s' % name
     ## Could optimise reverse case by looking up type(s) of found object once only
-    ## Currently done for each value in `T::Reference TypedObject::create()`
+    ## Currently done for each value in `T::Ptr TypedObject::create()`
     value = (('tobj::TypedObject::create_from_graph<%s>(value, graph)' % kind)
                                      if 'OBJ' in options
          else 'value.to_string()'    if kind == 'std::string'
@@ -93,7 +93,7 @@ class AssignFromRDF(object):
     if options[0] in ['SET', 'RSET']:
       if 'OBJ' in options:
         assign = '\n'.join(['{',
-                         '      %s::Reference obj = %s ;' % (kind, value),
+                         '      %s::Ptr obj = %s ;' % (kind, value),
                          '      if (obj) %s.insert(obj) ;' % name,
                          '      }'])
       else:

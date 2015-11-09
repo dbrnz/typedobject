@@ -10,12 +10,14 @@ int main(void)
   rdf::URI uri2("http://example.org/object/2") ;
   rdf::URI uri3("http://example.org/object/3") ;
 
-  auto object = example::Object::new_reference(uri1) ;
 
-  auto sobj2 = example::SubObject::new_reference(uri2) ;
+  auto object = example::Object::new_object(uri1) ;
+
+
+  auto sobj2 = example::SubObject::new_object(uri2) ;
   sobj2->set_parent(object) ;
 
-  auto sobj3 = example::SubObject::new_reference(uri3) ;
+  auto sobj3 = example::SubObject::new_object(uri3) ;
 
 
   std::string turtle = object.serialise_metadata(rdf::Graph::Format::TURTLE) ;
@@ -30,7 +32,7 @@ int main(void)
 
 //  object->add_resource<example::SubObject>(sobj2) ;
 
-  object->set_reference(uri3) ;
+  object->set_resource(uri3) ;
 
   rdf::Graph graph ;
   graph.parse_string(turtle, rdf::Graph::Format::TURTLE) ;
