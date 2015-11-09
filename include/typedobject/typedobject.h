@@ -87,7 +87,7 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
   CLASS() = default ;                                                       \
   CLASS(const rdf::URI &uri) ;                                              \
   static const rdf::URI rdf_type ;                                          \
-  const rdf::URI &type(void) const ;                                        \
+  const rdf::URI &type(void) const override ;                               \
   static std::set<rdf::URI> &subtypes(void) ;                               \
   static int add_subtype(const rdf::URI &T) ;                               \
   void add_prefix(const rdf::Namespace &prefix) ;                           \
@@ -97,11 +97,11 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
   inline static Ptr new_object(Args... args)                                \
   { return std::make_shared<CLASS>(args...) ; }                             \
  protected:                                                                 \
-  bool satisfies_restrictions(const rdf::Graph &graph) ;                    \
+  bool satisfies_restrictions(const rdf::Graph &graph) override ;           \
   static rdf::Node get_property(const std::string &name) ;                  \
   void assign_from_rdf(rdf::Graph &graph, const rdf::Node &property,        \
-               const rdf::Node &value,  const bool reverse) ;               \
-  void save_as_rdf(rdf::Graph & graph) ;                                    \
+               const rdf::Node &value,  const bool reverse) override ;      \
+  void save_as_rdf(rdf::Graph & graph) override ;                           \
  private:                                                                   \
   static std::unordered_map<std::string, rdf::Node> s_properties ;          \
   static const std::set<rdf::Namespace> s_prefixes ;                        \
