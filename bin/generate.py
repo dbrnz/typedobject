@@ -277,6 +277,8 @@ class Generator(object):
     self._classes = [ ]
     self._class = None
     self._base = None
+    self._type = None
+    self._typedclasses = { }
     #  (properties, assignments, restrictions, init, prefixes)
     self._properties = (OrderedDict(), OrderedDict(), OrderedDict(), [ ], [ ], OrderedDict())
     self._usednames = [ ]
@@ -298,25 +300,24 @@ class Generator(object):
       for n in namespaces:
         code.append('namespace %s {' % n)
         code.append('')
-      mcls = cls[3][0].get('TYPE')
-      if mcls and mcls[0]:
-        code.append(generate_types(mcls[0], cls[1], cls[2]))
       c = Constructor(cls[1], cls[2], cls[3][3], cls[3][4])  # class, base, init, prefixes
+      if cls[3]:
+        code.append(generate_types(cls[3], cls[1], cls[2]))
+      props = cls[4]
       a = AssignFromRDF(cls[1], cls[2])
       s = SaveToRDF(cls[1], cls[2])
-      for p, v in cls[3][0].iteritems():  # properties
-        if p != 'TYPE':
-          c.initialise(p, *v)
-          c.add_property(p, *v)
-          a.add_property(p, *v)
-          s.save_property(p, *v)
-      for p, v in cls[3][1].iteritems():  # assignments
+      for p, v in props[0].iteritems():  # properties
+        c.initialise(p, *v)
         c.add_property(p, *v)
         a.add_property(p, *v)
         s.save_property(p, *v)
-      for p, v in cls[3][2].iteritems():  # restrictions
+      for p, v in props[1].iteritems():  # assignments
+        c.add_property(p, *v)
+        a.add_property(p, *v)
+        s.save_property(p, *v)
+      for p, v in props[2].iteritems():  # restrictions
         c.preset(p, *v)
-      for r, v in cls[3][5].iteritems():  # resources
+      for r, v in props[5].iteritems():  # resources
         a.add_resource(r, *v)
       code.append(str(c))
       code.append(str(a))
@@ -339,15 +340,30 @@ class Generator(object):
   #---------------------------------
     self._class = name
     self._base = base
+    self._type = None
 
   def end_class(self):
   #-------------------
     if self._class is not None:
-      self._classes.append(('::'.join(self._namespaces), self._class, self._base, self._properties))
+      self._classes.append(('::'.join(self._namespaces),
+                            self._class, self._base, self._type,
+                            self._properties
+                          ))
       self._class = None
       self._base = None
+      self._type = None
       #  (properties, assignments, restrictions, init, prefixes, resources)
       self._properties = (OrderedDict(), OrderedDict(), OrderedDict(), [ ], [ ], OrderedDict())
+
+  def set_type(self, *params):
+  #---------------------------
+    if self._class is not None:
+      self._type = params[0]
+      self._typedclasses[self._type] = self._class
+
+  def add_forward(self, name, *params):
+  #------------------------------------
+    self._typedclasses[params[0]] = name
 
   def add_property(self, name, *params):
   #-------------------------------------
@@ -436,6 +452,20 @@ class Parser(object):
     assert(len(params) >= count)
     return params
 
+  def parse_definition(self, name, cursor):
+  #----------------------------------------
+    assert (name == self._class)
+    self._generator.start_class(self._class, self._base)
+    for c in cursor.get_children():
+      if c.kind == CursorKind.CALL_EXPR and c.displayname == '_PARAMETERS_':
+        self._generator.set_type(*self.parse_parameters(c))
+
+  def parse_forward(self, name, cursor):
+  #--------------------------------------
+    for c in cursor.get_children():
+      if c.kind == CursorKind.CALL_EXPR and c.displayname == '_PARAMETERS_':
+        self._generator.add_forward(name, *self.parse_parameters(c))
+
   def parse_property(self, name, cursor):
   #--------------------------------------
     for c in cursor.get_children():
@@ -484,20 +514,27 @@ class Parser(object):
   #-----------------------
     kind = cursor.kind
     name = cursor.displayname
-    if (self._file is not None
-     and cursor.location.file is not None
-     and self._file != cursor.location.file.name): return
-
     if kind == CursorKind.TRANSLATION_UNIT:
-      self._file = name
-      self._generator = Generator(name)
-      self.parse_children(cursor)
-      self._generator.save(self._header, self._output)
+      if self._file is None:
+        self._file = name
+        self._generator = Generator(name)
+        self.parse_children(cursor)
+        self._generator.save(self._header, self._output)
 
     elif kind == CursorKind.NAMESPACE:
       self._generator.add_namespace(name)
       self.parse_children(cursor)
       self._generator.pop_namespace()
+
+    elif kind == CursorKind.VAR_DECL and name.startswith('_FORWARD_'):
+      self.parse_forward(name[9:], cursor)
+
+    elif self._file != cursor.location.file.name:
+      if kind == CursorKind.CLASS_DECL:
+        self.parse_children(cursor)
+      elif kind == CursorKind.VAR_DECL and name.startswith('_OBJECT_'):
+        self.parse_forward(name[8:], cursor)
+      return
 
     elif kind == CursorKind.CLASS_DECL:
       self._class = name
@@ -509,8 +546,8 @@ class Parser(object):
     elif kind == CursorKind.CXX_BASE_SPECIFIER and self._class:
       self._base = self.parse_type(cursor)
 
-    elif kind == CursorKind.VAR_DECL and name == '_OBJECT_DEFINITION':
-      self._generator.start_class(self._class, self._base)
+    elif kind == CursorKind.VAR_DECL and name.startswith('_OBJECT_'):
+      self.parse_definition(name[8:], cursor)
 
     elif kind == CursorKind.VAR_DECL and name.startswith('_PROPERTY_'):
       self.parse_property(name[10:], cursor)

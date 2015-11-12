@@ -42,9 +42,12 @@
 #define REFERENCE(CLASS)
 
 int _PARAMETERS_(const char *params, ...) { return 0 ; }
-#define TYPED_OBJECT(CLASS, TYPE)         \
-  static int _OBJECT_DEFINITION = 0 ;     \
-  static int _PROPERTY_TYPE = _PARAMETERS_("1", #TYPE) ;
+
+#define _FORWARD_OBJECT(CLASS, TYPE)      \
+  static int _FORWARD_##CLASS##  = _PARAMETERS_("1", #TYPE) ;
+
+#define _TYPED_OBJECT(CLASS, TYPE)        \
+  static int _OBJECT_##CLASS##   = _PARAMETERS_("1", #TYPE) ;
 
 #define _PROPERTY(NAME, P, T, ...)        \
   static int _PROPERTY_##NAME##  = _PARAMETERS_("2", #T, #P, #__VA_ARGS__) ;
@@ -75,8 +78,10 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 
 #else
 
+#define _FORWARD_OBJECT(CLASS, TYPE)                                        \
+  class CLASS ;
 
-#define TYPED_OBJECT(CLASS, TYPE)                                           \
+#define _TYPED_OBJECT(CLASS, TYPE)                                          \
  public:                                                                    \
   CLASS() = default ;                                                       \
   CLASS(const rdf::URI &uri) ;                                              \
@@ -143,6 +148,9 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 #define _RESOURCE(P, T)
 
 #endif
+
+#define TYPED_OBJECT(CLASS, TYPE)        _TYPED_OBJECT(CLASS, TYPE)
+#define FORWARD_OBJECT(CLASS, TYPE)      _FORWARD_OBJECT(CLASS, TYPE)
 
 #define PROPERTY_STRING(NAME, P)         _PROPERTY(NAME, P, std::string)
 #define PROPERTY_INTEGER(NAME, P)        _PROPERTY(NAME, P, xsd::Integer)

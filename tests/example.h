@@ -30,8 +30,7 @@ using namespace rdf ;
 
 namespace example {
 
-  class Object ;
-
+  FORWARD_OBJECT(Object, OWL::Object)
 
   class SubObject : public tobj::TypedObject
   /*--------------------------------------*/
