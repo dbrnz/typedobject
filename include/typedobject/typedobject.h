@@ -296,6 +296,8 @@ namespace tobj
     static void add_resource(const rdf::URI &uri, WeakPtr weakptr, Registry &registry) ;
     static void delete_resource(const rdf::URI &uri, Registry &registry) ;
 
+    rdf::Graph::Ptr m_graph ;
+
    private:
     rdf::URI m_uri ;
     ResourceMap m_resources ;
@@ -330,6 +332,7 @@ namespace tobj
         this->assign_from_rdf(graph, rstatements.get_predicate(), rstatements.get_subject(), true) ;
         } while (!rstatements.next()) ;
       }
+    if (m_graph == nullptr) { m_graph = graph ; }
     return true ;
     }
 

@@ -24,14 +24,14 @@
 namespace tobj {
 
   TypedObject::TypedObject()
-  /*----------------------*/
-  : m_uri(), m_resources(ResourceMap())
+  /*======================*/
+  : m_graph{nullptr}, m_uri{}, m_resources{ResourceMap{}}
   {
     }
 
   TypedObject::TypedObject(const rdf::URI &uri)
-  /*-----------------------------------------*/
-  : m_uri(uri), m_resources(ResourceMap())
+  /*=========================================*/
+  : m_graph{nullptr}, m_uri{uri}, m_resources{ResourceMap{}}
   {
     }
 
