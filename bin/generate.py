@@ -192,7 +192,7 @@ class Constructor(object):
     b = base.split('::')
     if len(b) > 1 and b[-2] == b[-1]: del b[-1]
     self._ctr = [': %s(uri)' % '::'.join(b),
-                 '  m_type("%s")' % T,
+                 '  m_type(%s)' % T,
                  '  m_prefixes(std::set<rdf::Namespace>())',
                 ]
     self._base = '::'.join(b)
