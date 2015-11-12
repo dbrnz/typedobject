@@ -196,7 +196,32 @@ namespace tobj
 
 #else
 
+  class TYPEDOBJECT_EXPORT TypedObject ;
+
+  class TYPEDOBJECT_EXPORT TypedObjectFactory
+  /*---------------------------------------*/
+  {
+   public:
+    virtual std::shared_ptr<TypedObject> create(const std::string &uri,
+                                                rdf::Graph::Ptr &graph) = 0 ;
+    } ;
+
+
 #define REGISTER_TYPES(T, CLS, BASE)                            \
+  class CLS##Factory : public tobj::TypedObjectFactory {        \
+   public:                                                      \
+    inline CLS##Factory() { tobj::TypedObject::register_type(T, this) ; }     \
+    virtual std::shared_ptr<tobj::TypedObject> create(const std::string &uri, \
+                                                      rdf::Graph::Ptr &graph) \
+    {  \
+      auto object = std::make_shared<CLS>(uri) ;                \
+      if (object->template assign_metadata<CLS>(graph)) {         \
+        return object ;                                         \
+        }                                                       \
+      return nullptr ;                                          \
+      }                                                         \
+    } ;                                                         \
+  static auto _global_##CLS##Factory = CLS##Factory{} ;         \
   static int _global_##CLS##_type = CLS::add_subtype(T) ;       \
   static int _global_##CLS##_supertype = BASE::add_subtype(T) ;
 
@@ -228,6 +253,7 @@ namespace tobj
 
     virtual const rdf::URI &type(void) const = 0 ;
     static inline int add_subtype(const rdf::URI &T) { (void)T ; return 0 ; } // Unused parameter
+    static void register_type(const rdf::URI &T, TypedObjectFactory *factory) ;
 
     /**
     Set attributes from RDF triples in a graph.
@@ -273,6 +299,7 @@ namespace tobj
    private:
     rdf::URI m_uri ;
     ResourceMap m_resources ;
+    static std::unordered_map<rdf::URI, TypedObjectFactory *> &m_factories(void) ;
     } ;
 
 

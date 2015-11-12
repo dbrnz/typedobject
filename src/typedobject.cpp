@@ -36,6 +36,34 @@ namespace tobj {
     }
 
 
+  std::unordered_map<rdf::URI, TypedObjectFactory *> &TypedObject::m_factories(void)
+  /*------------------------------------------------------------------------------*/
+  {
+    static std::unordered_map<rdf::URI, TypedObjectFactory *> s_factories ;
+    return s_factories ;
+    }
+
+  std::set<rdf::URI> &TypedObject::m_subtypes(void)
+  /*---------------------------------------------*/
+  {
+    static std::set<rdf::URI> s_subtypes ;
+    return s_subtypes ;
+    }
+
+  int TypedObject::add_subtype(const rdf::URI &type)
+  /*----------------------------------------------*/
+  {
+    m_subtypes().insert(type) ;
+    return 0 ;
+    }
+
+  void TypedObject::register_type(const rdf::URI &T, TypedObjectFactory *factory)
+  /*---------------------------------------------------------------------------*/
+  {
+    TypedObject::m_factories()[T] = factory ;  // For last declared
+    }
+
+
   TypedObject::Ptr TypedObject::get_resource(const rdf::URI &uri, TypedObject::Registry &registry)
   /*--------------------------------------------------------------------------------------------*/
   {
