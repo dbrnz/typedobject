@@ -383,7 +383,7 @@ namespace tobj
     if (ref != m_resources.end()
      && std::type_index(typeid(T)) == ref->second.second)
       return std::static_pointer_cast<T>(ref->second.first) ;
-    return nullptr ;
+    return create_from_graph<T>(uri, m_graph) ;
     }
 
   template<class T>
