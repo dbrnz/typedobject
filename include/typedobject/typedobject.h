@@ -248,7 +248,7 @@ namespace tobj
     bool operator==(const TypedObject &other) const ;
     bool operator<(const TypedObject &other) const ;
 
-    inline const rdf::URI &uri() const { return m_uri ; }
+    inline const rdf::URI &uri(void) const { return m_uri ; }
     inline void set_uri(const rdf::URI &uri) { m_uri = uri ; }
     bool is_valid(void) const ;
     std::string to_string(void) const ;
@@ -291,10 +291,10 @@ namespace tobj
 
     virtual void assign_from_rdf(rdf::Graph::Ptr &graph, const rdf::Node &property,
                                  const rdf::Node &value, const bool reverse) = 0 ;
-    static rdf::Node get_property(const std::string &name) ;
     virtual void save_as_rdf(rdf::Graph::Ptr &graph) = 0 ;
     virtual bool satisfies_restrictions(rdf::Graph::Ptr &graph) ;
 
+    static rdf::Node get_property(const std::string &name) ;
     static Ptr get_resource(const rdf::URI &uri, Registry &registry) ;
     static void add_resource(const rdf::URI &uri, WeakPtr weakptr, Registry &registry) ;
     static void delete_resource(const rdf::URI &uri, Registry &registry) ;
@@ -326,13 +326,13 @@ namespace tobj
     rdf::StatementIter statements = graph->get_statements(m_uri, rdf::Node(), rdf::Node()) ;
     if (!statements.end()) {
       do {
-        this->assign_from_rdf(graph, statements.get_predicate(), statements.get_object(), false) ;
+        assign_from_rdf(graph, statements.get_predicate(), statements.get_object(), false) ;
         } while (!statements.next()) ;
       }
     rdf::StatementIter rstatements = graph->get_statements(rdf::Node(), rdf::Node(), m_uri) ;
     if (!rstatements.end()) {
       do {
-        this->assign_from_rdf(graph, rstatements.get_predicate(), rstatements.get_subject(), true) ;
+        assign_from_rdf(graph, rstatements.get_predicate(), rstatements.get_subject(), true) ;
         } while (!rstatements.next()) ;
       }
     if (m_graph == nullptr) { m_graph = graph ; }
