@@ -348,17 +348,17 @@ namespace tobj
     if (!types.end()) {
       do {
         rdf::URI type = rdf::URI(types.get_object()) ;
-        if (T::subtypes().find(type) != T::subtypes().end()) {
-          auto object = graph.get_resource(uri) ;
+        if (T::m_subtypes().find(type) != T::m_subtypes().end()) {
+          auto object = graph->get_resource(uri) ;
           if (object)
-            return std::dynamic_pointer_cast<T>(object) ;
-          else if (type == T::rdf_type) {
-            auto object = std::make_shared<T>((std::string)uri) ;
-            graph.add_resource(uri, object) ;
-            if (object->template assign_metadata<T>(graph))
-              return object ;
-            graph.delete_resource(uri) ;
-            object.reset() ;
+            return std::static_pointer_cast<T>(object) ;
+          else {
+            auto object = TypedObject::m_factories()[type]->create((std::string)uri, graph) ;  // This needs graph creation...
+            if (object) {
+              graph->add_resource(uri, object) ;
+              object->m_graph = graph ;
+              return std::static_pointer_cast<T>(object) ;
+              }
             }
           }
         } while (!types.next()) ;
