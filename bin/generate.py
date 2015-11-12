@@ -29,9 +29,7 @@ from clang.cindex import TypeKind, CursorKind
 
 def generate_types(T, cls, base):
 #--------------------------------
-  return('''const rdf::URI &%(cls)s::rdf_type(void) const { return m_type ; }
-
-std::set<rdf::URI> &%(cls)s::m_subtypes(void)
+  return('''std::set<rdf::URI> &%(cls)s::m_subtypes(void)
 {
   static std::set<rdf::URI> s_subtypes ;
   return s_subtypes ;
@@ -192,12 +190,11 @@ class Constructor(object):
     b = base.split('::')
     if len(b) > 1 and b[-2] == b[-1]: del b[-1]
     self._ctr = [': %s(uri)' % '::'.join(b),
-                 '  m_type(%s)' % T,
                  '  m_prefixes(std::set<rdf::Namespace>())',
                 ]
     self._base = '::'.join(b)
     self._props = [ ]
-    self._preset = ['{']
+    self._preset = ['{', '  set_rdf_type(%s) ;' % T]
     self._restrict = [ ]
     self._init_code = init_code
     self._prefixes = prefixes

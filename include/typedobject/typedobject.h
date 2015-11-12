@@ -86,7 +86,6 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
   CLASS() = default ;                                                       \
   CLASS(const rdf::URI &uri) ;                                              \
   SHARED_PTR(CLASS)                                                         \
-  const rdf::URI &rdf_type(void) const override ;                           \
   static std::set<rdf::URI> &m_subtypes(void) ;                             \
   static int add_subtype(const rdf::URI &type) ;                            \
   void add_prefix(const rdf::Namespace &prefix) ;                           \
@@ -101,7 +100,6 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
  private:                                                                   \
   static std::unordered_map<std::string, rdf::Node> s_properties ;          \
   static const std::set<rdf::Namespace> s_prefixes ;                        \
-  rdf::URI m_type ;                                                         \
   std::set<rdf::Namespace> m_prefixes ;
 
 #define _PROPERTY(NAME, P, T, ...)        \
@@ -250,9 +248,9 @@ namespace tobj
 
     inline const rdf::URI &uri(void) const { return m_uri ; }
     inline void set_uri(const rdf::URI &uri) { m_uri = uri ; }
+    const rdf::URI &rdf_type(void) const { return m_rdf_type ; }
     bool is_valid(void) const ;
     std::string to_string(void) const ;
-    virtual const rdf::URI &rdf_type(void) const = 0 ;
 
     static void register_type(const rdf::URI &T, TypedObjectFactory *factory) ;
     static std::set<rdf::URI> &m_subtypes(void) ;
@@ -301,8 +299,11 @@ namespace tobj
 
     rdf::Graph::Ptr m_graph ;
 
+    inline void set_rdf_type(const rdf::URI &type) { m_rdf_type = type ; }
+
    private:
     rdf::URI m_uri ;
+    rdf::URI m_rdf_type ;
     ResourceMap m_resources ;
     static std::unordered_map<rdf::URI, TypedObjectFactory *> &m_factories(void) ;
     } ;
