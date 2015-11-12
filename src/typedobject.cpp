@@ -94,8 +94,8 @@ namespace tobj {
     return type().to_string() + ": <" + m_uri.to_string() + ">" ;
     }
 
-  bool TypedObject::satisfies_restrictions(const rdf::Graph &graph)
-  /*-------------------------------------------------------------*/
+  bool TypedObject::satisfies_restrictions(rdf::Graph::Ptr &graph)
+  /*------------------------------------------------------------*/
   {
     return true ;
     }
@@ -107,13 +107,13 @@ namespace tobj {
     }
 
 
-  void TypedObject::save_metadata(rdf::Graph &graph)
-  /*----------------------------------------------*/
+  void TypedObject::save_metadata(rdf::Graph::Ptr &graph)
+  /*---------------------------------------------------*/
   {
     if (m_uri.is_valid()) {     // Check if object isn't in graph
       const rdf::Statement hastype(m_uri, rdf::RDF::type, type()) ;
-      if (!graph.contains(hastype)) {
-        graph.insert(hastype) ;
+      if (!graph->contains(hastype)) {
+        graph->insert(hastype) ;
         save_as_rdf(graph) ;
         for (auto const &r : m_resources) {
           if (r.second.first) r.second.first->save_metadata(graph) ;
@@ -126,9 +126,9 @@ namespace tobj {
   /*-----------------------------------------*/
     const rdf::Graph::Format format, const std::string &base, const std::set<rdf::Namespace> &prefixes)
   {
-    rdf::Graph g ;
+    auto g = rdf::Graph::create((std::string)m_uri) ;
     save_metadata(g) ;
-    return g.serialise(format, base, prefixes) ;
+    return g->serialise(format, base, prefixes) ;
     }
 
   } ;         // End `tobj` namespace

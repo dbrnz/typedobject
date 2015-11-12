@@ -22,6 +22,7 @@
 #define TYPEDOBJECT_RDF_H
 
 #include <typedobject/typedobject_export.h>
+#include <typedobject/common.h>
 #include <typedobject/xsd.h>
 
 //**************************************************************************//
@@ -249,6 +250,8 @@ namespace rdf {
   class TYPEDOBJECT_EXPORT Graph
   /*--------------------------*/
   {
+    SHARED_PTR(Graph)
+
    public:
     Graph() ;
     Graph(const std::string & uri) ;

@@ -11,13 +11,13 @@ int main(void)
   rdf::URI uri3("http://example.org/object/3") ;
 
 
-  auto object = example::Object::new_object(uri1) ;
+  auto object = example::Object::create(uri1) ;
 
 
-  auto sobj2 = example::SubObject::new_object(uri2) ;
+  auto sobj2 = example::SubObject::create(uri2) ;
   sobj2->set_parent(object) ;
 
-  auto sobj3 = example::SubObject::new_object(uri3) ;
+  auto sobj3 = example::SubObject::create(uri3) ;
 
 
   std::string turtle = object.serialise_metadata(rdf::Graph::Format::TURTLE) ;

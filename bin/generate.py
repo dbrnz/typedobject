@@ -59,7 +59,7 @@ class AssignFromRDF(object):
   def __init__(self, cls, base):
   #-----------------------------
     self._header = [
-      'void %s::assign_from_rdf(rdf::Graph &graph, const rdf::Node &property,' % cls,
+      'void %s::assign_from_rdf(rdf::Graph::Ptr &graph, const rdf::Node &property,' % cls,
       '                         const rdf::Node &value,  const bool reverse)',
       '{']
     self._baseassign = ''
@@ -136,10 +136,10 @@ class SaveToRDF(object):
   def __init__(self, cls, base):
   #-----------------------------
     self._header = [
-      'void %s::save_as_rdf(rdf::Graph & graph)' % cls,
+      'void %s::save_as_rdf(rdf::Graph::Ptr &graph)' % cls,
       '{'
-      '  graph.add_prefixes(m_prefixes) ;'
-      '  graph.add_prefixes(s_prefixes) ;'
+      '  graph->add_prefixes(m_prefixes) ;'
+      '  graph->add_prefixes(s_prefixes) ;'
       ]
     self._footer = ['  }', '']
     if base and base != 'tobj::TypedObject':
@@ -167,15 +167,15 @@ class SaveToRDF(object):
       if options[0] == 'SET':
         save = ('  for (auto const &value : %(name)s)'
                 + ' if (%s)' % (valid % {'name': 'value'})
-                + ' graph.insert(uri(), %(prop)s, ' + (value % {'name': 'value'}) + ') ;'
+                + ' graph->insert(uri(), %(prop)s, ' + (value % {'name': 'value'}) + ') ;'
                 )
       else:
         save = ('  if (%s)' % valid
-                + ' graph.insert(uri(), %(prop)s, ' + value + ') ;'
+                + ' graph->insert(uri(), %(prop)s, ' + value + ') ;'
                 )
     elif 'OBJ' in options:
       save = ('  if (%(name)s != nullptr && %(name)s->uri().is_valid()) {\n'
-            + '    graph.insert(uri(), %(prop)s, %(name)s->uri()) ;\n'
+            + '    graph->insert(uri(), %(prop)s, %(name)s->uri()) ;\n'
             + '    %(name)s->save_metadata(graph) ;\n'
             + '    }')
     self._getvalues.append(save % { 'prop': property, 'name': 'p_' + name})
@@ -225,7 +225,7 @@ class Constructor(object):
   def preset(self, name, value, kind):
   #-----------------------------------
     self._preset.append('  set_%s(%s) ;' % (name, value))
-    self._restrict.append('graph.contains(uri(), get_property("%s"), %s)'
+    self._restrict.append('graph->contains(uri(), get_property("%s"), %s)'
       % (name, ('rdf::Literal(%(cast)s(%(value)s))'
                    if kind in ['std::string', 'xsd::Integer', 'xsd::Decimal']
            else '%(value)s.to_literal()'
@@ -257,7 +257,7 @@ rdf::Node %(cls)s::get_property(const std::string & name)
   else                             return %(base)s::get_property(name) ;
   }
 
-bool %(cls)s::satisfies_restrictions(const rdf::Graph &graph)
+bool %(cls)s::satisfies_restrictions(rdf::Graph::Ptr &graph)
 {
   return %(base)s::satisfies_restrictions(graph)%(cond)s ;
   }

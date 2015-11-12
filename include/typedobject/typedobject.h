@@ -22,6 +22,7 @@
 #define TYPEDOBJECT_TYPEDOBJECT_H
 
 #include <typedobject/typedobject_export.h>
+#include <typedobject/common.h>
 #include <typedobject/rdf.h>
 #include <typedobject/rdfdefs.h>
 #include <typedobject/xsd.h>
@@ -74,13 +75,6 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 
 #else
 
-#define REFERENCE(CLASS)                                                    \
- public:                                                                    \
-  using Ptr = std::shared_ptr<CLASS> ;                                      \
-  using WeakPtr = std::weak_ptr<CLASS> ;                                    \
-  template<typename... Args>                                                \
-  inline static Ptr new_object(Args... args)                                \
-  { return std::make_shared<CLASS>(args...) ; }
 
 #define TYPED_OBJECT(CLASS, TYPE)                                           \
  public:                                                                    \
@@ -90,18 +84,14 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
   const rdf::URI &type(void) const override ;                               \
   static std::set<rdf::URI> &subtypes(void) ;                               \
   static int add_subtype(const rdf::URI &T) ;                               \
+  SHARED_PTR(CLASS)                                                         \
   void add_prefix(const rdf::Namespace &prefix) ;                           \
-  using Ptr = std::shared_ptr<CLASS> ;                                      \
-  using WeakPtr = std::weak_ptr<CLASS> ;                                    \
-  template<typename... Args>                                                \
-  inline static Ptr new_object(Args... args)                                \
-  { return std::make_shared<CLASS>(args...) ; }                             \
  protected:                                                                 \
-  bool satisfies_restrictions(const rdf::Graph &graph) override ;           \
+  bool satisfies_restrictions(rdf::Graph::Ptr &graph) override ;            \
   static rdf::Node get_property(const std::string &name) ;                  \
-  void assign_from_rdf(rdf::Graph &graph, const rdf::Node &property,        \
-               const rdf::Node &value,  const bool reverse) override ;      \
-  void save_as_rdf(rdf::Graph & graph) override ;                           \
+  void assign_from_rdf(rdf::Graph::Ptr &graph, const rdf::Node &property,   \
+               const rdf::Node &value, const bool reverse) override ;       \
+  void save_as_rdf(rdf::Graph::Ptr &graph) override ;                       \
  private:                                                                   \
   static std::unordered_map<std::string, rdf::Node> s_properties ;          \
   static const std::set<rdf::Namespace> s_prefixes ;                        \
@@ -218,7 +208,7 @@ namespace tobj
     using ResourceMap = std::map<rdf::URI, ResourceInfo> ;
 
     template <class T>
-    static typename T::Ptr create_from_graph(const rdf::URI &uri, rdf::Graph &graph) ;
+    static typename T::Ptr create_from_graph(const rdf::URI &uri, rdf::Graph::Ptr &graph) ;
 
     bool operator==(const TypedObject &other) const ;
     bool operator<(const TypedObject &other) const ;
@@ -237,7 +227,7 @@ namespace tobj
     :param graph: A graph of RDF statements.
     :type graph: :class:`~biosignalml.rdf.Graph`
     **/
-    template <typename T> bool add_metadata(rdf::Graph &graph) ;
+    template <typename T> bool add_metadata(rdf::Graph::Ptr &graph) ;
 
     /**
     Save attributes as RDF triples in a graph.
@@ -245,7 +235,7 @@ namespace tobj
     :param graph: A graph of RDF statements.
     :type graph: :class:`~biosignalml.rdf.Graph`
     **/
-    void save_metadata(rdf::Graph &graph) ;
+    void save_metadata(rdf::Graph::Ptr &graph) ;
 
     std::string serialise_metadata(const rdf::Graph::Format format=rdf::Graph::Format::RDFXML,
                                    const std::string &base="",
@@ -257,16 +247,16 @@ namespace tobj
 
     template<class T> std::list<rdf::URI> get_resource_uris(void) ;
 
+    template <typename T> bool assign_metadata(rdf::Graph::Ptr &graph) ;
+
    protected:
     friend class rdf::Graph ;
 
-    template <typename T> bool assign_metadata(rdf::Graph &graph) ;
-
-    virtual void assign_from_rdf(rdf::Graph &graph, const rdf::Node &property,
+    virtual void assign_from_rdf(rdf::Graph::Ptr &graph, const rdf::Node &property,
                                  const rdf::Node &value, const bool reverse) = 0 ;
-    virtual void save_as_rdf(rdf::Graph &graph) = 0 ;
-    virtual bool satisfies_restrictions(const rdf::Graph &graph) ;
     static rdf::Node get_property(const std::string &name) ;
+    virtual void save_as_rdf(rdf::Graph::Ptr &graph) = 0 ;
+    virtual bool satisfies_restrictions(rdf::Graph::Ptr &graph) ;
 
     static Ptr get_resource(const rdf::URI &uri, Registry &registry) ;
     static void add_resource(const rdf::URI &uri, WeakPtr weakptr, Registry &registry) ;
@@ -279,8 +269,8 @@ namespace tobj
 
 
   template <typename T>
-  bool TypedObject::add_metadata(rdf::Graph &graph)
-  /*---------------------------------------------*/
+  bool TypedObject::add_metadata(rdf::Graph::Ptr &graph)
+  /*--------------------------------------------------*/
   {
     if (m_uri.is_valid()
      && graph.contains(m_uri, rdf::RDF::type, type()))   // Needs to be sub-classes
@@ -289,8 +279,8 @@ namespace tobj
     }
 
   template <typename T>
-  bool TypedObject::assign_metadata(rdf::Graph &graph)
-  /*------------------------------------------------*/
+  bool TypedObject::assign_metadata(rdf::Graph::Ptr &graph)
+  /*-----------------------------------------------------*/
   {
     if (!satisfies_restrictions(graph)) return false ;
     rdf::StatementIter statements = graph.get_statements(m_uri, rdf::Node(), rdf::Node()) ;
@@ -309,8 +299,8 @@ namespace tobj
     }
 
   template <class T>
-  typename T::Ptr TypedObject::create_from_graph(const rdf::URI &uri, rdf::Graph &graph)
-  /*----------------------------------------------------------------------------------*/
+  typename T::Ptr TypedObject::create_from_graph(const rdf::URI &uri, rdf::Graph::Ptr &graph)
+  /*---------------------------------------------------------------------------------------*/
   {
     rdf::StatementIter types = graph.get_statements(uri, rdf::RDF::type, rdf::Node()) ;
     if (!types.end()) {

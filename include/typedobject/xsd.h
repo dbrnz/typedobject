@@ -22,6 +22,7 @@
 #define TYPEDOBJECT_XSD_H
 
 #include <typedobject/typedobject_export.h>
+#include <typedobject/common.h>
 
 #include <stdexcept>
 #include <string>
