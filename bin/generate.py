@@ -29,14 +29,9 @@ from clang.cindex import TypeKind, CursorKind
 
 def generate_types(T, cls, base):
 #--------------------------------
-  return('''const rdf::URI %(cls)s::rdf_type = %(T)s ;
-  
-const rdf::URI& %(cls)s::type(void) const
-{
-  return rdf_type ;
-  }
   
 std::set<rdf::URI> &%(cls)s::subtypes(void)
+  return('''const rdf::URI &%(cls)s::rdf_type(void) const { return m_type ; }
 {
   static std::set<rdf::URI> s_subtypes ;
   return s_subtypes ;
@@ -188,8 +183,8 @@ class SaveToRDF(object):
 class Constructor(object):
 #-------------------------
 
-  def __init__(self, cls, base, init_code, prefixes):
-  #--------------------------------------------------
+  def __init__(self, T, cls, base, init_code, prefixes):
+  #-----------------------------------------------------
 #    print "B:", base, " C:", constructor(base)
     self._class = cls
     ctr = cls + '::' + cls
@@ -197,6 +192,7 @@ class Constructor(object):
     b = base.split('::')
     if len(b) > 1 and b[-2] == b[-1]: del b[-1]
     self._ctr = [': %s(uri)' % '::'.join(b),
+                 '  m_type("%s")' % T,
                  '  m_prefixes(std::set<rdf::Namespace>())',
                 ]
     self._base = '::'.join(b)
@@ -300,10 +296,10 @@ class Generator(object):
       for n in namespaces:
         code.append('namespace %s {' % n)
         code.append('')
-      c = Constructor(cls[1], cls[2], cls[3][3], cls[3][4])  # class, base, init, prefixes
       if cls[3]:
         code.append(generate_types(cls[3], cls[1], cls[2]))
       props = cls[4]
+      c = Constructor(cls[3], cls[1], cls[2], props[3], props[4])  # type, class, base, init, prefixes
       a = AssignFromRDF(cls[1], cls[2])
       s = SaveToRDF(cls[1], cls[2])
       for p, v in props[0].iteritems():  # properties

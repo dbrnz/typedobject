@@ -119,7 +119,7 @@ namespace tobj {
   std::string TypedObject::to_string(void) const
   /*------------------------------------------*/
   {
-    return type().to_string() + ": <" + m_uri.to_string() + ">" ;
+    return rdf_type().to_string() + ": <" + m_uri.to_string() + ">" ;
     }
 
   bool TypedObject::satisfies_restrictions(rdf::Graph::Ptr &graph)
@@ -139,7 +139,7 @@ namespace tobj {
   /*---------------------------------------------------*/
   {
     if (m_uri.is_valid()) {     // Check if object isn't in graph
-      const rdf::Statement hastype(m_uri, rdf::RDF::type, type()) ;
+      const rdf::Statement hastype(m_uri, rdf::RDF::type, rdf_type()) ;
       if (!graph->contains(hastype)) {
         graph->insert(hastype) ;
         save_as_rdf(graph) ;
