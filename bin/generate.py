@@ -29,18 +29,18 @@ from clang.cindex import TypeKind, CursorKind
 
 def generate_types(T, cls, base):
 #--------------------------------
-  
-std::set<rdf::URI> &%(cls)s::subtypes(void)
   return('''const rdf::URI &%(cls)s::rdf_type(void) const { return m_type ; }
+
+std::set<rdf::URI> &%(cls)s::m_subtypes(void)
 {
   static std::set<rdf::URI> s_subtypes ;
   return s_subtypes ;
   }
-  
 
-int %(cls)s::add_subtype(const rdf::URI &T)
+int %(cls)s::add_subtype(const rdf::URI &type)
 {
-  %(cls)s::subtypes().insert(T) ;
+  %(cls)s::m_subtypes().insert(type) ;
+  %(base)s::m_subtypes().insert(type) ;
   return 0 ;
   }
 

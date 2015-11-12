@@ -85,10 +85,10 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
  public:                                                                    \
   CLASS() = default ;                                                       \
   CLASS(const rdf::URI &uri) ;                                              \
-  static std::set<rdf::URI> &subtypes(void) ;                               \
-  static int add_subtype(const rdf::URI &T) ;                               \
   SHARED_PTR(CLASS)                                                         \
   const rdf::URI &rdf_type(void) const override ;                           \
+  static std::set<rdf::URI> &m_subtypes(void) ;                             \
+  static int add_subtype(const rdf::URI &type) ;                            \
   void add_prefix(const rdf::Namespace &prefix) ;                           \
   static Ptr create_from_graph(const rdf::URI &uri, rdf::Graph::Ptr &graph) \
   { return TypedObject::create_from_graph<CLASS>(uri, graph) ; }            \
@@ -254,8 +254,9 @@ namespace tobj
     std::string to_string(void) const ;
     virtual const rdf::URI &rdf_type(void) const = 0 ;
 
-    static inline int add_subtype(const rdf::URI &T) { (void)T ; return 0 ; } // Unused parameter
     static void register_type(const rdf::URI &T, TypedObjectFactory *factory) ;
+    static std::set<rdf::URI> &m_subtypes(void) ;
+    static int add_subtype(const rdf::URI &type) ;
 
     /**
     Set attributes from RDF triples in a graph.
