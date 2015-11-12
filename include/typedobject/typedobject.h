@@ -310,7 +310,7 @@ namespace tobj
   /*--------------------------------------------------*/
   {
     if (m_uri.is_valid()
-     && graph.contains(m_uri, rdf::RDF::type, type()))   // Needs to be sub-classes
+     && graph->contains(m_uri, rdf::RDF::type, rdf_type()))   // Needs to be sub-classes
       return assign_metadata<T>(graph) ;
     return false ;
     }
@@ -320,13 +320,13 @@ namespace tobj
   /*-----------------------------------------------------*/
   {
     if (!satisfies_restrictions(graph)) return false ;
-    rdf::StatementIter statements = graph.get_statements(m_uri, rdf::Node(), rdf::Node()) ;
+    rdf::StatementIter statements = graph->get_statements(m_uri, rdf::Node(), rdf::Node()) ;
     if (!statements.end()) {
       do {
         this->assign_from_rdf(graph, statements.get_predicate(), statements.get_object(), false) ;
         } while (!statements.next()) ;
       }
-    rdf::StatementIter rstatements = graph.get_statements(rdf::Node(), rdf::Node(), m_uri) ;
+    rdf::StatementIter rstatements = graph->get_statements(rdf::Node(), rdf::Node(), m_uri) ;
     if (!rstatements.end()) {
       do {
         this->assign_from_rdf(graph, rstatements.get_predicate(), rstatements.get_subject(), true) ;
@@ -340,7 +340,7 @@ namespace tobj
   typename T::Ptr TypedObject::create_from_graph(const rdf::URI &uri, rdf::Graph::Ptr &graph)
   /*---------------------------------------------------------------------------------------*/
   {
-    rdf::StatementIter types = graph.get_statements(uri, rdf::RDF::type, rdf::Node()) ;
+    rdf::StatementIter types = graph->get_statements(uri, rdf::RDF::type, rdf::Node()) ;
     if (!types.end()) {
       do {
         rdf::URI type = rdf::URI(types.get_object()) ;
