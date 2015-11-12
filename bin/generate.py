@@ -206,7 +206,7 @@ class Constructor(object):
   #-----------------------------------------------
 ##    print name, kind, options
     self._ctr.append('  %s(' % ('p_%s' % name)
-                  + ('nullptr' if ('OBJ' in options and options[0] not in ['SET', 'RSET'])
+                  + (('%s::create()' % kind) if ('OBJ' in options and options[0] not in ['SET', 'RSET'])
                 else 'rdf::Literal::Constants::EMPTY_STRING'  if kind == 'std::string'
                 else 'rdf::Literal::Constants::EMPTY_INTEGER' if kind == 'xsd::Integer'
                 else 'rdf::Literal::Constants::EMPTY_DECIMAL' if kind == 'xsd::Decimal'
