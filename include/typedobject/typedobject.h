@@ -90,6 +90,8 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
   SHARED_PTR(CLASS)                                                         \
   const rdf::URI &rdf_type(void) const override ;                           \
   void add_prefix(const rdf::Namespace &prefix) ;                           \
+  static Ptr create_from_graph(const rdf::URI &uri, rdf::Graph::Ptr &graph) \
+  { return TypedObject::create_from_graph<CLASS>(uri, graph) ; }            \
  protected:                                                                 \
   bool satisfies_restrictions(rdf::Graph::Ptr &graph) override ;            \
   static rdf::Node get_property(const std::string &name) ;                  \

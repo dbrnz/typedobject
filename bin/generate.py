@@ -76,7 +76,7 @@ class AssignFromRDF(object):
     name = 'p_%s' % name
     ## Could optimise reverse case by looking up type(s) of found object once only
     ## Currently done for each value in `T::Ptr TypedObject::create()`
-    value = (('tobj::TypedObject::create_from_graph<%s>(value, graph)' % kind)
+    value = (('%s::create_from_graph(value, graph)' % kind)
                                      if 'OBJ' in options
          else 'value.to_string()'    if kind == 'std::string'
          else 'value.to_int()'       if kind == 'xsd::Integer'
@@ -104,7 +104,7 @@ class AssignFromRDF(object):
   #-----------------------------------------------
     self._assignvalue(self._setreverse, property,
       """tobj::TypedObject::add_resource<%(cls)s>(
-           tobj::TypedObject::create_from_graph<%(cls)s>(value, graph)
+           %(cls)s::create_from_graph(value, graph)
            ) ;""" % { 'cls': cls },
       False)
 
