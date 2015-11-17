@@ -255,7 +255,7 @@ namespace rdf {
 
    public:
     Graph() ;
-    Graph(const std::string & uri) ;
+    Graph(const rdf::URI & uri) ;
     virtual ~Graph() ;
 
     enum class Format {

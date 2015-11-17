@@ -554,8 +554,8 @@ rdf::Graph::Graph()
 {
   }
 
-rdf::Graph::Graph(const std::string &uri)
-/*-------------------------------------*/
+rdf::Graph::Graph(const rdf::URI &uri)
+/*----------------------------------*/
 : m_uri(uri), m_graph(new rdf::GraphImpl()),
   m_objectregistry(tobj::TypedObject::Registry())
 {
