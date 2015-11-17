@@ -66,12 +66,6 @@ rdf::NodeImpl::NodeImpl(const SordNode *node)
 {
   }
 
-rdf::NodeImpl::NodeImpl(SordNode *node, bool copy)
-/*----------------------------------------------*/
-: Sord::Node(sordWorld(), node, copy)
-{
-  }
-
 rdf::NodeImpl::NodeImpl(const NodeImpl &other)
 /*------------------------------------------*/
 : Sord::Node(other)

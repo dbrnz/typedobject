@@ -37,7 +37,6 @@ namespace rdf {
    public:
    	NodeImpl() ;
    	NodeImpl(const SordNode *node) ;
-   	NodeImpl(SordNode *node, bool copy=false) ;
    	NodeImpl(const NodeImpl &other) ;
 
    	static NodeImpl *new_node(Sord::Node::Type type, const std::string &s) ;
