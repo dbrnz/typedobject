@@ -452,6 +452,12 @@ rdf::Statement::Statement(rdf::Statement && other)
   other.m_stmnt = nullptr ;
   }
 
+rdf::Statement::Statement(rdf::StmntImpl *stmnt)
+/*--------------------------------------------*/
+: m_stmnt(stmnt)
+{
+  }
+
 rdf::Statement::~Statement()
 /*------------------------*/
 {
@@ -512,6 +518,12 @@ rdf::StatementIter & rdf::StatementIter::operator++(void)
 {
   m_iter++ ;
   return *this ;
+  }
+
+rdf::Statement rdf::StatementIter::get_statement(void) const
+/*--------------------------------------------------------*/
+{
+  return rdf::Statement(m_iter->get_statement()) ;
   }
 
 const rdf::Node rdf::StatementIter::get_subject(void) const

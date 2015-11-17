@@ -193,6 +193,7 @@ namespace rdf {
     Statement(const Node & s, const Node & p, const Node & o) ;
     Statement(const Statement & other) ;
     Statement(Statement && other) ;
+    Statement(StmntImpl *stmnt) ;
     virtual ~Statement() ;
     Statement & operator=(const Statement & other) ;
     Statement & operator=(Statement && other) ;
@@ -214,10 +215,10 @@ namespace rdf {
     bool end(void) const ;
     bool next(void) const ;
     StatementIter & operator++ (void) ;
+    Statement get_statement(void) const ;
     const Node get_subject(void) const ;
     const Node get_predicate(void) const ;
     const Node get_object(void) const ;
-    const Statement get_statement(void) const ;
 
    private:
     IterImpl *m_iter ;

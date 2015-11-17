@@ -167,6 +167,15 @@ rdf::StmntImpl::StmntImpl(const StmntImpl &other)
   m_quad[SORD_GRAPH] = nullptr ;
   }
 
+rdf::StmntImpl::StmntImpl(const SordQuad &quad)
+/*-------------------------------------------*/
+{
+  m_quad[SORD_SUBJECT] = sord_node_copy(quad[SORD_SUBJECT]) ;
+  m_quad[SORD_PREDICATE] = sord_node_copy(quad[SORD_PREDICATE]) ;
+  m_quad[SORD_OBJECT] = sord_node_copy(quad[SORD_OBJECT]) ;
+  m_quad[SORD_GRAPH] = nullptr ;
+  }
+
 const SordQuad *rdf::StmntImpl::quad(void) const
 /*--------------------------------------------*/
 {
@@ -179,6 +188,14 @@ rdf::IterImpl::IterImpl(SordIter *iter)
 /*-----------------------------------*/
 : Sord::Iter(sordWorld(), iter)
 {
+  }
+
+rdf::StmntImpl *rdf::IterImpl::get_statement(void) const
+/*----------------------------------------------------*/
+{
+  SordQuad quad ;
+  sord_iter_get(this->c_obj(), quad) ;
+  return new rdf::StmntImpl(quad) ;
   }
 
 const SordNode *rdf::IterImpl::get_subject(void) const

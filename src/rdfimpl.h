@@ -55,6 +55,7 @@ namespace rdf {
    public:
     StmntImpl(const NodeImpl *s, const NodeImpl *p, const NodeImpl *o) ;
    	StmntImpl(const StmntImpl &other) ;
+   	StmntImpl(const SordQuad &quad) ;
 
     const SordQuad *quad(void) const ;
 
@@ -69,6 +70,7 @@ namespace rdf {
    public:
     IterImpl(SordIter *iter) ;
 
+    StmntImpl *get_statement(void) const ;
     const SordNode *get_subject(void) const ;
     const SordNode *get_predicate(void) const ;
     const SordNode *get_object(void) const ;
