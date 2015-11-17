@@ -141,8 +141,10 @@ rdf::NodeImpl *rdf::NodeImpl::new_node_from_serd_node(
 /*--------------------------------------------------*/
   const SerdNode *node, const SerdNode *type, const SerdNode *lang)
 {
-  return
-    new rdf::NodeImpl(::sord_node_from_serd_node(sordWorld().c_obj(), sordWorld().prefixes().c_obj(), node, type, lang)) ;
+  return new rdf::NodeImpl(::sord_node_from_serd_node(sordWorld().c_obj(),
+                                                      sordWorld().prefixes().c_obj(),
+                                                      node, type, lang)
+                          ) ;
   }
 
 //**************************************************************************//
