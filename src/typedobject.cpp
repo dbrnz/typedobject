@@ -63,6 +63,19 @@ namespace tobj {
     TypedObject::m_factories()[T] = factory ;  // For last declared
     }
 
+  std::set<std::type_index> &TypedObject::m_subclasses(void)
+  /*------------------------------------------------------*/
+  {
+    static std::set<std::type_index> s_subclasses ;
+    return s_subclasses ;
+    }
+
+  int TypedObject::add_subclass(const std::type_index &cls)
+  /*-----------------------------------------------------*/
+  {
+    m_subclasses().insert(cls) ;
+    return 0 ;
+    }
 
   TypedObject::Ptr TypedObject::get_resource(const rdf::URI &uri, TypedObject::Registry &registry)
   /*--------------------------------------------------------------------------------------------*/

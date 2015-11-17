@@ -88,6 +88,8 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
   SHARED_PTR(CLASS)                                                         \
   static std::set<rdf::URI> &m_subtypes(void) ;                             \
   static int add_subtype(const rdf::URI &type) ;                            \
+  static std::set<std::type_index> &m_subclasses(void) ;                    \
+  static int add_subclass(const std::type_index &cls) ;                     \
   void add_prefix(const rdf::Namespace &prefix) ;                           \
   static Ptr create_from_graph(const rdf::URI &uri, rdf::Graph::Ptr &graph) \
   { return TypedObject::create_from_graph<CLASS>(uri, graph) ; }            \
@@ -223,7 +225,9 @@ namespace tobj
     } ;                                                         \
   static auto _global_##CLS##Factory = CLS##Factory{} ;         \
   static int _global_##CLS##_type = CLS::add_subtype(T) ;       \
-  static int _global_##CLS##_supertype = BASE::add_subtype(T) ;
+  static int _global_##CLS##_supertype = BASE::add_subtype(T) ; \
+  static int _global_##CLS##_class = CLS::add_subclass(std::type_index(typeid(CLS))) ; \
+  static int _global_##CLS##_superclass = BASE::add_subclass(std::type_index(typeid(CLS))) ;
 
 
   class TYPEDOBJECT_EXPORT TypedObject
@@ -255,6 +259,8 @@ namespace tobj
     static void register_type(const rdf::URI &T, TypedObjectFactory *factory) ;
     static std::set<rdf::URI> &m_subtypes(void) ;
     static int add_subtype(const rdf::URI &type) ;
+    static std::set<std::type_index> &m_subclasses(void) ;
+    static int add_subclass(const std::type_index &cls) ;
 
     /**
     Set attributes from RDF triples in a graph.
@@ -381,7 +387,7 @@ namespace tobj
   {
     auto ref = m_resources.find(uri) ;
     if (ref != m_resources.end()
-     && std::type_index(typeid(T)) == ref->second.second)
+     && T::m_subclasses().find(ref->second.second) != T::m_subclasses().end())
       return std::static_pointer_cast<T>(ref->second.first) ;
     return create_from_graph<T>(uri, m_graph) ;
     }
@@ -392,7 +398,7 @@ namespace tobj
   {
     std::list<rdf::URI> uris ;
     for (const auto ref : m_resources)
-      if (std::type_index(typeid(T)) == ref.second.second)
+      if (T::m_subclasses().find(ref.second.second) != T::m_subclasses().end())
         uris.push_back(ref.first) ;
     return uris ;
     }

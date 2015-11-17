@@ -42,6 +42,19 @@ int %(cls)s::add_subtype(const rdf::URI &type)
   return 0 ;
   }
 
+std::set<std::type_index> &%(cls)s::m_subclasses(void)
+{
+  static std::set<std::type_index> s_subclasses ;
+  return s_subclasses ;
+  }
+
+int %(cls)s::add_subclass(const std::type_index &cls)
+{
+  %(cls)s::m_subclasses().insert(cls) ;
+  %(base)s::m_subclasses().insert(cls) ;
+  return 0 ;
+  }
+
 REGISTER_TYPES(%(T)s, %(cls)s, %(base)s)
 ''' % {'T': T, 'cls': cls, 'base': base})
 
