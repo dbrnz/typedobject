@@ -215,9 +215,8 @@ namespace tobj
     inline CLS##Factory() { tobj::TypedObject::register_type(T, this) ; }     \
     virtual std::shared_ptr<tobj::TypedObject> create(const std::string &uri, \
                                                       rdf::Graph::Ptr &graph) \
-    {  \
-      auto object = std::make_shared<CLS>(uri) ;                \
-      if (object->template assign_metadata<CLS>(graph)) {         \
+    { auto object = std::make_shared<CLS>(uri) ;                \
+      if (object->template assign_metadata<CLS>(graph)) {       \
         return object ;                                         \
         }                                                       \
       return nullptr ;                                          \
