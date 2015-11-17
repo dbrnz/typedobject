@@ -55,9 +55,10 @@ then the following will retrieve values of properties::
 Requirements
 ------------
 
-* sord (http://drobilla.net/software/sord/) for storage.
+* sord (http://drobilla.net/software/sord/) for storage. At least version
+  0.14.0.
 * serd (http://drobilla.net/software/serd/) for Turtle and NTriples parsing and
-  serialisation.
+  serialisation. At least version 0.22.0.
 * Raptor (http://librdf.org/raptor/) for RDF/XML parsing and serialisation.
 * CMake is used for builds.
 
