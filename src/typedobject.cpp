@@ -150,13 +150,24 @@ namespace tobj {
       }
     }
 
-  std::string TypedObject::serialise_metadata(
-  /*-----------------------------------------*/
-    const rdf::Graph::Format format, const std::string &base, const std::set<rdf::Namespace> &prefixes)
+  std::string TypedObject::serialise_metadata(const rdf::Graph::Format format,
+  /*------------------------------------------------------------------------*/
+                                              const std::string &base, bool append,
+                                              const std::set<rdf::Namespace> &prefixes)
   {
-    auto g = rdf::Graph::create((std::string)m_uri) ;
-    save_metadata(g) ;
-    return g->serialise(format, base, prefixes) ;
+    auto graph = rdf::Graph::create(m_uri) ;
+    save_metadata(graph) ;
+    if (m_graph && append) {
+      auto stmnt = graph->get_statements(rdf::Statement(rdf::Node(), rdf::Node(), rdf::Node())) ;
+      if (!stmnt.end()) {
+        do {
+          m_graph->insert(stmnt.get_statement()) ;
+          } while (!stmnt.next()) ;
+        }
+      graph = m_graph ;
+      }
+    auto md = graph->serialise(format, base, prefixes) ;
+    return md ;
     }
 
   } ;         // End `tobj` namespace

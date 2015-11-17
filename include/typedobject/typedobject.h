@@ -273,7 +273,7 @@ namespace tobj
     void save_metadata(rdf::Graph::Ptr &graph) ;
 
     std::string serialise_metadata(const rdf::Graph::Format format=rdf::Graph::Format::RDFXML,
-                                   const std::string &base="",
+                                   const std::string &base="", bool append=false,
                                    const std::set<rdf::Namespace> &prefixes=std::set<rdf::Namespace>()) ;
 
     template<class T> void add_resource(typename T::Ptr resource) ;
