@@ -26,15 +26,18 @@
 #include <raptor2.h>
 
 #include <string>
-
+#include <memory>
 
 //**************************************************************************//
 
 static Sord::World &sordWorld()
 /*---------------------------*/
 {
-  static Sord::World instance ;
-  return instance;
+  static std::unique_ptr<Sord::World> instance = nullptr ;
+  if (instance == nullptr) {
+    instance = std::unique_ptr<Sord::World>{new Sord::World()} ;
+    }
+  return *instance;
   }
 
 
