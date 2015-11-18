@@ -370,7 +370,7 @@ namespace tobj
           }
         } while (!types.next()) ;
       }
-    return typename T::Ptr() ;
+    return T::create(rdf::URI()) ;
     }
 
 
