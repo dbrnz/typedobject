@@ -37,6 +37,13 @@
 #include <typeindex>
 
 
+namespace tobj
+/*==========*/
+{
+  const std::string VERSION = "1.1.0a" ;
+  } ;
+
+
 #ifdef TYPED_OBJECT_COMPILE
 
 #define REFERENCE(CLASS)
@@ -189,8 +196,6 @@ int _PARAMETERS_(const char *params, ...) { return 0 ; }
 namespace tobj
 /*==========*/
 {
-
-  const std::string VERSION = "0.9.5" ;
 
 #ifdef TYPED_OBJECT_COMPILE
 
