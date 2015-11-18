@@ -22,10 +22,17 @@
 
 #include <iostream>
 
+void test(double t)
+/*---------------*/
+{
+  auto d = xsd::Duration{t} ;
+  std::cout << "Double: " << t << " =  '" << d.to_string() << "' " << d.to_double() << std::endl ;
+  }
+
+
 int main(void)
 /*----------*/
 {
-
   try {
     xsd::Duration minute1(60) ;
     xsd::Duration minute2(1, "minute") ;
@@ -42,4 +49,6 @@ int main(void)
     std::cout << error.what() << std::endl ;
     }
 
+  test(0.054099) ;
+  test(0.0271) ;
   }

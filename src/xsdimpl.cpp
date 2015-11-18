@@ -175,8 +175,16 @@ std::string xsd::DurationImpl::to_string(void) const
       if (secs || frac) {
         ss << secs ;
         if (frac) {
+          long f = frac ;
+          int digits = 0 ;
+          while (f) {
+            f /= 10 ;
+            digits += 1 ;
+            }
+          digits = boost::posix_time::time_duration::num_fractional_digits() - digits ;
           while ((frac % 10) == 0) frac /= 10 ;
           ss << "." ;
+          while (digits-- > 0) ss << "0" ;
           ss << frac ;
           }
         ss << "S" ;
