@@ -601,6 +601,25 @@ rdf::Graph::Format rdf::Graph::mimetype_to_format(const std::string &mimetype)
   }
 
 
+rdf::Graph::Ptr rdf::Graph::create_from_resource(
+/*---------------------------------------------*/
+  const std::string &resource, const rdf::Graph::Format format, const std::string &base)
+{
+  auto graph = create(rdf::URI(resource)) ;
+  graph->parse_resource(resource, format, base) ;
+  return graph ;
+  }
+
+rdf::Graph::Ptr rdf::Graph::create_from_string(const rdf::URI &uri,
+/*---------------------------------------------------------------*/
+  const std::string &source, const rdf::Graph::Format format, const std::string &base)
+{
+  auto graph = create(uri) ;
+  graph->parse_string(source, format, base) ;
+  return graph ;
+  }
+
+
 void rdf::Graph::parse_resource(
 /*----------------------------*/
   const std::string &resource, const rdf::Graph::Format format, const std::string &base)

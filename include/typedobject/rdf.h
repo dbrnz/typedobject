@@ -269,6 +269,14 @@ namespace rdf {
     static const std::string format_to_mimetype(Format format) ;
     static Format mimetype_to_format(const std::string &mimetype) ;
 
+    static Ptr create_from_resource(const std::string &resource,
+                                    const Format format=Format::RDFXML,
+                                    const std::string &base="") ;
+    static Ptr create_from_string(const rdf::URI &uri,
+                                  const std::string &source,
+                                  const Format format=Format::RDFXML,
+                                  const std::string &base="") ;
+
     void parse_resource(const std::string &resource,
                         const Format format=Format::RDFXML,
                         const std::string &base="") ;
