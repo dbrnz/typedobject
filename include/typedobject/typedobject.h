@@ -204,23 +204,21 @@ namespace tobj
   /*---------------------------------------*/
   {
    public:
-    virtual std::shared_ptr<TypedObject> create(const std::string &uri,
-                                                rdf::Graph::Ptr &graph) = 0 ;
+    virtual std::shared_ptr<TypedObject> create(const std::string &uri) = 0 ;
+    virtual bool assign_metadata(std::shared_ptr<TypedObject> &object,
+                                 rdf::Graph::Ptr &graph) = 0 ;
     } ;
 
 
 #define REGISTER_TYPES(T, CLS, BASE)                            \
   class CLS##Factory : public tobj::TypedObjectFactory {        \
    public:                                                      \
-    inline CLS##Factory() { tobj::TypedObject::register_type(T, this) ; }     \
-    virtual std::shared_ptr<tobj::TypedObject> create(const std::string &uri, \
-                                                      rdf::Graph::Ptr &graph) \
-    { auto object = std::make_shared<CLS>(uri) ;                \
-      if (object->template assign_metadata<CLS>(graph)) {       \
-        return object ;                                         \
-        }                                                       \
-      return nullptr ;                                          \
-      }                                                         \
+    inline CLS##Factory() { tobj::TypedObject::register_type(T, this) ; }  \
+    std::shared_ptr<tobj::TypedObject> create(const std::string &uri)      \
+    { return std::make_shared<CLS>(uri) ; }                                \
+    bool assign_metadata(std::shared_ptr<tobj::TypedObject> &object,       \
+                                 rdf::Graph::Ptr &graph)        \
+    { return object->template assign_metadata<CLS>(graph) ; }   \
     } ;                                                         \
   static auto _global_##CLS##Factory = CLS##Factory{} ;         \
   static int _global_##CLS##_type = CLS::add_subtype(T) ;       \
@@ -358,11 +356,15 @@ namespace tobj
           if (object)
             return std::static_pointer_cast<T>(object) ;
           else {
-            auto object = TypedObject::m_factories()[type]->create((std::string)uri, graph) ;  // This needs graph creation...
-            if (object) {
-              graph->add_resource(uri, object) ;
+            auto object = TypedObject::m_factories()[type]->create((std::string)uri) ;
+            graph->add_resource(uri, object) ;
+            if (TypedObject::m_factories()[type]->assign_metadata(object, graph)) {
               object->m_graph = graph ;
               return std::static_pointer_cast<T>(object) ;
+              }
+            else {
+              graph->delete_resource(uri) ;
+              object.reset() ;
               }
             }
           }
