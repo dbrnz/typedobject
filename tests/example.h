@@ -37,7 +37,7 @@ namespace example {
   {
     TYPED_OBJECT(SubObject, TEST::SubObject)
 
-    PROPERTY_OBJECT(parent, TEST::object, Object)
+    PROPERTY_OBJECT(parent, TEST::object, Object)           // Circular reference
     } ;
 
   class Object : public tobj::TypedObject
@@ -52,7 +52,7 @@ namespace example {
     PROPERTY_DURATION(duration, DCT::extent)
     PROPERTY_NODE(investigator, DCT::creator)
 
-    PROPERTY_OBJECT(subobject, TEST::subobject, SubObject)
+    PROPERTY_OBJECT(subobject, TEST::subobject, SubObject)  // Circular reference
     PROPERTY_URI(resource, TEST::resource)
 
     RESOURCE(TEST::object, SubObject) ;
