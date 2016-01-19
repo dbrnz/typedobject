@@ -4,6 +4,7 @@ Building pre-requisites under Unix
 
 Tested under Ubuntu 14.04.
 
+
 serd
 ----
 
@@ -44,3 +45,47 @@ sord
   ./waf configure --static --no-shared
   ./waf
   sudo ./waf install
+
+
+raptor2
+-------
+
+  ./configure CFLAGS=-fPIC --disable-shared --enable-static --enable-parsers=rdfxml --enable-serializers=rdfxml
+
+Needs statically linked curl and xml2
+
+curl
+----
+
+  ./configure CFLAGS=-fPIC --disable-shared --enable-static
+
+
+libxml2
+-------
+
+  ./configure CFLAGS=-fPIC --disable-shared --enable-static
+
+
+
+Boost
+-----
+
+::
+
+  cd ~/build/boost_1_59_0
+  ./bootstrap.sh --with-libraries=date_time,filesystem,system,test
+  ./b2 stage threading=multi link=static cxxflags=-fPIC address-model=64
+  sudo ./b2 install
+
+serd/sord
+---------
+
+* Edit `serd.pc.in` to add `-lm` to libraries line and remove `Libs.private`.
+* Edit `wscript` files and add `cflags = ['-fPIC'],` to the static build options.
+
+::
+
+  ./waf configure --static --no-shared
+  ./waf
+  sudo ./waf install
+
