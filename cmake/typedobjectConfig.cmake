@@ -9,4 +9,4 @@ endif (NOT WIN32)
 
 set(typedobject_INCLUDE_DIR "${_IMPORT_PREFIX}/include")
 set(typedobject_LIBRARY_DIR "${_IMPORT_PREFIX}/lib")
-find_library(typedobject_LIBRARY typedobject PATHS ${typedobject_LIBRARY_DIR})
+find_library(typedobject_LIBRARY typedobject@CMAKE_DEBUG_POSTFIX@ PATHS ${typedobject_LIBRARY_DIR})

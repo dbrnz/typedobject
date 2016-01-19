@@ -28,6 +28,13 @@ elseif(WIN32)
   add_definitions(-DRAPTOR_STATIC)
 endif()
 
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+  message(STATUS "Building DEBUG version")
+  set(CMAKE_DEBUG_POSTFIX _d)
+else()
+  message(STATUS "Building RELEASE version")
+endif()
+
 set(INCLUDES $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>)
 
 add_subdirectory(src)
@@ -74,7 +81,7 @@ export(EXPORT typedobjectTargets
   )
 configure_file(cmake/typedobjectConfig.cmake
   "${CMAKE_CURRENT_BINARY_DIR}/typedobject/typedobjectConfig.cmake"
-  COPYONLY
+  @ONLY
   )
 
 if(WIN32)
@@ -94,8 +101,8 @@ install(EXPORT typedobjectTargets
 
 install(
   FILES
-    cmake/typedobjectConfig.cmake
     cmake/typedobject_generate.cmake
+    "${CMAKE_CURRENT_BINARY_DIR}/typedobject/typedobjectConfig.cmake"
     "${CMAKE_CURRENT_BINARY_DIR}/typedobject/typedobjectConfigVersion.cmake"
   DESTINATION
     ${ConfigPackageLocation}
