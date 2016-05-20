@@ -1,0 +1,8 @@
+if(UNIX)
+  if(APPLE)
+    file(GLOB installedLibs $ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/*.dylib)
+  else()
+    file(GLOB installedLibs $ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/*.so)
+  endif()
+  execute_process(COMMAND strip -x ${installedLibs})
+endif()  

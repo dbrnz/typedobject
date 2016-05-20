@@ -117,3 +117,6 @@ install(
   COMPONENT
     Devel
   )
+
+# Ensure symbols are stripped from packaged libraries
+install(SCRIPT cmake/strip_libraries.cmake)
