@@ -1,15 +1,12 @@
 cmake_minimum_required(VERSION 3.0)
 
 project("TypedObjectLib")
-set(TypedObject_VERSION 1.1.0)
+set(TypedObject_VERSION_MAJOR 1)
+set(TypedObject_VERSION_MINOR 1)
+set(TypedObject_VERSION_PATCH 1)
 
-### Build a package...
-if(WIN32)
-  set(CPACK_GENERATOR "ZIP")
-else()
-  set(CPACK_GENERATOR "TGZ")
-endif()
-include(CPack)
+set(TypedObject_VERSION ${TypedObject_VERSION_MAJOR}.${TypedObject_VERSION_MINOR}.${TypedObject_VERSION_PATCH})
+set(TypedObject_VERSION_SO ${TypedObject_VERSION_MAJOR})
 
 ### CMake helpers...
 include(CMakePackageConfigHelpers)
@@ -46,10 +43,10 @@ target_include_directories(typedobject PUBLIC ${INCLUDES})
 target_link_libraries(typedobject ${LIBS})
 
 set_property(TARGET typedobject PROPERTY VERSION ${TypedObject_VERSION})
-set_property(TARGET typedobject PROPERTY SOVERSION 1)
-set_property(TARGET typedobject PROPERTY INTERFACE_typedobject_MAJOR_VERSION 1)
+set_property(TARGET typedobject PROPERTY SOVERSION ${TypedObject_VERSION_SO})
+set_property(TARGET typedobject PROPERTY INTERFACE_typedobject_VERSION_MAJOR ${TypedObject_VERSION_MAJOR})
 set_property(TARGET typedobject APPEND PROPERTY
-  COMPATIBLE_INTERFACE_STRING typedobject_MAJOR_VERSION
+  COMPATIBLE_INTERFACE_STRING typedobject_VERSION_MAJOR
   )
 
 install(TARGETS typedobject EXPORT typedobjectTargets
@@ -120,3 +117,14 @@ install(
 
 # Ensure symbols are stripped from packaged libraries
 install(SCRIPT cmake/strip_libraries.cmake)
+
+### Build a package...
+if(WIN32)
+  set(CPACK_GENERATOR "ZIP")
+else()
+  set(CPACK_GENERATOR "TGZ")
+endif()
+set(CPACK_PACKAGE_VERSION_MAJOR ${TypedObject_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${TypedObject_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${TypedObject_VERSION_PATCH})
+include(CPack)
