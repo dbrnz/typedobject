@@ -3,9 +3,8 @@ cmake_minimum_required(VERSION 3.0)
 project("TypedObjectLib")
 set(TypedObject_VERSION_MAJOR 1)
 set(TypedObject_VERSION_MINOR 1)
-set(TypedObject_VERSION_PATCH 1)
 
-set(TypedObject_VERSION ${TypedObject_VERSION_MAJOR}.${TypedObject_VERSION_MINOR}.${TypedObject_VERSION_PATCH})
+set(TypedObject_VERSION ${TypedObject_VERSION_MAJOR}.${TypedObject_VERSION_MINOR})
 set(TypedObject_VERSION_SO ${TypedObject_VERSION_MAJOR})
 
 ### CMake helpers...
@@ -126,5 +125,5 @@ else()
 endif()
 set(CPACK_PACKAGE_VERSION_MAJOR ${TypedObject_VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${TypedObject_VERSION_MINOR})
-set(CPACK_PACKAGE_VERSION_PATCH ${TypedObject_VERSION_PATCH})
+set(CPACK_PACKAGE_VERSION ${TypedObject_VERSION})
 include(CPack)
