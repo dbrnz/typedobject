@@ -29,6 +29,7 @@ appears before `-lserd-0` on the linker's command line.
 ::
 
   export CFLAGS=-fPIC
+  # Or edit `wscript` files and add `cflags = ['-fPIC'],` to the static build options.
   ./waf configure --static --no-shared
   ./waf
   sudo ./waf install
@@ -42,29 +43,49 @@ sord
   curl http://download.drobilla.net/sord-0.14.0.tar.bz2 | tar xj
   cd sord-0.14.0
   export CFLAGS=-fPIC
+  # Or edit `wscript` files and add `cflags = ['-fPIC'],` to the static build options.
   ./waf configure --static --no-shared
   ./waf
   sudo ./waf install
 
 
-raptor2
--------
-
-  ./configure CFLAGS=-fPIC --disable-shared --enable-static --enable-parsers=rdfxml --enable-serializers=rdfxml
-
-Needs statically linked curl and xml2
-
 curl
 ----
 
+::
+
+  wget https://curl.haxx.se/download/curl-7.54.1.tar.gz
+  tar xzf curl-7.54.1.tar.gz
+  cd curl-7.54.1
   ./configure CFLAGS=-fPIC --disable-shared --enable-static
+  make
+  sudo make install
 
 
 libxml2
 -------
 
-  ./configure CFLAGS=-fPIC --disable-shared --enable-static
+::
 
+  curl ftp://xmlsoft.org/libxml2/libxml2-2.9.4.tar.gz | tar xz
+  cd libxml2-2.9.4
+  ./configure CFLAGS=-fPIC --disable-shared --enable-static
+  make
+  sudo make install
+
+
+raptor2
+-------
+
+Needs statically linked curl and xml2
+
+::
+
+  curl http://download.librdf.org/source/raptor2-2.0.15.tar.gz | tar xz
+  cd raptor2-2.0.15
+  ./configure CFLAGS=-fPIC --disable-shared --enable-static --enable-parsers=rdfxml --enable-serializers=rdfxml
+  make
+  sudo make install
 
 
 Boost
@@ -72,20 +93,23 @@ Boost
 
 ::
 
-  cd ~/build/boost_1_59_0
+  wget https://dl.bintray.com/boostorg/release/1.64.0/source/boost_1_64_0.tar.bz2
+  tar xjf boost_1_64_0.tar.bz2
+  cd ~/build/boost_1_64_0
   ./bootstrap.sh --with-libraries=date_time,filesystem,system,test
   ./b2 stage threading=multi link=static cxxflags=-fPIC address-model=64
   sudo ./b2 install
 
-serd/sord
----------
 
-* Edit `serd.pc.in` to add `-lm` to libraries line and remove `Libs.private`.
-* Edit `wscript` files and add `cflags = ['-fPIC'],` to the static build options.
+clang
+-----
 
 ::
 
-  ./waf configure --static --no-shared
-  ./waf
-  sudo ./waf install
-
+  curl http://releases.llvm.org/4.0.0/clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz | tar xJ
+  sudo cp clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-14.04/lib/libclang.so /usr/local/lib/libclang.so.4
+  sudo chmod +x /usr/local/lib/libclang.so.4
+  sudo ln -s /usr/local/lib/libclang.so.4 /usr/local/lib/libclang.so
+  sudo ldconfig
+  #
+  sudo pip install clang
