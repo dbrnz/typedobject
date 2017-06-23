@@ -23,7 +23,7 @@ Visual Studio 2013 is required to build `typedobject`. After installing
 VS2013, the appropriate Visual C environment needs to be first setup by running
 `vcvarsall.bat`. For 64-bit compiles the command is: ::
 
-  "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x86_amd64 
+  "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x86_amd64
 
 and for 32-bit compiles: ::
 
@@ -172,12 +172,12 @@ libxml2
 
 libxslt
 -------
-  
+
 * Get and extract ftp://xmlsoft.org/libxslt/libxslt-1.1.28.tar.gz into a work
   directory.
 
 * Edit the file `win32\Makefile.msvc`, change line 74 to read: ::
-  
+
     LDFLAGS = $(LDFLAGS)
 
   line 315 to read: ::
@@ -402,7 +402,12 @@ The typedobject code generation utility uses `libclang` to parse C++ header
 files.
 
 * Install LLVM and libclang by running
-  http://llvm.org/releases/3.6.2/LLVM-3.6.2-win32.exe
+  http://releases.llvm.org/4.0.0/LLVM-4.0.0-win32.exe
+
+* NB:
+
+  * Need 32-bit version to work with 32-bit Python 2.7.
+  * Python's clang bindings have not been ported to Pyton 3.
 
 * Add `C:\Program Files (x86)\LLVM\bin` to the PATH.
 
