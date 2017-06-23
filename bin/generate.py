@@ -520,7 +520,11 @@ class Parser(object):
   #-----------------------
     kind = cursor.kind
     name = cursor.displayname
-    if kind == CursorKind.TRANSLATION_UNIT:
+
+    if kind == CursorKind.UNEXPOSED_ATTR:
+      pass
+
+    elif kind == CursorKind.TRANSLATION_UNIT:
       if self._file is None:
         self._file = name
         self._generator = Generator(name)
@@ -548,7 +552,7 @@ class Parser(object):
       self._generator.end_class()
       self._class = None
       self._base = None
-    
+
     elif kind == CursorKind.CXX_BASE_SPECIFIER and self._class:
       self._base = self.parse_type(cursor)
 
