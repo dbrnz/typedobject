@@ -79,11 +79,8 @@ configure_file(cmake/typedobjectConfig.cmake
   @ONLY
   )
 
-if(WIN32)
-  set(ConfigPackageLocation cmake)
-else()
-  set(ConfigPackageLocation lib/cmake/typedobject)
-endif()
+# Where package configuration files are put
+set(ConfigPackageLocation lib/cmake/typedobject)
 
 install(EXPORT typedobjectTargets
   FILE
