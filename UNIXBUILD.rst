@@ -83,7 +83,8 @@ Needs statically linked curl and xml2
 
   curl http://download.librdf.org/source/raptor2-2.0.15.tar.gz | tar xz
   cd raptor2-2.0.15
-  ./configure CFLAGS=-fPIC --disable-shared --enable-static --enable-parsers=rdfxml --enable-serializers=rdfxml
+  ./configure CFLAGS=-fPIC --disable-shared --enable-static \
+      --enable-parsers=rdfxml --enable-serializers=rdfxml --without-www
   make
   sudo make install
 

@@ -292,7 +292,7 @@ class Generator(object):
   def save(self, hdr, fn):
   #-----------------------
     if len(self._classes) == 0: return
-    output = open(fn, 'wb')
+    output = open(fn, 'w')
     output.write('// Generated at: %s\n' % datetime.datetime.now())
     code = ['#include "%s"' % hdr]
     if self._usednames:
@@ -312,18 +312,18 @@ class Generator(object):
       c = Constructor(cls[3], cls[1], cls[2], props[3], props[4])  # type, class, base, init, prefixes
       a = AssignFromRDF(cls[1], cls[2])
       s = SaveToRDF(cls[1], cls[2])
-      for p, v in props[0].iteritems():  # properties
+      for p, v in props[0].items():  # properties
         c.initialise(p, *v)
         c.add_property(p, *v)
         a.add_property(p, *v)
         s.save_property(p, *v)
-      for p, v in props[1].iteritems():  # assignments
+      for p, v in props[1].items():  # assignments
         c.add_property(p, *v)
         a.add_property(p, *v)
         s.save_property(p, *v)
-      for p, v in props[2].iteritems():  # restrictions
+      for p, v in props[2].items():  # restrictions
         c.preset(p, *v)
-      for r, v in props[5].iteritems():  # resources
+      for r, v in props[5].items():  # resources
         a.add_resource(r, *v)
       code.append(str(c))
       code.append(str(a))
