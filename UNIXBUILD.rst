@@ -10,8 +10,8 @@ serd
 
 ::
 
-  curl http://download.drobilla.net/serd-0.22.0.tar.bz2 | tar xj
-  cd serd-0.22.0
+  curl http://download.drobilla.net/serd-0.28.0.tar.bz2 | tar xj
+  cd serd-0.28.0
 
 Edit `serd.pc.in` and replace the two lines: ::
 
@@ -40,8 +40,8 @@ sord
 
 ::
 
-  curl http://download.drobilla.net/sord-0.14.0.tar.bz2 | tar xj
-  cd sord-0.14.0
+  curl http://download.drobilla.net/sord-0.16.0.tar.bz2 | tar xj
+  cd sord-0.16.0
   export CFLAGS=-fPIC
   # Or edit `wscript` files and add `cflags = ['-fPIC'],` to the static build options.
   ./waf configure --static --no-shared
@@ -54,9 +54,9 @@ curl
 
 ::
 
-  wget https://curl.haxx.se/download/curl-7.54.1.tar.gz
-  tar xzf curl-7.54.1.tar.gz
-  cd curl-7.54.1
+  wget https://curl.haxx.se/download/curl-7.55.0.tar.gz
+  tar xzf curl-7.55.0.tar.gz
+  cd curl-7.55.0
   ./configure CFLAGS=-fPIC --disable-shared --enable-static
   make
   sudo make install
@@ -69,7 +69,7 @@ libxml2
 
   curl ftp://xmlsoft.org/libxml2/libxml2-2.9.4.tar.gz | tar xz
   cd libxml2-2.9.4
-  ./configure CFLAGS=-fPIC --disable-shared --enable-static
+  ./configure CFLAGS=-fPIC --disable-shared --enable-static --without-python
   make
   sudo make install
 
@@ -107,8 +107,8 @@ clang
 
 ::
 
-  curl http://releases.llvm.org/4.0.0/clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz | tar xJ
-  sudo cp clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-14.04/lib/libclang.so /usr/local/lib/libclang.so.4
+  curl http://releases.llvm.org/4.0.0/clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz | tar xJ
+  sudo cp clang+llvm-4.0.0-x86_64-linux-gnu-ubuntu-16.04/lib/libclang.so /usr/local/lib/libclang.so.4
   sudo chmod +x /usr/local/lib/libclang.so.4
   sudo ln -s /usr/local/lib/libclang.so.4 /usr/local/lib/libclang.so
   sudo ldconfig
